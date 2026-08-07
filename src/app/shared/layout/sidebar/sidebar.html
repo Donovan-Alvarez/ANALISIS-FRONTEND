@@ -1,1 +1,46 @@
-<p>sidebar works!</p>
+<nav class="sidebar">
+  @for (modulo of modulos(); track modulo.idModulo) {
+    <div class="sidebar__modulo">
+      <span class="sidebar__modulo-title">{{ modulo.nombre }}</span>
+
+      @for (menu of modulo.menus; track menu.idMenu) {
+        <div class="sidebar__menu">
+          <button
+            type="button"
+            class="sidebar__menu-toggle"
+            (click)="toggleMenu(menu.idMenu)"
+            [attr.aria-expanded]="estaExpandido(menu.idMenu)"
+          >
+            <span>{{ menu.nombre }}</span>
+            <mat-icon
+              class="sidebar__menu-chevron"
+              [class.sidebar__menu-chevron--open]="estaExpandido(menu.idMenu)"
+            >
+              expand_more
+            </mat-icon>
+          </button>
+
+          <div
+            class="sidebar__opciones-wrapper"
+            [class.sidebar__opciones-wrapper--open]="estaExpandido(menu.idMenu)"
+          >
+            <ul class="sidebar__opciones">
+              @for (opcion of menu.opciones; track opcion.idOpcion) {
+                <li>
+                  <a
+                    [routerLink]="['/', opcion.pagina]"
+                    routerLinkActive="sidebar__link--active"
+                    class="sidebar__link"
+                  >
+                    <mat-icon>{{ iconoDe(opcion.pagina) }}</mat-icon>
+                    <span>{{ opcion.nombre }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</nav>

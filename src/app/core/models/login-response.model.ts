@@ -2,6 +2,7 @@ export interface LoginResponse {
   token: string;
   idUsuario: string;
   nombre: string;
-  rol: string;
+  idRole: number;
+  nombreRole: string;
   expiraEn: number;
 }

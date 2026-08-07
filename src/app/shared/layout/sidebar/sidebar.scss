@@ -1,0 +1,119 @@
+@use 'colors' as *;
+
+.sidebar {
+  width: 240px;
+  flex: 0 0 240px;
+  height: 100%;
+  overflow-y: auto;
+  background: #fff;
+  border-right: 1px solid $color-border;
+  padding: 1.25rem 0.75rem;
+  box-sizing: border-box;
+}
+
+.sidebar__modulo {
+  margin-bottom: 1.25rem;
+}
+
+.sidebar__modulo-title {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: $color-text-muted;
+  padding: 0 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.sidebar__menu {
+  margin-bottom: 0.75rem;
+}
+
+.sidebar__menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: $color-text;
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $color-bg-page;
+  }
+}
+
+.sidebar__menu-chevron {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: $color-text-muted;
+  transition: transform 0.2s ease;
+}
+
+.sidebar__menu-chevron--open {
+  transform: rotate(180deg);
+}
+
+.sidebar__opciones-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease;
+  overflow: hidden;
+}
+
+.sidebar__opciones-wrapper--open {
+  grid-template-rows: 1fr;
+}
+
+.sidebar__opciones {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  color: $color-text-muted;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  mat-icon {
+    font-size: 19px;
+    width: 19px;
+    height: 19px;
+  }
+
+  &:hover {
+    background: $color-bg-page;
+    color: $color-text;
+  }
+}
+
+.sidebar__link--active {
+  background: $color-primary;
+  color: #fff;
+
+  &:hover {
+    background: $color-primary;
+  }
+}

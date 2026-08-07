@@ -1,0 +1,21 @@
+@use 'colors' as *;
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+.shell__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.shell__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  background: $color-bg-page;
+  box-sizing: border-box;
+}
