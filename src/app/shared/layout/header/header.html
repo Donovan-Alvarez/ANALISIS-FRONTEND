@@ -1,1 +1,24 @@
-<p>header works!</p>
+<header class="app-header">
+  <div class="app-header__brand">
+    <span class="app-header__logo">ERP</span>
+    <span class="app-header__title">Análisis de Sistemas</span>
+  </div>
+
+  <div class="app-header__user">
+    @if (usuario) {
+      <div class="app-header__user-info">
+        <span class="app-header__user-name">{{ usuario.nombre }}</span>
+        <span class="app-header__user-role">{{ usuario.nombreRole }}</span>
+      </div>
+    }
+    <button
+      type="button"
+      class="app-header__logout"
+      (click)="cerrarSesion()"
+      aria-label="Cerrar sesión"
+    >
+      <mat-icon>logout</mat-icon>
+      <span>Salir</span>
+    </button>
+  </div>
+</header>
