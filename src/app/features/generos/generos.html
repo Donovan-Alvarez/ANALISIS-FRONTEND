@@ -1,1 +1,78 @@
-<p>generos works!</p>
+<div class="container">
+  <!-- Formulario de Registro / Edición -->
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>
+        {{ editandoId() ? 'Editar Género' : 'Registrar Nuevo Género' }}
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre del Género</mat-label>
+          <input matInput formControlName="nombre" placeholder="Ej. Masculino, Femenino">
+          @if (form.get('nombre')?.hasError('required') && form.get('nombre')?.touched) {
+            <mat-error>El nombre del género es obligatorio</mat-error>
+          }
+          @if (form.get('nombre')?.hasError('maxlength')) {
+            <mat-error>El nombre no puede superar los 50 caracteres</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-flat-button color="primary" class="btn-rounded" type="submit" [disabled]="form.invalid || guardando()">
+            <mat-icon>save</mat-icon>
+            {{ editandoId() ? 'Actualizar' : 'Guardar' }}
+          </button>
+
+          @if (editandoId() !== null) {
+            <button mat-button type="button" (click)="cancelarEdicion()">
+              Cancelar
+            </button>
+          }
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Tabla de Catálogo -->
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title>Catálogo de Géneros</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <table mat-table [dataSource]="dataSource()" class="mat-elevation-z0 full-width">
+
+        <!-- ID Column -->
+        <ng-container matColumnDef="idGenero">
+          <th mat-header-cell *matHeaderCellDef> IDENTIFICACIÓN </th>
+          <td mat-cell *matCellDef="let element"> {{ element.idGenero }} </td>
+        </ng-container>
+
+        <!-- Nombre Column -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef> Nombre </th>
+          <td mat-cell *matCellDef="let element"> {{ element.nombre }} </td>
+        </ng-container>
+
+        <!-- Acciones Column -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef> Acciones </th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button color="primary" (click)="editar(element)" title="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="eliminar(element.idGenero!)" title="Eliminar">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</div>

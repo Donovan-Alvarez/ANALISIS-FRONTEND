@@ -1,0 +1,57 @@
+@use 'colors' as *;
+
+.container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background-color: $color-bg-page;
+  min-height: calc(100vh - 70px);
+}
+
+.form-card, .table-card {
+  background-color: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(35, 35, 69, 0.05) !important;
+  padding: 16px;
+}
+
+.full-width {
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+.btn-rounded {
+  background-color: $color-primary !important;
+  color: #ffffff !important;
+  border-radius: 20px !important;
+  padding: 8px 20px !important;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(108, 105, 224, 0.3);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &:hover {
+    background-color: $color-primary-dark !important;
+  }
+}
+
+table {
+  width: 100%;
+  background: transparent !important;
+
+  th.mat-header-cell {
+    color: $color-text-muted;
+    font-weight: 600;
+  }
+}
