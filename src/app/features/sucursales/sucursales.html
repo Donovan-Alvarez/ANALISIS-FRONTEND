@@ -1,1 +1,39 @@
-<p>sucursales works!</p>
+<div style="padding: 16px; display:flex; justify-content:flex-end;">
+  <button mat-flat-button (click)="nuevaSucursal()">
+    <mat-icon>add</mat-icon>
+    Nueva sucursal
+  </button>
+</div>
+
+<table mat-table [dataSource]="sucursales()" class="mat-elevation-z2">
+
+  <ng-container matColumnDef="nombre">
+    <th mat-header-cell *matHeaderCellDef>Nombre</th>
+    <td mat-cell *matCellDef="let sucursal">{{ sucursal.nombre }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="direccion">
+    <th mat-header-cell *matHeaderCellDef>Dirección</th>
+    <td mat-cell *matCellDef="let sucursal">{{ sucursal.direccion }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="nombreEmpresa">
+    <th mat-header-cell *matHeaderCellDef>Empresa</th>
+    <td mat-cell *matCellDef="let sucursal">{{ sucursal.nombreEmpresa }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="acciones">
+    <th mat-header-cell *matHeaderCellDef>Acciones</th>
+    <td mat-cell *matCellDef="let sucursal">
+      <button mat-icon-button (click)="editarSucursal(sucursal)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button (click)="eliminarSucursal(sucursal)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnas"></tr>
+</table>

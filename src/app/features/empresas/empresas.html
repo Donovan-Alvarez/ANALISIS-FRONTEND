@@ -1,1 +1,39 @@
-<p>empresas works!</p>
+<div style="padding: 16px; display:flex; justify-content:flex-end;">
+  <button mat-flat-button (click)="nuevaEmpresa()">
+    <mat-icon>add</mat-icon>
+    Nueva empresa
+  </button>
+</div>
+
+<table mat-table [dataSource]="empresas()" class="mat-elevation-z2">
+
+  <ng-container matColumnDef="nombre">
+    <th mat-header-cell *matHeaderCellDef>Nombre</th>
+    <td mat-cell *matCellDef="let empresa">{{ empresa.nombre }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="direccion">
+    <th mat-header-cell *matHeaderCellDef>Dirección</th>
+    <td mat-cell *matCellDef="let empresa">{{ empresa.direccion }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="nit">
+    <th mat-header-cell *matHeaderCellDef>NIT</th>
+    <td mat-cell *matCellDef="let empresa">{{ empresa.nit }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="acciones">
+    <th mat-header-cell *matHeaderCellDef>Acciones</th>
+    <td mat-cell *matCellDef="let empresa">
+      <button mat-icon-button (click)="editarEmpresa(empresa)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button (click)="eliminarEmpresa(empresa)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnas"></tr>
+</table>
