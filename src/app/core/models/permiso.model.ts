@@ -18,12 +18,43 @@ export const ACCIONES_PERMISO: readonly { clave: AccionPermiso; etiqueta: string
   { clave: 'exportar', etiqueta: 'Exportar' },
 ];
 
-/** Una fila de la cuadricula: la opcion y sus seis casillas. */
-export interface PermisoOpcion {
+/**
+ * Una opcion con sus seis casillas, tal como la devuelve el backend en
+ * OpcionAsignacionDTO.
+ *
+ * OJO con "consultar": no es una columna de ROLE_OPCION. El backend lo deriva
+ * de la existencia de la fila (IdRole + IdOpcion). Al guardar, si las seis
+ * casillas van en false la fila se borra; si al menos una va en true, se
+ * inserta. Por eso desmarcar todo equivale a quitarle la opcion al rol.
+ */
+export interface OpcionAsignacion {
   idOpcion: number;
   nombre: string;
-  pagina: string;
-  menuNombre: string;
+  consultar: boolean;
+  alta: boolean;
+  baja: boolean;
+  cambio: boolean;
+  imprimir: boolean;
+  exportar: boolean;
+}
+
+/** Agrupacion por menu que devuelve el backend (MenuAsignacionDTO). */
+export interface MenuAsignacion {
+  idMenu: number;
+  nombre: string;
+  opciones: OpcionAsignacion[];
+}
+
+/** Respuesta completa de GET /api/roles/{idRole}/opciones/por-modulo/{idModulo} */
+export interface RoleOpcionesResponse {
+  idRole: number;
+  idModulo: number;
+  menus: MenuAsignacion[];
+}
+
+/** Cuerpo de cada elemento del PUT del mismo endpoint. */
+export interface OpcionPermisoRequest {
+  idOpcion: number;
   consultar: boolean;
   alta: boolean;
   baja: boolean;
@@ -34,7 +65,7 @@ export interface PermisoOpcion {
 
 /**
  * Permisos del rol autenticado sobre la pantalla que se esta viendo.
- * Se derivan del menu que ya devuelve GET /api/menu/actual.
+ * Se derivan del menu que devuelve GET /api/menu/actual.
  */
 export interface PermisosPantalla {
   consultar: boolean;

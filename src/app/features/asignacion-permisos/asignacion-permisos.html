@@ -12,7 +12,7 @@
         <button
           type="button"
           class="btn btn--ghost"
-          [disabled]="!hayCambios()"
+          [disabled]="!hayCambios() || guardando()"
           (click)="descartar()"
         >
           <mat-icon>undo</mat-icon>
@@ -25,19 +25,11 @@
           (click)="guardar()"
         >
           <mat-icon>save</mat-icon>
-          <span>Guardar cambios</span>
+          <span>{{ guardando() ? 'Guardando…' : 'Guardar cambios' }}</span>
         </button>
       </div>
     }
   </header>
-
-  <p class="demo-note">
-    <mat-icon>science</mat-icon>
-    <span>
-      Datos de demostración. El endpoint que lee y escribe <code>ROLE_OPCION</code>
-      todavía no existe en el backend.
-    </span>
-  </p>
 
   <!-- Selectores de rol y módulo -->
   <section class="card">
@@ -48,7 +40,9 @@
           <div class="field__control">
             <mat-icon class="field__icon">admin_panel_settings</mat-icon>
             <select id="idRole" (change)="onRoleChange($any($event.target).value)">
-              <option value="">Selecciona un rol…</option>
+              <option value="">
+                {{ cargandoCatalogos() ? 'Cargando…' : 'Selecciona un rol…' }}
+              </option>
               @for (rol of roles(); track rol.idRole) {
                 <option [value]="rol.idRole">{{ rol.nombre }}</option>
               }
@@ -62,7 +56,9 @@
           <div class="field__control">
             <mat-icon class="field__icon">widgets</mat-icon>
             <select id="idModulo" (change)="onModuloChange($any($event.target).value)">
-              <option value="">Selecciona un módulo…</option>
+              <option value="">
+                {{ cargandoCatalogos() ? 'Cargando…' : 'Selecciona un módulo…' }}
+              </option>
               @for (modulo of modulos(); track modulo.idModulo) {
                 <option [value]="modulo.idModulo">{{ modulo.nombre }}</option>
               }
@@ -71,7 +67,7 @@
           </div>
         </div>
 
-        @if (seleccionCompleta()) {
+        @if (seleccionCompleta() && totalOpciones() > 0) {
           <div class="selectores__resumen">
             <span class="badge badge--role">
               {{ totalMarcados() }} de {{ totalCasillas() }} permisos activos
@@ -96,7 +92,14 @@
         <p>Selecciona un rol y un módulo para configurar sus permisos.</p>
       </div>
     </section>
-  } @else if (filas().length === 0) {
+  } @else if (cargandoCuadricula()) {
+    <section class="card">
+      <div class="empty-state">
+        <mat-icon>hourglass_empty</mat-icon>
+        <p>Cargando permisos…</p>
+      </div>
+    </section>
+  } @else if (totalOpciones() === 0) {
     <section class="card">
       <div class="empty-state">
         <mat-icon>folder_off</mat-icon>
@@ -153,49 +156,54 @@
               <th class="permisos__col-accion">Todo</th>
             </tr>
           </thead>
-          <tbody>
-            @for (fila of filas(); track fila.idOpcion) {
-              <tr>
-                <td class="permisos__col-opcion">
-                  <div class="permisos__opcion">
-                    <span class="permisos__opcion-nombre">{{ fila.nombre }}</span>
-                    <span class="permisos__opcion-meta">
-                      {{ fila.menuNombre }} · /{{ fila.pagina }}
-                    </span>
-                  </div>
-                </td>
 
-                @for (accion of acciones; track accion.clave) {
-                  <td class="permisos__col-accion">
-                    <label class="check">
-                      <input
-                        type="checkbox"
-                        [checked]="fila[accion.clave]"
-                        [disabled]="!permisos().cambio"
-                        (change)="alternar(fila.idOpcion, accion.clave)"
-                        [attr.aria-label]="accion.etiqueta + ' en ' + fila.nombre"
-                      />
-                      <span class="check__box"><mat-icon>check</mat-icon></span>
-                    </label>
-                  </td>
-                }
-
-                <td class="permisos__col-accion">
-                  <button
-                    type="button"
-                    class="btn-icon"
-                    [disabled]="!permisos().cambio"
-                    (click)="alternarFila(fila.idOpcion)"
-                    [title]="'Marcar o limpiar toda la fila ' + fila.nombre"
-                  >
-                    <mat-icon>
-                      {{ filaCompleta(fila) ? 'check_box' : 'check_box_outline_blank' }}
-                    </mat-icon>
-                  </button>
+          @for (menu of menus(); track menu.idMenu) {
+            <tbody>
+              <tr class="permisos__grupo">
+                <td [attr.colspan]="acciones.length + 2">
+                  <mat-icon>folder</mat-icon>
+                  <span>{{ menu.nombre }}</span>
                 </td>
               </tr>
-            }
-          </tbody>
+
+              @for (opcion of menu.opciones; track opcion.idOpcion) {
+                <tr>
+                  <td class="permisos__col-opcion">
+                    <span class="permisos__opcion-nombre">{{ opcion.nombre }}</span>
+                  </td>
+
+                  @for (accion of acciones; track accion.clave) {
+                    <td class="permisos__col-accion">
+                      <label class="check">
+                        <input
+                          type="checkbox"
+                          [checked]="opcion[accion.clave]"
+                          [disabled]="!permisos().cambio"
+                          (change)="alternar(opcion.idOpcion, accion.clave)"
+                          [attr.aria-label]="accion.etiqueta + ' en ' + opcion.nombre"
+                        />
+                        <span class="check__box"><mat-icon>check</mat-icon></span>
+                      </label>
+                    </td>
+                  }
+
+                  <td class="permisos__col-accion">
+                    <button
+                      type="button"
+                      class="btn-icon"
+                      [disabled]="!permisos().cambio"
+                      (click)="alternarFila(opcion.idOpcion)"
+                      [title]="'Marcar o limpiar toda la fila ' + opcion.nombre"
+                    >
+                      <mat-icon>
+                        {{ filaCompleta(opcion) ? 'check_box' : 'check_box_outline_blank' }}
+                      </mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          }
         </table>
       </div>
     </section>
@@ -203,8 +211,9 @@
     <p class="permisos__pie">
       <mat-icon>info</mat-icon>
       <span>
-        Al iniciar sesión, esta configuración construye el menú del usuario y habilita o
-        deshabilita los botones de cada pantalla.
+        <strong>Consultar</strong> no es una columna de <code>ROLE_OPCION</code>: representa que el
+        rol tenga asignada la opción. Si dejas las seis casillas de una fila en blanco, esa opción
+        desaparece del menú de ese rol.
       </span>
     </p>
   }

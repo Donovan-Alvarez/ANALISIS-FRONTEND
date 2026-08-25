@@ -1,19 +1,26 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Empresa } from '../../core/models/catalogo.model';
-import { ReglaPassword, UsuarioResponse } from '../../core/models/usuario.model';
-import { PermisosService } from '../../core/services/permisos.service';
+import { forkJoin } from 'rxjs';
 import {
-  MOCK_EMPRESAS,
-  MOCK_GENEROS,
-  MOCK_ROLES,
-  MOCK_STATUS_USUARIO,
-  MOCK_SUCURSALES,
-  MOCK_USUARIOS,
-} from './usuarios.mock';
+  Empresa,
+  Genero,
+  Role,
+  StatusUsuario,
+  Sucursal,
+} from '../../core/models/catalogo.model';
+import {
+  ReglaPassword,
+  UsuarioRequest,
+  UsuarioResponse,
+} from '../../core/models/usuario.model';
+import { CatalogosService } from '../../core/services/catalogos.service';
+import { PermisosService } from '../../core/services/permisos.service';
+import { UsuariosService } from '../../core/services/usuarios.service';
+import { mensajeDeError } from '../../core/utils/api-error';
+import { aBase64Puro, aDataUri } from '../../core/utils/foto';
 
 /** Ruta de esta pantalla; coincide con OPCION.Pagina en la base de datos. */
 const PAGINA = 'usuarios';
@@ -24,36 +31,37 @@ const PAGINA = 'usuarios';
   templateUrl: './usuarios.html',
   styleUrl: './usuarios.scss',
 })
-export class Usuarios {
+export class Usuarios implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly snackBar = inject(MatSnackBar);
   private readonly permisosService = inject(PermisosService);
+  private readonly usuariosService = inject(UsuariosService);
+  private readonly catalogosService = inject(CatalogosService);
 
-  /** Permisos reales del rol autenticado (derivados de GET /api/menu/actual). */
+  /** Permisos del rol autenticado, derivados de GET /api/menu/actual. */
   protected readonly permisos = computed(() => this.permisosService.permisosDe(PAGINA));
 
-  // ── Catalogos ───────────────────────────────────────────────────────
-  // DEMO: al conectar el backend, estos signals se llenan con las
-  // respuestas de /api/empresas, /api/sucursales, etc.
-  protected readonly empresas = signal(MOCK_EMPRESAS);
-  protected readonly sucursales = signal(MOCK_SUCURSALES);
-  protected readonly generos = signal(MOCK_GENEROS);
-  protected readonly estatus = signal(MOCK_STATUS_USUARIO);
-  protected readonly roles = signal(MOCK_ROLES);
-  protected readonly usuarios = signal<UsuarioResponse[]>(MOCK_USUARIOS);
+  // ── Catálogos ───────────────────────────────────────────────────────
+  protected readonly empresas = signal<Empresa[]>([]);
+  protected readonly sucursales = signal<Sucursal[]>([]);
+  protected readonly generos = signal<Genero[]>([]);
+  protected readonly estatus = signal<StatusUsuario[]>([]);
+  protected readonly roles = signal<Role[]>([]);
+  protected readonly usuarios = signal<UsuarioResponse[]>([]);
 
   // ── Estado de la pantalla ───────────────────────────────────────────
+  protected readonly cargando = signal(true);
   protected readonly filtro = signal('');
   protected readonly modalAbierto = signal(false);
   protected readonly modoEdicion = signal(false);
   protected readonly guardando = signal(false);
+  protected readonly eliminando = signal(false);
   protected readonly usuarioAEliminar = signal<UsuarioResponse | null>(null);
   protected readonly verPassword = signal(false);
+  /** Data URI para el <img>; se convierte a base64 puro antes de enviarlo. */
   protected readonly fotoPreview = signal<string | null>(null);
-  /** Usuario que se esta editando, para el panel de datos del sistema. */
   protected readonly usuarioSeleccionado = signal<UsuarioResponse | null>(null);
 
-  /** Empresa elegida en el combo; determina sucursales y politica de password. */
   private readonly empresaSeleccionada = signal<number | null>(null);
   private readonly passwordActual = signal('');
 
@@ -62,22 +70,22 @@ export class Usuarios {
     nombre: ['', [Validators.required, Validators.maxLength(100)]],
     apellido: ['', [Validators.required, Validators.maxLength(100)]],
     fechaNacimiento: ['', Validators.required],
-    correoElectronico: ['', [Validators.required, Validators.email]],
-    telefonoMovil: ['', Validators.required],
+    correoElectronico: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
+    telefonoMovil: ['', [Validators.required, Validators.maxLength(30)]],
     password: [''],
     idEmpresa: [null as number | null, Validators.required],
     idSucursal: [null as number | null, Validators.required],
     idGenero: [null as number | null, Validators.required],
     idStatusUsuario: [null as number | null, Validators.required],
     idRole: [null as number | null, Validators.required],
-    pregunta: ['', Validators.required],
-    respuesta: ['', Validators.required],
+    pregunta: ['', [Validators.required, Validators.maxLength(200)]],
+    // El backend exige respuesta siempre (@NotBlank) y la re-encripta con
+    // BCrypt en cada guardado, así que también es obligatoria al editar.
+    respuesta: ['', [Validators.required, Validators.maxLength(200)]],
     requiereCambiarPassword: [false],
   });
 
   constructor() {
-    // El combo de Sucursales depende del de Empresa: al cambiar empresa se
-    // limpia la sucursal para no dejar una que ya no pertenece.
     this.form.controls.idEmpresa.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe((idEmpresa) => {
@@ -90,53 +98,93 @@ export class Usuarios {
       .subscribe((valor) => this.passwordActual.set(valor ?? ''));
   }
 
+  ngOnInit(): void {
+    this.cargarTodo();
+  }
+
+  private cargarTodo(): void {
+    this.cargando.set(true);
+    forkJoin({
+      usuarios: this.usuariosService.listar(),
+      empresas: this.catalogosService.empresas(),
+      sucursales: this.catalogosService.sucursales(),
+      generos: this.catalogosService.generos(),
+      estatus: this.catalogosService.statusUsuario(),
+      roles: this.catalogosService.roles(),
+    }).subscribe({
+      next: (datos) => {
+        this.usuarios.set(datos.usuarios);
+        this.empresas.set(datos.empresas);
+        this.sucursales.set(datos.sucursales);
+        this.generos.set(datos.generos);
+        this.estatus.set(datos.estatus);
+        this.roles.set(datos.roles);
+        this.cargando.set(false);
+      },
+      error: (error) => {
+        this.cargando.set(false);
+        this.snackBar.open(mensajeDeError(error, 'No se pudieron cargar los usuarios'), 'Cerrar', {
+          duration: 5000,
+        });
+      },
+    });
+  }
+
+  private recargarUsuarios(): void {
+    this.usuariosService.listar().subscribe({
+      next: (lista) => this.usuarios.set(lista),
+      error: (error) =>
+        this.snackBar.open(mensajeDeError(error), 'Cerrar', { duration: 5000 }),
+    });
+  }
+
   // ── Derivados ───────────────────────────────────────────────────────
 
-  /** Solo las sucursales de la empresa elegida. */
   protected readonly sucursalesFiltradas = computed(() => {
     const idEmpresa = this.empresaSeleccionada();
     if (idEmpresa === null) return [];
     return this.sucursales().filter((s) => s.idEmpresa === idEmpresa);
   });
 
-  /** Politica de contrasena de la empresa elegida. */
   protected readonly politica = computed<Empresa | null>(() => {
     const idEmpresa = this.empresaSeleccionada();
     return this.empresas().find((e) => e.idEmpresa === idEmpresa) ?? null;
   });
 
-  /** Checklist en vivo de la politica de contrasena. */
+  /**
+   * Checklist en vivo de la política de contraseña. Refleja las mismas reglas
+   * que UsuarioService.validarPoliticaPassword() aplica en el servidor: aquí
+   * son solo una guía visual, la validación que manda es la del backend.
+   */
   protected readonly reglasPassword = computed<ReglaPassword[]>(() => {
     const politica = this.politica();
     if (!politica) return [];
     const valor = this.passwordActual();
-
     const contar = (patron: RegExp) => (valor.match(patron) ?? []).length;
 
-    const reglas: ReglaPassword[] = [
+    return [
       {
         texto: `Al menos ${politica.passwordLargo} caracteres`,
         cumple: valor.length >= politica.passwordLargo,
       },
       {
-        texto: `${politica.passwordCantidadMayusculas} mayuscula(s)`,
-        cumple: contar(/[A-ZÁÉÍÓÚÑ]/g) >= politica.passwordCantidadMayusculas,
+        texto: `${politica.passwordCantidadMayusculas} mayúscula(s)`,
+        cumple: contar(/\p{Lu}/gu) >= politica.passwordCantidadMayusculas,
       },
       {
-        texto: `${politica.passwordCantidadMinusculas} minuscula(s)`,
-        cumple: contar(/[a-záéíóúñ]/g) >= politica.passwordCantidadMinusculas,
+        texto: `${politica.passwordCantidadMinusculas} minúscula(s)`,
+        cumple: contar(/\p{Ll}/gu) >= politica.passwordCantidadMinusculas,
       },
       {
-        texto: `${politica.passwordCantidadNumeros} numero(s)`,
-        cumple: contar(/[0-9]/g) >= politica.passwordCantidadNumeros,
+        texto: `${politica.passwordCantidadNumeros} número(s)`,
+        cumple: contar(/\d/g) >= politica.passwordCantidadNumeros,
       },
       {
-        texto: `${politica.passwordCantidadCaracteresEspeciales} caracter(es) especial(es)`,
+        texto: `${politica.passwordCantidadCaracteresEspeciales} carácter(es) especial(es)`,
         cumple:
-          contar(/[^A-Za-z0-9ÁÉÍÓÚÑáéíóúñ]/g) >= politica.passwordCantidadCaracteresEspeciales,
+          contar(/[^\p{L}\p{N}]/gu) >= politica.passwordCantidadCaracteresEspeciales,
       },
     ];
-    return reglas;
   });
 
   protected readonly passwordCumplePolitica = computed(() => {
@@ -144,7 +192,6 @@ export class Usuarios {
     return reglas.length > 0 && reglas.every((r) => r.cumple);
   });
 
-  /** Filas visibles segun el texto del buscador. */
   protected readonly usuariosFiltrados = computed(() => {
     const texto = this.filtro().trim().toLowerCase();
     const lista = this.usuarios();
@@ -157,7 +204,7 @@ export class Usuarios {
     );
   });
 
-  // ── Etiquetas para la tabla ─────────────────────────────────────────
+  // ── Etiquetas ───────────────────────────────────────────────────────
 
   protected nombreSucursal(idSucursal: number): string {
     return this.sucursales().find((s) => s.idSucursal === idSucursal)?.nombre ?? '—';
@@ -171,7 +218,6 @@ export class Usuarios {
     return this.estatus().find((e) => e.idStatusUsuario === idStatus)?.nombre ?? '—';
   }
 
-  /** Clase del badge segun el estatus, para que se lea de un vistazo. */
   protected claseEstatus(idStatus: number): string {
     const nombre = this.nombreEstatus(idStatus).toLowerCase();
     if (nombre === 'activo') return 'badge badge--ok';
@@ -183,25 +229,27 @@ export class Usuarios {
     return `${usuario.nombre.charAt(0)}${usuario.apellido.charAt(0)}`.toUpperCase();
   }
 
+  /** Convierte el base64 crudo del backend en algo que el <img> pueda mostrar. */
+  protected fotoDe(usuario: UsuarioResponse): string | null {
+    return aDataUri(usuario.fotografiaBase64);
+  }
+
   protected fecha(valor: string | null): string {
     if (!valor) return 'Nunca';
     const d = new Date(valor);
     return Number.isNaN(d.getTime()) ? valor : d.toLocaleString('es-GT');
   }
 
-  // ── Alta / edicion ──────────────────────────────────────────────────
+  // ── Alta / edición ──────────────────────────────────────────────────
 
   protected abrirAlta(): void {
     if (!this.permisos().alta) return;
     this.modoEdicion.set(false);
     this.fotoPreview.set(null);
     this.verPassword.set(false);
-    // Sin esto, los datos de auditoria del ultimo usuario editado se
-    // arrastrarian al registro nuevo.
     this.usuarioSeleccionado.set(null);
     this.form.reset({ requiereCambiarPassword: true });
     this.form.controls.idUsuario.enable();
-    // En alta la contrasena es obligatoria.
     this.form.controls.password.setValidators([Validators.required]);
     this.form.controls.password.updateValueAndValidity();
     this.modalAbierto.set(true);
@@ -211,7 +259,7 @@ export class Usuarios {
     if (!this.permisos().cambio) return;
     this.modoEdicion.set(true);
     this.verPassword.set(false);
-    this.fotoPreview.set(usuario.fotografiaBase64);
+    this.fotoPreview.set(aDataUri(usuario.fotografiaBase64));
 
     const sucursal = this.sucursales().find((s) => s.idSucursal === usuario.idSucursal);
 
@@ -229,15 +277,14 @@ export class Usuarios {
       idStatusUsuario: usuario.idStatusUsuario,
       idRole: usuario.idRole,
       pregunta: usuario.pregunta,
-      respuesta: usuario.respuesta,
+      // La respuesta llega encriptada con BCrypt desde el backend, así que no
+      // se puede prellenar: hay que volver a capturarla en claro.
+      respuesta: '',
       requiereCambiarPassword: usuario.requiereCambiarPassword,
     });
-    // valueChanges de idEmpresa limpia la sucursal, hay que reponerla.
     this.form.controls.idSucursal.setValue(usuario.idSucursal);
 
-    // El id de usuario es la llave primaria: no se edita.
     this.form.controls.idUsuario.disable();
-    // En edicion, contrasena vacia significa "no cambiarla".
     this.form.controls.password.clearValidators();
     this.form.controls.password.updateValueAndValidity();
 
@@ -254,7 +301,6 @@ export class Usuarios {
     this.verPassword.update((v) => !v);
   }
 
-  /** Carga la fotografia como base64, que es lo que espera el backend. */
   protected onFotoSeleccionada(event: Event): void {
     const input = event.target as HTMLInputElement;
     const archivo = input.files?.[0];
@@ -284,53 +330,49 @@ export class Usuarios {
       return;
     }
 
-    this.guardando.set(true);
-
-    // DEMO: se actualiza la lista en memoria. Al conectar el backend, aqui
-    // van POST /api/usuarios o PUT /api/usuarios/{id} con UsuarioRequest.
     const v = this.form.getRawValue();
-    const fila: UsuarioResponse = {
+    const cuerpo: UsuarioRequest = {
       idUsuario: v.idUsuario,
       nombre: v.nombre,
       apellido: v.apellido,
       fechaNacimiento: v.fechaNacimiento,
       idStatusUsuario: Number(v.idStatusUsuario),
+      password: v.password,
       idGenero: Number(v.idGenero),
-      idSucursal: Number(v.idSucursal),
-      idRole: Number(v.idRole),
       correoElectronico: v.correoElectronico,
+      requiereCambiarPassword: v.requiereCambiarPassword,
+      fotografiaBase64: aBase64Puro(this.fotoPreview()),
       telefonoMovil: v.telefonoMovil,
+      idSucursal: Number(v.idSucursal),
       pregunta: v.pregunta,
       respuesta: v.respuesta,
-      fotografiaBase64: this.fotoPreview(),
-      requiereCambiarPassword: v.requiereCambiarPassword,
-      // Campos administrados por el sistema: en alta arrancan vacios, en
-      // edicion se conservan los que ya tenia.
-      ultimaFechaIngreso: this.usuarioSeleccionado()?.ultimaFechaIngreso ?? null,
-      intentosDeAcceso: this.usuarioSeleccionado()?.intentosDeAcceso ?? 0,
-      sesionActual: this.usuarioSeleccionado()?.sesionActual ?? null,
-      ultimaFechaCambioPassword: this.usuarioSeleccionado()?.ultimaFechaCambioPassword ?? null,
-      fechaCreacion: this.usuarioSeleccionado()?.fechaCreacion ?? new Date().toISOString(),
-      usuarioCreacion: this.usuarioSeleccionado()?.usuarioCreacion ?? 'Administrador',
-      fechaModificacion: this.modoEdicion() ? new Date().toISOString() : null,
-      usuarioModificacion: this.modoEdicion() ? 'Administrador' : null,
+      idRole: Number(v.idRole),
     };
 
-    if (this.modoEdicion()) {
-      this.usuarios.update((lista) =>
-        lista.map((u) => (u.idUsuario === fila.idUsuario ? fila : u)),
-      );
-    } else {
-      this.usuarios.update((lista) => [fila, ...lista]);
-    }
+    this.guardando.set(true);
+    const edicion = this.modoEdicion();
+    const peticion = edicion
+      ? this.usuariosService.actualizar(v.idUsuario, cuerpo)
+      : this.usuariosService.crear(cuerpo);
 
-    this.guardando.set(false);
-    this.cerrarModal();
-    this.snackBar.open(
-      this.modoEdicion() ? 'Usuario actualizado' : 'Usuario creado',
-      'Cerrar',
-      { duration: 3000 },
-    );
+    peticion.subscribe({
+      next: () => {
+        this.guardando.set(false);
+        this.cerrarModal();
+        this.recargarUsuarios();
+        this.snackBar.open(edicion ? 'Usuario actualizado' : 'Usuario creado', 'Cerrar', {
+          duration: 3000,
+        });
+      },
+      error: (error) => {
+        this.guardando.set(false);
+        // Aquí caen las validaciones del servidor: política de contraseña,
+        // usuario duplicado, sucursal/rol inexistente, etc.
+        this.snackBar.open(mensajeDeError(error, 'No se pudo guardar el usuario'), 'Cerrar', {
+          duration: 6000,
+        });
+      },
+    });
   }
 
   // ── Baja ────────────────────────────────────────────────────────────
@@ -348,10 +390,26 @@ export class Usuarios {
     const usuario = this.usuarioAEliminar();
     if (!usuario) return;
 
-    // DEMO: aqui va DELETE /api/usuarios/{id}.
-    this.usuarios.update((lista) => lista.filter((u) => u.idUsuario !== usuario.idUsuario));
-    this.usuarioAEliminar.set(null);
-    this.snackBar.open('Usuario eliminado', 'Cerrar', { duration: 3000 });
+    this.eliminando.set(true);
+    this.usuariosService.eliminar(usuario.idUsuario).subscribe({
+      next: () => {
+        this.eliminando.set(false);
+        this.usuarioAEliminar.set(null);
+        this.recargarUsuarios();
+        this.snackBar.open('Usuario eliminado', 'Cerrar', { duration: 3000 });
+      },
+      error: (error) => {
+        this.eliminando.set(false);
+        this.usuarioAEliminar.set(null);
+        // Oracle rechaza la baja si el usuario tiene bitácora o sesiones
+        // asociadas (restricción de integridad referencial).
+        this.snackBar.open(
+          mensajeDeError(error, 'No se pudo eliminar el usuario'),
+          'Cerrar',
+          { duration: 6000 },
+        );
+      },
+    });
   }
 
   // ── Imprimir / Exportar ─────────────────────────────────────────────
@@ -363,9 +421,16 @@ export class Usuarios {
 
   protected exportar(): void {
     if (!this.permisos().exportar) return;
-    // DEMO: genera un CSV en el navegador. Cuando exista el endpoint de
-    // exportacion del backend, se reemplaza por la descarga que este emita.
-    const encabezados = ['Usuario', 'Nombre', 'Apellido', 'Correo', 'Telefono', 'Sucursal', 'Rol', 'Estatus'];
+    const encabezados = [
+      'Usuario',
+      'Nombre',
+      'Apellido',
+      'Correo',
+      'Telefono',
+      'Sucursal',
+      'Rol',
+      'Estatus',
+    ];
     const filas = this.usuariosFiltrados().map((u) => [
       u.idUsuario,
       u.nombre,
@@ -377,7 +442,7 @@ export class Usuarios {
       this.nombreEstatus(u.idStatusUsuario),
     ]);
     const csv = [encabezados, ...filas]
-      .map((f) => f.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(','))
+      .map((f) => f.map((c) => `"${String(c ?? '').replace(/"/g, '""')}"`).join(','))
       .join('\r\n');
 
     const blob = new Blob([`﻿${csv}`], { type: 'text/csv;charset=utf-8;' });

@@ -54,20 +54,37 @@
   }
 }
 
-.permisos__opcion {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
 .permisos__opcion-nombre {
   font-weight: 600;
   color: $color-text;
 }
 
-.permisos__opcion-meta {
+// Fila separadora con el nombre del menú al que pertenecen las opciones.
+.permisos__grupo td {
+  display: table-cell;
+  padding: 0.5rem 0.75rem;
+  background: $color-panel-light;
+  border-top: 1px solid $color-border-soft;
+  border-bottom: 1px solid $color-border-soft;
   font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: $color-text-muted;
+  vertical-align: middle;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+    vertical-align: -3px;
+    margin-right: 0.35rem;
+    color: $color-primary;
+  }
+}
+
+.permisos__tabla tbody:hover .permisos__grupo td {
+  background: $color-panel-light;
 }
 
 // Encabezado clicable: marca o limpia la columna completa.

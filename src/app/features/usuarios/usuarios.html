@@ -21,14 +21,6 @@
     </div>
   </header>
 
-  <p class="demo-note">
-    <mat-icon>science</mat-icon>
-    <span>
-      Datos de demostración. Los botones Alta, Baja, Cambio, Imprimir y Exportar sí
-      responden al rol autenticado, porque salen de <code>ROLE_OPCION</code>.
-    </span>
-  </p>
-
   <section class="card">
     <div class="card__head">
       <h2 class="card__title">{{ usuariosFiltrados().length }} usuario(s)</h2>
@@ -47,7 +39,12 @@
       </div>
     </div>
 
-    @if (usuariosFiltrados().length === 0) {
+    @if (cargando()) {
+      <div class="empty-state">
+        <mat-icon>hourglass_empty</mat-icon>
+        <p>Cargando usuarios…</p>
+      </div>
+    } @else if (usuariosFiltrados().length === 0) {
       <div class="empty-state">
         <mat-icon>group_off</mat-icon>
         <p>No hay usuarios que coincidan con la búsqueda.</p>
@@ -75,8 +72,8 @@
                 <td>
                   <div class="usuarios__identidad">
                     <span class="usuarios__avatar">
-                      @if (usuario.fotografiaBase64) {
-                        <img [src]="usuario.fotografiaBase64" alt="" />
+                      @if (fotoDe(usuario); as foto) {
+                        <img [src]="foto" alt="" />
                       } @else {
                         {{ iniciales(usuario) }}
                       }
@@ -454,8 +451,17 @@
                   form.controls.respuesta.invalid && form.controls.respuesta.touched
                 "
               >
-                <input id="respuesta" type="text" formControlName="respuesta" />
+                <input id="respuesta" type="text" formControlName="respuesta" autocomplete="off" />
               </div>
+              @if (modoEdicion()) {
+                <p class="field__hint">
+                  El servidor la guarda encriptada, así que no se puede mostrar la actual:
+                  escríbela de nuevo para confirmarla.
+                </p>
+              }
+              @if (form.controls.respuesta.invalid && form.controls.respuesta.touched) {
+                <p class="field__error">La respuesta es obligatoria</p>
+              }
             </div>
 
             <div class="field form-grid__full">
@@ -538,7 +544,13 @@
         <button type="button" class="btn btn--ghost" (click)="cerrarModal()">Cancelar</button>
         <button type="button" class="btn btn--primary" [disabled]="guardando()" (click)="guardar()">
           <mat-icon>save</mat-icon>
-          <span>{{ modoEdicion() ? 'Guardar cambios' : 'Crear usuario' }}</span>
+          <span>
+            @if (guardando()) {
+              Guardando…
+            } @else {
+              {{ modoEdicion() ? 'Guardar cambios' : 'Crear usuario' }}
+            }
+          </span>
         </button>
       </footer>
     </div>
@@ -561,9 +573,14 @@
       </div>
       <footer class="modal__foot">
         <button type="button" class="btn btn--ghost" (click)="cancelarBaja()">Cancelar</button>
-        <button type="button" class="btn btn--primary usuarios__btn-eliminar" (click)="eliminar()">
+        <button
+          type="button"
+          class="btn btn--primary usuarios__btn-eliminar"
+          [disabled]="eliminando()"
+          (click)="eliminar()"
+        >
           <mat-icon>delete</mat-icon>
-          <span>Eliminar</span>
+          <span>{{ eliminando() ? 'Eliminando…' : 'Eliminar' }}</span>
         </button>
       </footer>
     </div>
