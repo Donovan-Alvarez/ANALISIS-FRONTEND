@@ -1,0 +1,20 @@
+@use 'colors' as *;
+@use 'ui' as *;
+
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.chip__punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+}

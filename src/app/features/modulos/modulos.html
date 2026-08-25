@@ -1,1 +1,58 @@
-<p>modulos works!</p>
+<div class="page">
+  <header class="page__head">
+    <div class="page__heading">
+      <h1 class="page__title">Módulos</h1>
+      <p class="page__subtitle">Las secciones grandes del sidebar. Cada una agrupa uno o varios menús.</p>
+    </div>
+    <div class="page__actions">
+      <button type="button" class="btn btn--primary" (click)="nuevoModulo()">
+        <mat-icon>add</mat-icon>
+        <span>Nuevo módulo</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="card">
+    @if (!modulos().length) {
+      <div class="empty-state">
+        <mat-icon>widgets</mat-icon>
+        <p>Todavía no hay módulos. Crea el primero con el botón de arriba.</p>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th class="data-table__num">Orden</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (modulo of modulos(); track modulo.idModulo) {
+              <tr>
+                <td>
+                  <span class="chip" [style.background]="colorDe(modulo.nombre) + '1f'" [style.color]="colorDe(modulo.nombre)">
+                    <span class="chip__punto" [style.background]="colorDe(modulo.nombre)"></span>
+                    {{ modulo.nombre }}
+                  </span>
+                </td>
+                <td class="data-table__num">{{ modulo.ordenMenu }}</td>
+                <td>
+                  <div class="data-table__actions">
+                    <button type="button" class="btn-icon" (click)="editarModulo(modulo)" title="Editar">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button type="button" class="btn-icon btn-icon--danger" (click)="eliminarModulo(modulo)" title="Eliminar">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>

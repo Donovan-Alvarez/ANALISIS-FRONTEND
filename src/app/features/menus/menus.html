@@ -1,1 +1,60 @@
-<p>menus works!</p>
+<div class="page">
+  <header class="page__head">
+    <div class="page__heading">
+      <h1 class="page__title">Menús</h1>
+      <p class="page__subtitle">Los subgrupos dentro de cada módulo. El color coincide con su módulo.</p>
+    </div>
+    <div class="page__actions">
+      <button type="button" class="btn btn--primary" (click)="nuevoMenu()">
+        <mat-icon>add</mat-icon>
+        <span>Nuevo menú</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="card">
+    @if (!menus().length) {
+      <div class="empty-state">
+        <mat-icon>menu</mat-icon>
+        <p>Todavía no hay menús. Crea el primero con el botón de arriba.</p>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th class="data-table__num">Orden</th>
+              <th>Módulo</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (menu of menus(); track menu.idMenu) {
+              <tr>
+                <td>{{ menu.nombre }}</td>
+                <td class="data-table__num">{{ menu.ordenMenu }}</td>
+                <td>
+                  <span class="chip" [style.background]="colorDe(menu.nombreModulo) + '1f'" [style.color]="colorDe(menu.nombreModulo)">
+                    <span class="chip__punto" [style.background]="colorDe(menu.nombreModulo)"></span>
+                    {{ menu.nombreModulo }}
+                  </span>
+                </td>
+                <td>
+                  <div class="data-table__actions">
+                    <button type="button" class="btn-icon" (click)="editarMenu(menu)" title="Editar">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button type="button" class="btn-icon btn-icon--danger" (click)="eliminarMenu(menu)" title="Eliminar">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>
