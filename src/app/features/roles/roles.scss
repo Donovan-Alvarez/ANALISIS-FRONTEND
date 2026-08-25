@@ -1,0 +1,85 @@
+@use 'colors' as *;
+
+.container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background-color: $color-bg-page;
+  min-height: calc(100vh - 70px);
+}
+
+.form-card, .table-card {
+  background-color: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(35, 35, 69, 0.05) !important;
+  padding: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+.btn-rounded {
+  background-color: $color-primary !important;
+  color: #ffffff !important;
+  border-radius: 20px !important;
+  padding: 8px 20px !important;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(108, 105, 224, 0.3);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &:hover {
+    background-color: $color-primary-dark !important;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-cancel {
+  background-color: transparent !important;
+  color: $color-text-muted !important;
+  border-radius: 20px !important;
+  padding: 8px 20px !important;
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04) !important;
+  }
+}
+
+table {
+  width: 100%;
+  background: transparent !important;
+
+  th.mat-header-cell {
+    color: $color-text-muted;
+    font-weight: 600;
+  }
+}

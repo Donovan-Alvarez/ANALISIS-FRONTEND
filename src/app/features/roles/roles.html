@@ -1,1 +1,74 @@
-<p>roles works!</p>
+<div class="container">
+  <h2>Gestión de Roles</h2>
+
+  <div>
+    <button class="btn-rounded" (click)="abrirNuevo()" *ngIf="!mostrarFormulario">
+      <mat-icon>add</mat-icon> Nuevo Rol
+    </button>
+  </div>
+
+  <mat-card class="form-card" *ngIf="mostrarFormulario">
+    <mat-card-header>
+      <mat-card-title>{{ editandoId ? 'Editar Rol' : 'Nuevo Rol' }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content style="padding-top: 16px;">
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre del Rol</mat-label>
+            <input matInput formControlName="nombre" placeholder="Ej. Administrador..." required>
+            <mat-error *ngIf="form.get('nombre')?.hasError('required')">El nombre es obligatorio</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-rounded" [disabled]="form.invalid" type="submit">
+            <mat-icon>save</mat-icon> {{ editandoId ? 'Actualizar' : 'Guardar' }}
+          </button>
+
+          <button class="btn-cancel" type="button" (click)="cancelar()">
+            Cancelar
+          </button>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="table-card">
+    <table mat-table [dataSource]="dataSource()" class="mat-elevation-z0">
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> IDENTIFICACIÓN </th>
+        <td mat-cell *matCellDef="let element"> {{ element.idRole }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+        <td mat-cell *matCellDef="let element"> {{ element.nombre }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="usuarioCreacion">
+        <th mat-header-cell *matHeaderCellDef> Creado por </th>
+        <td mat-cell *matCellDef="let element"> {{ element.usuarioCreacion }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button color="primary" (click)="iniciarEdicion(element)" title="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="eliminar(element.idRole)" title="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+</div>
