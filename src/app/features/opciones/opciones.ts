@@ -1,13 +1,12 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
 import { forkJoin } from 'rxjs';
 import { Menu } from '../../core/models/menu.model';
 import { Opcion } from '../../core/models/opcion.model';
 import { MenuMantenimientoService } from '../../core/services/menu-mantenimiento.service';
 import { OpcionService } from '../../core/services/opcion.service';
+import { colorParaTexto } from '../../shared/utils/color-chip.util';
 import { OpcionFormDialog } from './opcion-form-dialog/opcion-form-dialog';
 
 interface OpcionConMenu extends Opcion {
@@ -16,7 +15,7 @@ interface OpcionConMenu extends Opcion {
 
 @Component({
   selector: 'app-opciones',
-  imports: [MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
+  imports: [MatIconModule, MatDialogModule],
   templateUrl: './opciones.html',
   styleUrl: './opciones.scss',
 })
@@ -27,7 +26,7 @@ export class Opciones implements OnInit {
 
   protected readonly opciones = signal<OpcionConMenu[]>([]);
   protected readonly menus = signal<Menu[]>([]);
-  protected readonly columnas = ['nombre', 'ordenMenu', 'pagina', 'nombreMenu', 'acciones'];
+  protected readonly colorDe = colorParaTexto;
 
   ngOnInit(): void {
     this.cargar();

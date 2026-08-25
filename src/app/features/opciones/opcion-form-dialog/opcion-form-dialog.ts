@@ -1,10 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { Menu } from '../../../core/models/menu.model';
 import { Opcion } from '../../../core/models/opcion.model';
 
@@ -13,6 +9,8 @@ export interface OpcionDialogData {
   menus: Menu[];
 }
 
+// Debe coincidir exactamente con las rutas hijas registradas en
+// app.routes.ts y con las claves de ICONOS_POR_PAGINA en sidebar.ts.
 const PAGINAS_DISPONIBLES = [
   'empresas',
   'sucursales',
@@ -28,8 +26,9 @@ const PAGINAS_DISPONIBLES = [
 
 @Component({
   selector: 'app-opcion-form-dialog',
-  imports: [ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule],
+  imports: [ReactiveFormsModule, MatDialogModule],
   templateUrl: './opcion-form-dialog.html',
+  styleUrl: './opcion-form-dialog.scss',
 })
 export class OpcionFormDialog {
   private readonly fb = inject(FormBuilder);

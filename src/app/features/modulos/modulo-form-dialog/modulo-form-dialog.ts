@@ -1,15 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { Modulo } from '../../../core/models/modulo.model';
 
 @Component({
   selector: 'app-modulo-form-dialog',
-  imports: [ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [ReactiveFormsModule, MatDialogModule],
   templateUrl: './modulo-form-dialog.html',
+  styleUrl: './modulo-form-dialog.scss',
 })
 export class ModuloFormDialog {
   private readonly fb = inject(FormBuilder);

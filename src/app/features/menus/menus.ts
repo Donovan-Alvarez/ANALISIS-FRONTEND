@@ -1,13 +1,12 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
 import { forkJoin } from 'rxjs';
 import { Menu } from '../../core/models/menu.model';
 import { Modulo } from '../../core/models/modulo.model';
 import { MenuMantenimientoService } from '../../core/services/menu-mantenimiento.service';
 import { ModuloService } from '../../core/services/modulo.service';
+import { colorParaTexto } from '../../shared/utils/color-chip.util';
 import { MenuFormDialog } from './menu-form-dialog/menu-form-dialog';
 
 interface MenuConModulo extends Menu {
@@ -16,7 +15,7 @@ interface MenuConModulo extends Menu {
 
 @Component({
   selector: 'app-menus',
-  imports: [MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
+  imports: [MatIconModule, MatDialogModule],
   templateUrl: './menus.html',
   styleUrl: './menus.scss',
 })
@@ -27,7 +26,7 @@ export class Menus implements OnInit {
 
   protected readonly menus = signal<MenuConModulo[]>([]);
   protected readonly modulos = signal<Modulo[]>([]);
-  protected readonly columnas = ['nombre', 'ordenMenu', 'nombreModulo', 'acciones'];
+  protected readonly colorDe = colorParaTexto;
 
   ngOnInit(): void {
     this.cargar();

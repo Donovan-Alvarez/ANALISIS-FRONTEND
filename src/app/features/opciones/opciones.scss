@@ -1,81 +1,21 @@
-@use '../../../styles/colors' as *;
+@use 'colors' as *;
+@use 'ui' as *;
 
-// Misma familia de color (indigo/violeta), variando solo tono e
-// intensidad -- por eso no se ve "arcoiris", se ve como una paleta
-// de marca. Agrega mas tonos aqui si quieres mas variedad, siempre
-// dentro de esta misma familia.
-$acentos: (#6c69e0, #4f46e5, #4338ca, #8683ec, #7c7ff0, #a5b4fc);
-
-.tabla-card {
-  background: #fff;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(35, 35, 69, 0.07), 0 1px 2px rgba(35, 35, 69, 0.05);
-}
-
-table {
-  width: 100%;
-}
-
-th.mat-mdc-header-cell {
-  background: linear-gradient(180deg, #fff 0%, $color-panel-light 100%);
-  color: $color-text-muted;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border-bottom: 1px solid $color-border;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
-
-td.mat-mdc-cell {
-  color: $color-text;
-  font-size: 0.9rem;
-  border-bottom: 1px solid $color-panel-light;
-  padding-top: 0.85rem;
-  padding-bottom: 0.85rem;
-}
-
-tr.mat-mdc-row {
-  transition: background 0.15s ease;
-
-  &:hover {
-    background: $color-panel-light;
-  }
-
-  &:last-child td.mat-mdc-cell {
-    border-bottom: none;
-  }
-}
-
-@for $i from 1 through length($acentos) {
-  tr.mat-mdc-row:nth-of-type(#{length($acentos)}n + #{$i}) {
-    --acento: #{nth($acentos, $i)};
-  }
-}
-
-td.mat-mdc-cell:first-of-type {
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
   font-weight: 600;
-  color: var(--acento, #{$color-text});
+  font-size: 0.82rem;
 }
 
-td.mat-mdc-cell:first-of-type::before {
-  content: '';
-  display: inline-block;
-  width: 8px;
-  height: 8px;
+.chip__punto {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--acento, #{$color-text-muted});
-  margin-right: 0.55rem;
-  vertical-align: middle;
-}
-
-.tabla-vacia {
-  padding: 2.5rem 1rem;
-  text-align: center;
-  color: $color-text-muted;
-  font-size: 0.9rem;
+  flex: none;
 }
 
 .ruta {
@@ -83,6 +23,6 @@ td.mat-mdc-cell:first-of-type::before {
   font-size: 0.8rem;
   color: $color-text-muted;
   background: $color-panel-light;
-  padding: 0.25rem 0.6rem;
+  padding: 0.2rem 0.5rem;
   border-radius: 6px;
 }

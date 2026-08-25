@@ -1,20 +1,26 @@
 <h2 mat-dialog-title>{{ moduloExistente ? 'Editar módulo' : 'Nuevo módulo' }}</h2>
 
 <form [formGroup]="form" (ngSubmit)="guardar()">
-  <mat-dialog-content style="display:flex; flex-direction:column; gap:12px; min-width:320px;">
-    <mat-form-field appearance="outline">
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="nombre" />
-    </mat-form-field>
+  <mat-dialog-content style="min-width: 340px;">
+    <div class="form-grid">
+      <div class="field form-grid__full">
+        <label class="field__label" for="nombre">Nombre</label>
+        <div class="field__control">
+          <input id="nombre" formControlName="nombre" placeholder="Ej. Seguridad" />
+        </div>
+      </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Orden en el menú</mat-label>
-      <input matInput type="number" formControlName="ordenMenu" />
-    </mat-form-field>
+      <div class="field">
+        <label class="field__label" for="ordenMenu">Orden en el menú</label>
+        <div class="field__control">
+          <input id="ordenMenu" type="number" formControlName="ordenMenu" />
+        </div>
+      </div>
+    </div>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancelar()">Cancelar</button>
-    <button mat-flat-button type="submit">Guardar</button>
+    <button type="button" class="btn btn--ghost" (click)="cancelar()">Cancelar</button>
+    <button type="submit" class="btn btn--primary">Guardar</button>
   </mat-dialog-actions>
 </form>

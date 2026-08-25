@@ -1,15 +1,14 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
 import { Modulo } from '../../core/models/modulo.model';
 import { ModuloService } from '../../core/services/modulo.service';
+import { colorParaTexto } from '../../shared/utils/color-chip.util';
 import { ModuloFormDialog } from './modulo-form-dialog/modulo-form-dialog';
 
 @Component({
   selector: 'app-modulos',
-  imports: [MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
+  imports: [MatIconModule, MatDialogModule],
   templateUrl: './modulos.html',
   styleUrl: './modulos.scss',
 })
@@ -18,7 +17,7 @@ export class Modulos implements OnInit {
   private readonly dialog = inject(MatDialog);
 
   protected readonly modulos = signal<Modulo[]>([]);
-  protected readonly columnas = ['nombre', 'ordenMenu', 'acciones'];
+  protected readonly colorDe = colorParaTexto;
 
   ngOnInit(): void {
     this.cargar();

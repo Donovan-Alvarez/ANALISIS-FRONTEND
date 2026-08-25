@@ -1,29 +1,38 @@
 <h2 mat-dialog-title>{{ datos.menu ? 'Editar menú' : 'Nuevo menú' }}</h2>
 
 <form [formGroup]="form" (ngSubmit)="guardar()">
-  <mat-dialog-content style="display:flex; flex-direction:column; gap:12px; min-width:320px;">
-    <mat-form-field appearance="outline">
-      <mat-label>Módulo</mat-label>
-      <mat-select formControlName="idModulo">
-        @for (modulo of modulos; track modulo.idModulo) {
-          <mat-option [value]="modulo.idModulo">{{ modulo.nombre }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+  <mat-dialog-content style="min-width: 340px;">
+    <div class="form-grid">
+      <div class="field form-grid__full">
+        <label class="field__label" for="idModulo">Módulo</label>
+        <div class="field__control">
+          <select id="idModulo" formControlName="idModulo">
+            <option [ngValue]="null" disabled>Selecciona un módulo…</option>
+            @for (modulo of modulos; track modulo.idModulo) {
+              <option [ngValue]="modulo.idModulo">{{ modulo.nombre }}</option>
+            }
+          </select>
+        </div>
+      </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Nombre</mat-label>
-      <input matInput formControlName="nombre" />
-    </mat-form-field>
+      <div class="field form-grid__full">
+        <label class="field__label" for="nombre">Nombre</label>
+        <div class="field__control">
+          <input id="nombre" formControlName="nombre" placeholder="Ej. Parametros Generales" />
+        </div>
+      </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Orden en el menú</mat-label>
-      <input matInput type="number" formControlName="ordenMenu" />
-    </mat-form-field>
+      <div class="field">
+        <label class="field__label" for="ordenMenu">Orden en el menú</label>
+        <div class="field__control">
+          <input id="ordenMenu" type="number" formControlName="ordenMenu" />
+        </div>
+      </div>
+    </div>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="cancelar()">Cancelar</button>
-    <button mat-flat-button type="submit" [disabled]="!modulos.length">Guardar</button>
+    <button type="button" class="btn btn--ghost" (click)="cancelar()">Cancelar</button>
+    <button type="submit" class="btn btn--primary" [disabled]="!modulos.length">Guardar</button>
   </mat-dialog-actions>
 </form>
