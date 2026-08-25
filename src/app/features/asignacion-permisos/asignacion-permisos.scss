@@ -1,0 +1,126 @@
+@use 'colors' as *;
+@use 'ui' as *;
+
+.selectores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+.selectores__resumen {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding-bottom: 0.6rem;
+
+  .badge mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.permisos__masivo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* ── Cuadrícula ────────────────────────────────────────────────────── */
+
+.permisos__tabla {
+  th,
+  td {
+    padding: 0.6rem 0.75rem;
+  }
+}
+
+.permisos__col-opcion {
+  min-width: 240px;
+  white-space: normal;
+}
+
+.permisos__col-accion {
+  width: 96px;
+  text-align: center;
+
+  .check {
+    // Centra la casilla dentro de la celda.
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.permisos__opcion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.permisos__opcion-nombre {
+  font-weight: 600;
+  color: $color-text;
+}
+
+.permisos__opcion-meta {
+  font-size: 0.72rem;
+  color: $color-text-muted;
+}
+
+// Encabezado clicable: marca o limpia la columna completa.
+.permisos__col-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: none;
+  background: transparent;
+  padding: 0.2rem 0.3rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $color-text-muted;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover:not(:disabled) {
+    background: rgba(108, 105, 224, 0.1);
+    color: $color-primary-dark;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+/* ── Pie explicativo ───────────────────────────────────────────────── */
+
+.permisos__pie {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.8rem;
+  color: $color-text-muted;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $color-primary;
+  }
+}

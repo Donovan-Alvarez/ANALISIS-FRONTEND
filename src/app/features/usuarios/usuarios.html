@@ -1,1 +1,571 @@
-<p>usuarios works!</p>
+<div class="page">
+  <header class="page__head">
+    <div class="page__heading">
+      <h1 class="page__title">Usuarios</h1>
+      <p class="page__subtitle">Administración de las cuentas de acceso al sistema</p>
+    </div>
+
+    <div class="page__actions">
+      <button type="button" class="btn btn--ghost" [disabled]="!permisos().imprimir" (click)="imprimir()">
+        <mat-icon>print</mat-icon>
+        <span>Imprimir</span>
+      </button>
+      <button type="button" class="btn btn--ghost" [disabled]="!permisos().exportar" (click)="exportar()">
+        <mat-icon>file_download</mat-icon>
+        <span>Exportar</span>
+      </button>
+      <button type="button" class="btn btn--primary" [disabled]="!permisos().alta" (click)="abrirAlta()">
+        <mat-icon>add</mat-icon>
+        <span>Nuevo usuario</span>
+      </button>
+    </div>
+  </header>
+
+  <p class="demo-note">
+    <mat-icon>science</mat-icon>
+    <span>
+      Datos de demostración. Los botones Alta, Baja, Cambio, Imprimir y Exportar sí
+      responden al rol autenticado, porque salen de <code>ROLE_OPCION</code>.
+    </span>
+  </p>
+
+  <section class="card">
+    <div class="card__head">
+      <h2 class="card__title">{{ usuariosFiltrados().length }} usuario(s)</h2>
+
+      <div class="field usuarios__buscador">
+        <div class="field__control">
+          <mat-icon class="field__icon">search</mat-icon>
+          <input
+            type="search"
+            placeholder="Buscar por usuario, nombre o correo…"
+            [value]="filtro()"
+            (input)="filtro.set($any($event.target).value)"
+            aria-label="Buscar usuarios"
+          />
+        </div>
+      </div>
+    </div>
+
+    @if (usuariosFiltrados().length === 0) {
+      <div class="empty-state">
+        <mat-icon>group_off</mat-icon>
+        <p>No hay usuarios que coincidan con la búsqueda.</p>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Nombre completo</th>
+              <th>Correo</th>
+              <th>Teléfono</th>
+              <th>Sucursal</th>
+              <th>Rol</th>
+              <th>Estatus</th>
+              <th class="data-table__num">Intentos</th>
+              <th>Último ingreso</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (usuario of usuariosFiltrados(); track usuario.idUsuario) {
+              <tr>
+                <td>
+                  <div class="usuarios__identidad">
+                    <span class="usuarios__avatar">
+                      @if (usuario.fotografiaBase64) {
+                        <img [src]="usuario.fotografiaBase64" alt="" />
+                      } @else {
+                        {{ iniciales(usuario) }}
+                      }
+                    </span>
+                    <span class="usuarios__id">{{ usuario.idUsuario }}</span>
+                  </div>
+                </td>
+                <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
+                <td>{{ usuario.correoElectronico }}</td>
+                <td>{{ usuario.telefonoMovil }}</td>
+                <td>{{ nombreSucursal(usuario.idSucursal) }}</td>
+                <td><span class="badge badge--role">{{ nombreRole(usuario.idRole) }}</span></td>
+                <td>
+                  <span [class]="claseEstatus(usuario.idStatusUsuario)">
+                    {{ nombreEstatus(usuario.idStatusUsuario) }}
+                  </span>
+                </td>
+                <td class="data-table__num">{{ usuario.intentosDeAcceso }}</td>
+                <td>{{ fecha(usuario.ultimaFechaIngreso) }}</td>
+                <td>
+                  <div class="data-table__actions">
+                    <button
+                      type="button"
+                      class="btn-icon"
+                      [disabled]="!permisos().cambio"
+                      (click)="abrirEdicion(usuario)"
+                      title="Editar"
+                      aria-label="Editar usuario"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn-icon btn-icon--danger"
+                      [disabled]="!permisos().baja"
+                      (click)="confirmarBaja(usuario)"
+                      title="Eliminar"
+                      aria-label="Eliminar usuario"
+                    >
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>
+
+<!-- ── Modal de alta / edición ─────────────────────────────────────── -->
+@if (modalAbierto()) {
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloModalUsuario">
+    <div class="modal__dialog">
+      <header class="modal__head">
+        <h2 class="modal__title" id="tituloModalUsuario">
+          {{ modoEdicion() ? 'Editar usuario' : 'Nuevo usuario' }}
+        </h2>
+        <button type="button" class="btn-icon" (click)="cerrarModal()" aria-label="Cerrar">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+
+      <form [formGroup]="form" (ngSubmit)="guardar()" class="modal__body">
+        <!-- Datos personales -->
+        <div class="form-section">
+          <h3 class="form-section__title">Datos personales</h3>
+
+          <div class="usuarios__foto-row">
+            <div class="usuarios__foto">
+              @if (fotoPreview()) {
+                <img [src]="fotoPreview()" alt="Fotografía del usuario" />
+              } @else {
+                <mat-icon>person</mat-icon>
+              }
+            </div>
+            <div class="usuarios__foto-acciones">
+              <label class="btn btn--ghost">
+                <mat-icon>upload</mat-icon>
+                <span>Subir fotografía</span>
+                <input type="file" accept="image/*" hidden (change)="onFotoSeleccionada($event)" />
+              </label>
+              @if (fotoPreview()) {
+                <button type="button" class="btn btn--danger" (click)="quitarFoto()">
+                  <mat-icon>delete</mat-icon>
+                  <span>Quitar</span>
+                </button>
+              }
+              <p class="field__hint">Se envía al backend como Base64.</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label class="field__label" for="idUsuario">
+                Usuario <span class="field__req">*</span>
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.idUsuario.invalid && form.controls.idUsuario.touched
+                "
+              >
+                <mat-icon class="field__icon">badge</mat-icon>
+                <input id="idUsuario" type="text" formControlName="idUsuario" autocomplete="off" />
+              </div>
+              @if (modoEdicion()) {
+                <p class="field__hint">El identificador es la llave primaria y no se modifica.</p>
+              } @else if (form.controls.idUsuario.invalid && form.controls.idUsuario.touched) {
+                <p class="field__error">El usuario es obligatorio</p>
+              }
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="nombre">
+                Nombre <span class="field__req">*</span>
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.nombre.invalid && form.controls.nombre.touched
+                "
+              >
+                <input id="nombre" type="text" formControlName="nombre" />
+              </div>
+              @if (form.controls.nombre.invalid && form.controls.nombre.touched) {
+                <p class="field__error">El nombre es obligatorio</p>
+              }
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="apellido">
+                Apellidos <span class="field__req">*</span>
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.apellido.invalid && form.controls.apellido.touched
+                "
+              >
+                <input id="apellido" type="text" formControlName="apellido" />
+              </div>
+              @if (form.controls.apellido.invalid && form.controls.apellido.touched) {
+                <p class="field__error">Los apellidos son obligatorios</p>
+              }
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="fechaNacimiento">
+                Fecha de nacimiento <span class="field__req">*</span>
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.fechaNacimiento.invalid && form.controls.fechaNacimiento.touched
+                "
+              >
+                <input id="fechaNacimiento" type="date" formControlName="fechaNacimiento" />
+              </div>
+              @if (form.controls.fechaNacimiento.invalid && form.controls.fechaNacimiento.touched) {
+                <p class="field__error">La fecha de nacimiento es obligatoria</p>
+              }
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="correoElectronico">
+                Correo electrónico <span class="field__req">*</span>
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.correoElectronico.invalid && form.controls.correoElectronico.touched
+                "
+              >
+                <mat-icon class="field__icon">mail</mat-icon>
+                <input id="correoElectronico" type="email" formControlName="correoElectronico" />
+              </div>
+              @if (form.controls.correoElectronico.invalid && form.controls.correoElectronico.touched) {
+                <p class="field__error">Ingresa un correo válido</p>
+              }
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="telefonoMovil">
+                Teléfono móvil <span class="field__req">*</span>
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.telefonoMovil.invalid && form.controls.telefonoMovil.touched
+                "
+              >
+                <mat-icon class="field__icon">smartphone</mat-icon>
+                <input id="telefonoMovil" type="tel" formControlName="telefonoMovil" />
+              </div>
+              @if (form.controls.telefonoMovil.invalid && form.controls.telefonoMovil.touched) {
+                <p class="field__error">El teléfono es obligatorio</p>
+              }
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="idGenero">
+                Género <span class="field__req">*</span>
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.idGenero.invalid && form.controls.idGenero.touched
+                "
+              >
+                <select id="idGenero" formControlName="idGenero">
+                  <option [ngValue]="null" disabled>Selecciona…</option>
+                  @for (g of generos(); track g.idGenero) {
+                    <option [ngValue]="g.idGenero">{{ g.nombre }}</option>
+                  }
+                </select>
+                <mat-icon class="field__icon">expand_more</mat-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Asignación organizacional -->
+        <div class="form-section">
+          <h3 class="form-section__title">Asignación</h3>
+
+          <div class="form-grid">
+            <div class="field">
+              <label class="field__label" for="idEmpresa">
+                Empresa <span class="field__req">*</span>
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.idEmpresa.invalid && form.controls.idEmpresa.touched
+                "
+              >
+                <select id="idEmpresa" formControlName="idEmpresa">
+                  <option [ngValue]="null" disabled>Selecciona…</option>
+                  @for (e of empresas(); track e.idEmpresa) {
+                    <option [ngValue]="e.idEmpresa">{{ e.nombre }}</option>
+                  }
+                </select>
+                <mat-icon class="field__icon">expand_more</mat-icon>
+              </div>
+              <p class="field__hint">Filtra las sucursales y define la política de contraseña.</p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="idSucursal">
+                Sucursal <span class="field__req">*</span>
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.idSucursal.invalid && form.controls.idSucursal.touched
+                "
+              >
+                <select id="idSucursal" formControlName="idSucursal">
+                  <option [ngValue]="null" disabled>
+                    {{ sucursalesFiltradas().length === 0 ? 'Elige una empresa primero' : 'Selecciona…' }}
+                  </option>
+                  @for (s of sucursalesFiltradas(); track s.idSucursal) {
+                    <option [ngValue]="s.idSucursal">{{ s.nombre }}</option>
+                  }
+                </select>
+                <mat-icon class="field__icon">expand_more</mat-icon>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="idRole">
+                Rol <span class="field__req">*</span>
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.idRole.invalid && form.controls.idRole.touched
+                "
+              >
+                <select id="idRole" formControlName="idRole">
+                  <option [ngValue]="null" disabled>Selecciona…</option>
+                  @for (r of roles(); track r.idRole) {
+                    <option [ngValue]="r.idRole">{{ r.nombre }}</option>
+                  }
+                </select>
+                <mat-icon class="field__icon">expand_more</mat-icon>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="idStatusUsuario">
+                Estatus del usuario <span class="field__req">*</span>
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.idStatusUsuario.invalid && form.controls.idStatusUsuario.touched
+                "
+              >
+                <select id="idStatusUsuario" formControlName="idStatusUsuario">
+                  <option [ngValue]="null" disabled>Selecciona…</option>
+                  @for (e of estatus(); track e.idStatusUsuario) {
+                    <option [ngValue]="e.idStatusUsuario">{{ e.nombre }}</option>
+                  }
+                </select>
+                <mat-icon class="field__icon">expand_more</mat-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seguridad -->
+        <div class="form-section">
+          <h3 class="form-section__title">Seguridad</h3>
+
+          <div class="form-grid">
+            <div class="field">
+              <label class="field__label" for="password">
+                Contraseña
+                @if (!modoEdicion()) {
+                  <span class="field__req">*</span>
+                }
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.password.invalid && form.controls.password.touched
+                "
+              >
+                <input
+                  id="password"
+                  [type]="verPassword() ? 'text' : 'password'"
+                  formControlName="password"
+                  autocomplete="new-password"
+                />
+                <button
+                  type="button"
+                  class="btn-icon"
+                  (click)="alternarPassword()"
+                  [attr.aria-label]="verPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                >
+                  <mat-icon>{{ verPassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+              </div>
+              @if (modoEdicion()) {
+                <p class="field__hint">Déjala vacía para conservar la contraseña actual.</p>
+              }
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="pregunta">
+                Pregunta de recuperación <span class="field__req">*</span>
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.pregunta.invalid && form.controls.pregunta.touched
+                "
+              >
+                <mat-icon class="field__icon">help_outline</mat-icon>
+                <input id="pregunta" type="text" formControlName="pregunta" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="respuesta">
+                Respuesta <span class="field__req">*</span>
+              </label>
+              <div
+                class="field__control"
+                [class.field__control--invalid]="
+                  form.controls.respuesta.invalid && form.controls.respuesta.touched
+                "
+              >
+                <input id="respuesta" type="text" formControlName="respuesta" />
+              </div>
+            </div>
+
+            <div class="field form-grid__full">
+              <label class="check check--labeled">
+                <input type="checkbox" formControlName="requiereCambiarPassword" />
+                <span class="check__box"><mat-icon>check</mat-icon></span>
+                <span>Obligar al usuario a cambiar la contraseña en el próximo ingreso</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Política de contraseña de la empresa seleccionada -->
+          @if (politica(); as pol) {
+            <div class="politica">
+              <div class="politica__head">
+                <mat-icon>shield</mat-icon>
+                <span>Política de contraseña · {{ pol.nombre }}</span>
+              </div>
+              <ul class="politica__reglas">
+                @for (regla of reglasPassword(); track regla.texto) {
+                  <li class="politica__regla" [class.politica__regla--ok]="regla.cumple">
+                    <mat-icon>{{ regla.cumple ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                    <span>{{ regla.texto }}</span>
+                  </li>
+                }
+              </ul>
+              <p class="politica__extra">
+                Caduca cada {{ pol.passwordCantidadCaducidadDias }} días ·
+                Se bloquea a los {{ pol.passwordIntentosAntesDeBloquear }} intentos fallidos
+              </p>
+            </div>
+          }
+        </div>
+
+        <!-- Administrado por el sistema -->
+        @if (modoEdicion() && usuarioSeleccionado(); as sel) {
+          <div class="form-section">
+            <h3 class="form-section__title">Administrado por el sistema</h3>
+            <p class="field__hint sistema__aviso">
+              Estos valores los mantiene el backend durante el inicio de sesión. Se muestran
+              solo como consulta.
+            </p>
+            <dl class="sistema">
+              <div class="sistema__item">
+                <dt>Última fecha de ingreso</dt>
+                <dd>{{ fecha(sel.ultimaFechaIngreso) }}</dd>
+              </div>
+              <div class="sistema__item">
+                <dt>Intentos fallidos</dt>
+                <dd>{{ sel.intentosDeAcceso }}</dd>
+              </div>
+              <div class="sistema__item">
+                <dt>Último cambio de contraseña</dt>
+                <dd>{{ fecha(sel.ultimaFechaCambioPassword) }}</dd>
+              </div>
+              <div class="sistema__item">
+                <dt>Sesión activa</dt>
+                <dd>
+                  @if (sel.sesionActual) {
+                    <span class="badge badge--ok">Con sesión</span>
+                  } @else {
+                    <span class="badge badge--off">Sin sesión</span>
+                  }
+                </dd>
+              </div>
+              <div class="sistema__item">
+                <dt>Creado por</dt>
+                <dd>{{ sel.usuarioCreacion ?? '—' }} · {{ fecha(sel.fechaCreacion) }}</dd>
+              </div>
+              <div class="sistema__item">
+                <dt>Modificado por</dt>
+                <dd>{{ sel.usuarioModificacion ?? '—' }} · {{ fecha(sel.fechaModificacion) }}</dd>
+              </div>
+            </dl>
+          </div>
+        }
+      </form>
+
+      <footer class="modal__foot">
+        <button type="button" class="btn btn--ghost" (click)="cerrarModal()">Cancelar</button>
+        <button type="button" class="btn btn--primary" [disabled]="guardando()" (click)="guardar()">
+          <mat-icon>save</mat-icon>
+          <span>{{ modoEdicion() ? 'Guardar cambios' : 'Crear usuario' }}</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+}
+
+<!-- ── Confirmación de baja ────────────────────────────────────────── -->
+@if (usuarioAEliminar(); as objetivo) {
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloBaja">
+    <div class="modal__dialog modal__dialog--sm">
+      <header class="modal__head">
+        <h2 class="modal__title" id="tituloBaja">Eliminar usuario</h2>
+      </header>
+      <div class="modal__body">
+        <p class="baja__texto">
+          ¿Seguro que deseas eliminar a
+          <strong>{{ objetivo.nombre }} {{ objetivo.apellido }}</strong>
+          (<code>{{ objetivo.idUsuario }}</code>)? Esta acción no se puede deshacer.
+        </p>
+      </div>
+      <footer class="modal__foot">
+        <button type="button" class="btn btn--ghost" (click)="cancelarBaja()">Cancelar</button>
+        <button type="button" class="btn btn--primary usuarios__btn-eliminar" (click)="eliminar()">
+          <mat-icon>delete</mat-icon>
+          <span>Eliminar</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+}
