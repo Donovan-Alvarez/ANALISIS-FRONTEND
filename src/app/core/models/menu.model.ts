@@ -23,3 +23,9 @@ export interface ModuloConMenus {
   ordenMenu: number;
   menus: MenuConOpciones[];
 }
+export interface Menu {
+  idMenu?: number;
+  nombre: string;
+  ordenMenu: number;
+  idModulo: number;
+}

@@ -1,9 +1,61 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { Modulo } from '../../core/models/modulo.model';
+import { ModuloService } from '../../core/services/modulo.service';
+import { ModuloFormDialog } from './modulo-form-dialog/modulo-form-dialog';
 
 @Component({
   selector: 'app-modulos',
-  imports: [],
+  imports: [MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
   templateUrl: './modulos.html',
   styleUrl: './modulos.scss',
 })
-export class Modulos {}
+export class Modulos implements OnInit {
+  private readonly moduloService = inject(ModuloService);
+  private readonly dialog = inject(MatDialog);
+
+  protected readonly modulos = signal<Modulo[]>([]);
+  protected readonly columnas = ['nombre', 'ordenMenu', 'acciones'];
+
+  ngOnInit(): void {
+    this.cargar();
+  }
+
+  private cargar(): void {
+    this.moduloService.findAll().subscribe(modulos => this.modulos.set(modulos));
+  }
+
+  protected nuevoModulo(): void {
+    const ref = this.dialog.open(ModuloFormDialog, { data: null });
+    ref.afterClosed().subscribe((resultado?: Modulo) => {
+      if (!resultado) return;
+      this.moduloService.create(resultado).subscribe({
+        next: () => this.cargar(),
+        error: err => alert(err?.error?.detail ?? 'No se pudo crear el módulo.'),
+      });
+    });
+  }
+
+  protected editarModulo(modulo: Modulo): void {
+    const ref = this.dialog.open(ModuloFormDialog, { data: modulo });
+    ref.afterClosed().subscribe((resultado?: Modulo) => {
+      if (!resultado || !modulo.idModulo) return;
+      this.moduloService.update(modulo.idModulo, resultado).subscribe({
+        next: () => this.cargar(),
+        error: err => alert(err?.error?.detail ?? 'No se pudo actualizar el módulo.'),
+      });
+    });
+  }
+
+  protected eliminarModulo(modulo: Modulo): void {
+    if (!modulo.idModulo) return;
+    if (!confirm(`¿Eliminar "${modulo.nombre}"?`)) return;
+    this.moduloService.delete(modulo.idModulo).subscribe({
+      next: () => this.cargar(),
+      error: err => alert(err?.error?.detail ?? 'No se pudo eliminar el módulo.'),
+    });
+  }
+}

@@ -1,0 +1,41 @@
+@use '../../../styles/colors' as *;
+
+$acentos: (#6c69e0, #0891b2, #059669, #d97706, #c026d3, #e11d48, #14b8a6, #8b5cf6);
+
+table {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(35, 35, 69, 0.05);
+}
+
+th.mat-mdc-header-cell {
+  background: $color-panel-light;
+  color: $color-text-muted;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 1px solid $color-border;
+}
+
+td.mat-mdc-cell {
+  color: $color-text;
+  font-size: 0.9rem;
+  border-bottom: 1px solid $color-panel-light;
+}
+
+tr.mat-mdc-row {
+  border-left: 4px solid transparent;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $color-panel-light;
+  }
+}
+
+@for $i from 1 through length($acentos) {
+  tr.mat-mdc-row:nth-of-type(#{length($acentos)}n + #{$i}) {
+    border-left-color: nth($acentos, $i);
+  }
+}
