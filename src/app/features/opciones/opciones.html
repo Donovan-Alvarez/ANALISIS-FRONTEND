@@ -5,7 +5,7 @@
       <p class="page__subtitle">Los links finales del sidebar. Cada uno apunta a una pantalla real.</p>
     </div>
     <div class="page__actions">
-      <button type="button" class="btn btn--primary" (click)="nuevaOpcion()">
+      <button type="button" class="btn btn--primary" [disabled]="!permisos().alta" (click)="nuevaOpcion()">
         <mat-icon>add</mat-icon>
         <span>Nueva opción</span>
       </button>
@@ -44,10 +44,10 @@
                 </td>
                 <td>
                   <div class="data-table__actions">
-                    <button type="button" class="btn-icon" (click)="editarOpcion(opcion)" title="Editar">
+                    <button type="button" class="btn-icon" [disabled]="!permisos().cambio" (click)="editarOpcion(opcion)" title="Editar">
                       <mat-icon>edit</mat-icon>
                     </button>
-                    <button type="button" class="btn-icon btn-icon--danger" (click)="eliminarOpcion(opcion)" title="Eliminar">
+                    <button type="button" class="btn-icon btn-icon--danger" [disabled]="!permisos().baja" (click)="eliminarOpcion(opcion)" title="Eliminar">
                       <mat-icon>delete</mat-icon>
                     </button>
                   </div>

@@ -1,8 +1,9 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { Modulo } from '../../core/models/modulo.model';
 import { ModuloService } from '../../core/services/modulo.service';
+import { PermisosService } from '../../core/services/permisos.service';
 import { colorParaTexto } from '../../shared/utils/color-chip.util';
 import { ModuloFormDialog } from './modulo-form-dialog/modulo-form-dialog';
 
@@ -14,10 +15,12 @@ import { ModuloFormDialog } from './modulo-form-dialog/modulo-form-dialog';
 })
 export class Modulos implements OnInit {
   private readonly moduloService = inject(ModuloService);
+  private readonly permisosService = inject(PermisosService);
   private readonly dialog = inject(MatDialog);
 
   protected readonly modulos = signal<Modulo[]>([]);
   protected readonly colorDe = colorParaTexto;
+  protected readonly permisos = computed(() => this.permisosService.permisosDe('modulos'));
 
   ngOnInit(): void {
     this.cargar();
@@ -28,6 +31,7 @@ export class Modulos implements OnInit {
   }
 
   protected nuevoModulo(): void {
+    if (!this.permisos().alta) return;
     const ref = this.dialog.open(ModuloFormDialog, { data: null });
     ref.afterClosed().subscribe((resultado?: Modulo) => {
       if (!resultado) return;
@@ -39,6 +43,7 @@ export class Modulos implements OnInit {
   }
 
   protected editarModulo(modulo: Modulo): void {
+    if (!this.permisos().cambio) return;
     const ref = this.dialog.open(ModuloFormDialog, { data: modulo });
     ref.afterClosed().subscribe((resultado?: Modulo) => {
       if (!resultado || !modulo.idModulo) return;
@@ -50,6 +55,7 @@ export class Modulos implements OnInit {
   }
 
   protected eliminarModulo(modulo: Modulo): void {
+    if (!this.permisos().baja) return;
     if (!modulo.idModulo) return;
     if (!confirm(`¿Eliminar "${modulo.nombre}"?`)) return;
     this.moduloService.delete(modulo.idModulo).subscribe({

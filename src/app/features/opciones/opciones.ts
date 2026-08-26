@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { forkJoin } from 'rxjs';
@@ -6,6 +6,7 @@ import { Menu } from '../../core/models/menu.model';
 import { Opcion } from '../../core/models/opcion.model';
 import { MenuMantenimientoService } from '../../core/services/menu-mantenimiento.service';
 import { OpcionService } from '../../core/services/opcion.service';
+import { PermisosService } from '../../core/services/permisos.service';
 import { colorParaTexto } from '../../shared/utils/color-chip.util';
 import { OpcionFormDialog } from './opcion-form-dialog/opcion-form-dialog';
 
@@ -22,11 +23,13 @@ interface OpcionConMenu extends Opcion {
 export class Opciones implements OnInit {
   private readonly opcionService = inject(OpcionService);
   private readonly menuService = inject(MenuMantenimientoService);
+  private readonly permisosService = inject(PermisosService);
   private readonly dialog = inject(MatDialog);
 
   protected readonly opciones = signal<OpcionConMenu[]>([]);
   protected readonly menus = signal<Menu[]>([]);
   protected readonly colorDe = colorParaTexto;
+  protected readonly permisos = computed(() => this.permisosService.permisosDe('opciones'));
 
   ngOnInit(): void {
     this.cargar();
@@ -46,6 +49,7 @@ export class Opciones implements OnInit {
   }
 
   protected nuevaOpcion(): void {
+    if (!this.permisos().alta) return;
     const ref = this.dialog.open(OpcionFormDialog, {
       data: { opcion: null, menus: this.menus() },
     });
@@ -59,6 +63,7 @@ export class Opciones implements OnInit {
   }
 
   protected editarOpcion(opcion: Opcion): void {
+    if (!this.permisos().cambio) return;
     const ref = this.dialog.open(OpcionFormDialog, {
       data: { opcion, menus: this.menus() },
     });
@@ -72,6 +77,7 @@ export class Opciones implements OnInit {
   }
 
   protected eliminarOpcion(opcion: Opcion): void {
+    if (!this.permisos().baja) return;
     if (!opcion.idOpcion) return;
     if (!confirm(`¿Eliminar "${opcion.nombre}"?`)) return;
     this.opcionService.delete(opcion.idOpcion).subscribe({

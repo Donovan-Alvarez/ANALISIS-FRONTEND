@@ -5,7 +5,7 @@
       <p class="page__subtitle">Las secciones grandes del sidebar. Cada una agrupa uno o varios menús.</p>
     </div>
     <div class="page__actions">
-      <button type="button" class="btn btn--primary" (click)="nuevoModulo()">
+      <button type="button" class="btn btn--primary" [disabled]="!permisos().alta" (click)="nuevoModulo()">
         <mat-icon>add</mat-icon>
         <span>Nuevo módulo</span>
       </button>
@@ -40,10 +40,10 @@
                 <td class="data-table__num">{{ modulo.ordenMenu }}</td>
                 <td>
                   <div class="data-table__actions">
-                    <button type="button" class="btn-icon" (click)="editarModulo(modulo)" title="Editar">
+                    <button type="button" class="btn-icon" [disabled]="!permisos().cambio" (click)="editarModulo(modulo)" title="Editar">
                       <mat-icon>edit</mat-icon>
                     </button>
-                    <button type="button" class="btn-icon btn-icon--danger" (click)="eliminarModulo(modulo)" title="Eliminar">
+                    <button type="button" class="btn-icon btn-icon--danger" [disabled]="!permisos().baja" (click)="eliminarModulo(modulo)" title="Eliminar">
                       <mat-icon>delete</mat-icon>
                     </button>
                   </div>

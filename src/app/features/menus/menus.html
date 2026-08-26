@@ -5,7 +5,7 @@
       <p class="page__subtitle">Los subgrupos dentro de cada módulo. El color coincide con su módulo.</p>
     </div>
     <div class="page__actions">
-      <button type="button" class="btn btn--primary" (click)="nuevoMenu()">
+      <button type="button" class="btn btn--primary" [disabled]="!permisos().alta" (click)="nuevoMenu()">
         <mat-icon>add</mat-icon>
         <span>Nuevo menú</span>
       </button>
@@ -42,10 +42,10 @@
                 </td>
                 <td>
                   <div class="data-table__actions">
-                    <button type="button" class="btn-icon" (click)="editarMenu(menu)" title="Editar">
+                    <button type="button" class="btn-icon" [disabled]="!permisos().cambio" (click)="editarMenu(menu)" title="Editar">
                       <mat-icon>edit</mat-icon>
                     </button>
-                    <button type="button" class="btn-icon btn-icon--danger" (click)="eliminarMenu(menu)" title="Eliminar">
+                    <button type="button" class="btn-icon btn-icon--danger" [disabled]="!permisos().baja" (click)="eliminarMenu(menu)" title="Eliminar">
                       <mat-icon>delete</mat-icon>
                     </button>
                   </div>
