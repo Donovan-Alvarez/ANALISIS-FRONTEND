@@ -1,39 +1,183 @@
-<div style="padding: 16px; display:flex; justify-content:flex-end;">
-  <button mat-flat-button (click)="nuevaEmpresa()">
-    <mat-icon>add</mat-icon>
-    Nueva empresa
-  </button>
+<div class="page">
+  <header class="page__head">
+    <div class="page__heading">
+      <h1 class="page__title">Empresas</h1>
+      <p class="page__subtitle">Administración de las empresas registradas en el sistema</p>
+    </div>
+
+    <div class="page__actions">
+      <button type="button" class="btn btn--primary" (click)="abrirAlta()">
+        <mat-icon>add</mat-icon>
+        <span>Nueva empresa</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="card__head">
+      <h2 class="card__title">{{ empresas().length }} empresa(s)</h2>
+    </div>
+
+    @if (cargando()) {
+      <div class="empty-state">
+        <mat-icon>hourglass_empty</mat-icon>
+        <p>Cargando empresas…</p>
+      </div>
+    } @else if (empresas().length === 0) {
+      <div class="empty-state">
+        <mat-icon>business</mat-icon>
+        <p>Todavía no hay empresas registradas.</p>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Dirección</th>
+              <th>NIT</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (empresa of empresas(); track empresa.idEmpresa) {
+              <tr>
+                <td>{{ empresa.nombre }}</td>
+                <td>{{ empresa.direccion }}</td>
+                <td>{{ empresa.nit }}</td>
+                <td>
+                  <div class="data-table__actions">
+                    <button type="button" class="btn-icon" (click)="abrirEdicion(empresa)" title="Editar" aria-label="Editar empresa">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button type="button" class="btn-icon btn-icon--danger" (click)="confirmarBaja(empresa)" title="Eliminar" aria-label="Eliminar empresa">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
 </div>
 
-<table mat-table [dataSource]="empresas()" class="mat-elevation-z2">
+@if (modalAbierto()) {
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloModalEmpresa">
+    <div class="modal__dialog">
+      <header class="modal__head">
+        <h2 class="modal__title" id="tituloModalEmpresa">
+          {{ modoEdicion() ? 'Editar empresa' : 'Nueva empresa' }}
+        </h2>
+        <button type="button" class="btn-icon" (click)="cerrarModal()" aria-label="Cerrar">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
 
-  <ng-container matColumnDef="nombre">
-    <th mat-header-cell *matHeaderCellDef>Nombre</th>
-    <td mat-cell *matCellDef="let empresa">{{ empresa.nombre }}</td>
-  </ng-container>
+      <form [formGroup]="form" (ngSubmit)="guardar()" class="modal__body">
+        <div class="form-section">
+          <h3 class="form-section__title">Datos generales</h3>
+          <div class="form-grid">
+            <div class="field form-grid__full">
+              <label class="field__label" for="nombre">Nombre <span class="field__req">*</span></label>
+              <div class="field__control" [class.field__control--invalid]="form.controls.nombre.invalid && form.controls.nombre.touched">
+                <input id="nombre" type="text" formControlName="nombre" />
+              </div>
+              @if (form.controls.nombre.invalid && form.controls.nombre.touched) {
+                <p class="field__error">El nombre es obligatorio</p>
+              }
+            </div>
 
-  <ng-container matColumnDef="direccion">
-    <th mat-header-cell *matHeaderCellDef>Dirección</th>
-    <td mat-cell *matCellDef="let empresa">{{ empresa.direccion }}</td>
-  </ng-container>
+            <div class="field form-grid__full">
+              <label class="field__label" for="direccion">Dirección <span class="field__req">*</span></label>
+              <div class="field__control" [class.field__control--invalid]="form.controls.direccion.invalid && form.controls.direccion.touched">
+                <input id="direccion" type="text" formControlName="direccion" />
+              </div>
+              @if (form.controls.direccion.invalid && form.controls.direccion.touched) {
+                <p class="field__error">La dirección es obligatoria</p>
+              }
+            </div>
 
-  <ng-container matColumnDef="nit">
-    <th mat-header-cell *matHeaderCellDef>NIT</th>
-    <td mat-cell *matCellDef="let empresa">{{ empresa.nit }}</td>
-  </ng-container>
+            <div class="field">
+              <label class="field__label" for="nit">NIT <span class="field__req">*</span></label>
+              <div class="field__control" [class.field__control--invalid]="form.controls.nit.invalid && form.controls.nit.touched">
+                <input id="nit" type="text" formControlName="nit" />
+              </div>
+              @if (form.controls.nit.invalid && form.controls.nit.touched) {
+                <p class="field__error">El NIT es obligatorio</p>
+              }
+            </div>
+          </div>
+        </div>
 
-  <ng-container matColumnDef="acciones">
-    <th mat-header-cell *matHeaderCellDef>Acciones</th>
-    <td mat-cell *matCellDef="let empresa">
-      <button mat-icon-button (click)="editarEmpresa(empresa)">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button (click)="eliminarEmpresa(empresa)">
-        <mat-icon>delete</mat-icon>
-      </button>
-    </td>
-  </ng-container>
+        <div class="form-section">
+          <h3 class="form-section__title">Políticas de contraseña</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label class="field__label" for="passwordCantidadMayusculas">Mayúsculas mínimas</label>
+              <div class="field__control"><input id="passwordCantidadMayusculas" type="number" min="0" formControlName="passwordCantidadMayusculas" /></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="passwordCantidadMinusculas">Minúsculas mínimas</label>
+              <div class="field__control"><input id="passwordCantidadMinusculas" type="number" min="0" formControlName="passwordCantidadMinusculas" /></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="passwordCantidadNumeros">Números mínimos</label>
+              <div class="field__control"><input id="passwordCantidadNumeros" type="number" min="0" formControlName="passwordCantidadNumeros" /></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="passwordCantidadCaracteresEspeciales">Caracteres especiales mínimos</label>
+              <div class="field__control"><input id="passwordCantidadCaracteresEspeciales" type="number" min="0" formControlName="passwordCantidadCaracteresEspeciales" /></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="passwordLargo">Longitud mínima</label>
+              <div class="field__control"><input id="passwordLargo" type="number" min="1" formControlName="passwordLargo" /></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="passwordIntentosAntesDeBloquear">Intentos antes de bloquear</label>
+              <div class="field__control"><input id="passwordIntentosAntesDeBloquear" type="number" min="1" formControlName="passwordIntentosAntesDeBloquear" /></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="passwordCantidadCaducidadDias">Días de vigencia</label>
+              <div class="field__control"><input id="passwordCantidadCaducidadDias" type="number" min="1" formControlName="passwordCantidadCaducidadDias" /></div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="passwordCantidadPreguntasValidar">Preguntas de recuperación</label>
+              <div class="field__control"><input id="passwordCantidadPreguntasValidar" type="number" min="0" formControlName="passwordCantidadPreguntasValidar" /></div>
+            </div>
+          </div>
+        </div>
+      </form>
 
-  <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-  <tr mat-row *matRowDef="let row; columns: columnas"></tr>
-</table>
+      <footer class="modal__foot">
+        <button type="button" class="btn btn--ghost" (click)="cerrarModal()">Cancelar</button>
+        <button type="button" class="btn btn--primary" [disabled]="guardando()" (click)="guardar()">
+          <mat-icon>save</mat-icon>
+          <span>@if (guardando()) { Guardando… } @else { {{ modoEdicion() ? 'Guardar cambios' : 'Crear empresa' }} }</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+}
+
+@if (empresaAEliminar(); as objetivo) {
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloBajaEmpresa">
+    <div class="modal__dialog modal__dialog--sm">
+      <header class="modal__head">
+        <h2 class="modal__title" id="tituloBajaEmpresa">Eliminar empresa</h2>
+      </header>
+      <div class="modal__body">
+        <p class="baja__texto">¿Seguro que deseas eliminar <strong>{{ objetivo.nombre }}</strong>? Esta acción no se puede deshacer.</p>
+      </div>
+      <footer class="modal__foot">
+        <button type="button" class="btn btn--ghost" (click)="cancelarBaja()">Cancelar</button>
+        <button type="button" class="btn btn--primary empresas__btn-eliminar" [disabled]="eliminando()" (click)="eliminar()">
+          <mat-icon>delete</mat-icon>
+          <span>{{ eliminando() ? 'Eliminando…' : 'Eliminar' }}</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+}

@@ -1,0 +1,21 @@
+@use 'colors' as *;
+@use 'ui' as *;
+
+.modal__dialog--sm {
+  max-width: 460px;
+}
+
+.baja__texto {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: $color-text;
+}
+
+.sucursales__btn-eliminar {
+  background: $color-error;
+
+  &:hover:not(:disabled) {
+    background: #b73a3a;
+  }
+}

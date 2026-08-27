@@ -1,39 +1,153 @@
-<div style="padding: 16px; display:flex; justify-content:flex-end;">
-  <button mat-flat-button (click)="nuevaSucursal()">
-    <mat-icon>add</mat-icon>
-    Nueva sucursal
-  </button>
+<div class="page">
+  <header class="page__head">
+    <div class="page__heading">
+      <h1 class="page__title">Sucursales</h1>
+      <p class="page__subtitle">Administración de las sucursales de cada empresa</p>
+    </div>
+
+    <div class="page__actions">
+      <button type="button" class="btn btn--primary" (click)="abrirAlta()">
+        <mat-icon>add</mat-icon>
+        <span>Nueva sucursal</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="card__head">
+      <h2 class="card__title">{{ sucursales().length }} sucursal(es)</h2>
+    </div>
+
+    @if (cargando()) {
+      <div class="empty-state">
+        <mat-icon>hourglass_empty</mat-icon>
+        <p>Cargando sucursales…</p>
+      </div>
+    } @else if (sucursales().length === 0) {
+      <div class="empty-state">
+        <mat-icon>store</mat-icon>
+        <p>Todavía no hay sucursales registradas.</p>
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Dirección</th>
+              <th>Empresa</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (sucursal of sucursales(); track sucursal.idSucursal) {
+              <tr>
+                <td>{{ sucursal.nombre }}</td>
+                <td>{{ sucursal.direccion }}</td>
+                <td>{{ sucursal.nombreEmpresa }}</td>
+                <td>
+                  <div class="data-table__actions">
+                    <button type="button" class="btn-icon" (click)="abrirEdicion(sucursal)" title="Editar" aria-label="Editar sucursal">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button type="button" class="btn-icon btn-icon--danger" (click)="confirmarBaja(sucursal)" title="Eliminar" aria-label="Eliminar sucursal">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
 </div>
 
-<table mat-table [dataSource]="sucursales()" class="mat-elevation-z2">
+@if (modalAbierto()) {
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloModalSucursal">
+    <div class="modal__dialog">
+      <header class="modal__head">
+        <h2 class="modal__title" id="tituloModalSucursal">
+          {{ modoEdicion() ? 'Editar sucursal' : 'Nueva sucursal' }}
+        </h2>
+        <button type="button" class="btn-icon" (click)="cerrarModal()" aria-label="Cerrar">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
 
-  <ng-container matColumnDef="nombre">
-    <th mat-header-cell *matHeaderCellDef>Nombre</th>
-    <td mat-cell *matCellDef="let sucursal">{{ sucursal.nombre }}</td>
-  </ng-container>
+      <form [formGroup]="form" (ngSubmit)="guardar()" class="modal__body">
+        <div class="form-section">
+          <h3 class="form-section__title">Datos de la sucursal</h3>
+          <div class="form-grid">
+            <div class="field form-grid__full">
+              <label class="field__label" for="idEmpresa">Empresa <span class="field__req">*</span></label>
+              <div class="field__control" [class.field__control--invalid]="form.controls.idEmpresa.invalid && form.controls.idEmpresa.touched">
+                <select id="idEmpresa" formControlName="idEmpresa">
+                  <option [ngValue]="null" disabled>
+                    {{ empresas().length === 0 ? 'No hay empresas registradas' : 'Selecciona…' }}
+                  </option>
+                  @for (e of empresas(); track e.idEmpresa) {
+                    <option [ngValue]="e.idEmpresa">{{ e.nombre }}</option>
+                  }
+                </select>
+                <mat-icon class="field__icon">expand_more</mat-icon>
+              </div>
+              @if (form.controls.idEmpresa.invalid && form.controls.idEmpresa.touched) {
+                <p class="field__error">Debes seleccionar la empresa propietaria</p>
+              }
+            </div>
 
-  <ng-container matColumnDef="direccion">
-    <th mat-header-cell *matHeaderCellDef>Dirección</th>
-    <td mat-cell *matCellDef="let sucursal">{{ sucursal.direccion }}</td>
-  </ng-container>
+            <div class="field form-grid__full">
+              <label class="field__label" for="nombre">Nombre <span class="field__req">*</span></label>
+              <div class="field__control" [class.field__control--invalid]="form.controls.nombre.invalid && form.controls.nombre.touched">
+                <input id="nombre" type="text" formControlName="nombre" />
+              </div>
+              @if (form.controls.nombre.invalid && form.controls.nombre.touched) {
+                <p class="field__error">El nombre es obligatorio</p>
+              }
+            </div>
 
-  <ng-container matColumnDef="nombreEmpresa">
-    <th mat-header-cell *matHeaderCellDef>Empresa</th>
-    <td mat-cell *matCellDef="let sucursal">{{ sucursal.nombreEmpresa }}</td>
-  </ng-container>
+            <div class="field form-grid__full">
+              <label class="field__label" for="direccion">Dirección <span class="field__req">*</span></label>
+              <div class="field__control" [class.field__control--invalid]="form.controls.direccion.invalid && form.controls.direccion.touched">
+                <input id="direccion" type="text" formControlName="direccion" />
+              </div>
+              @if (form.controls.direccion.invalid && form.controls.direccion.touched) {
+                <p class="field__error">La dirección es obligatoria</p>
+              }
+            </div>
+          </div>
+        </div>
+      </form>
 
-  <ng-container matColumnDef="acciones">
-    <th mat-header-cell *matHeaderCellDef>Acciones</th>
-    <td mat-cell *matCellDef="let sucursal">
-      <button mat-icon-button (click)="editarSucursal(sucursal)">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button (click)="eliminarSucursal(sucursal)">
-        <mat-icon>delete</mat-icon>
-      </button>
-    </td>
-  </ng-container>
+      <footer class="modal__foot">
+        <button type="button" class="btn btn--ghost" (click)="cerrarModal()">Cancelar</button>
+        <button type="button" class="btn btn--primary" [disabled]="guardando() || empresas().length === 0" (click)="guardar()">
+          <mat-icon>save</mat-icon>
+          <span>@if (guardando()) { Guardando… } @else { {{ modoEdicion() ? 'Guardar cambios' : 'Crear sucursal' }} }</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+}
 
-  <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-  <tr mat-row *matRowDef="let row; columns: columnas"></tr>
-</table>
+@if (sucursalAEliminar(); as objetivo) {
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloBajaSucursal">
+    <div class="modal__dialog modal__dialog--sm">
+      <header class="modal__head">
+        <h2 class="modal__title" id="tituloBajaSucursal">Eliminar sucursal</h2>
+      </header>
+      <div class="modal__body">
+        <p class="baja__texto">¿Seguro que deseas eliminar <strong>{{ objetivo.nombre }}</strong>? Esta acción no se puede deshacer.</p>
+      </div>
+      <footer class="modal__foot">
+        <button type="button" class="btn btn--ghost" (click)="cancelarBaja()">Cancelar</button>
+        <button type="button" class="btn btn--primary sucursales__btn-eliminar" [disabled]="eliminando()" (click)="eliminar()">
+          <mat-icon>delete</mat-icon>
+          <span>{{ eliminando() ? 'Eliminando…' : 'Eliminar' }}</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+}
