@@ -1,1 +1,29 @@
-<p>status-usuario works!</p>
+<div style="padding: 16px; display:flex; justify-content:flex-end;">
+  <button mat-flat-button (click)="nuevoStatusUsuario()">
+    <mat-icon>add</mat-icon>
+    Nuevo estatus de usuario
+  </button>
+</div>
+
+<table mat-table [dataSource]="statusUsuarios()" class="mat-elevation-z2">
+
+  <ng-container matColumnDef="nombre">
+    <th mat-header-cell *matHeaderCellDef>Nombre</th>
+    <td mat-cell *matCellDef="let statusUsuario">{{ statusUsuario.nombre }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="acciones">
+    <th mat-header-cell *matHeaderCellDef>Acciones</th>
+    <td mat-cell *matCellDef="let statusUsuario">
+      <button mat-icon-button (click)="editarStatusUsuario(statusUsuario)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button (click)="eliminarStatusUsuario(statusUsuario)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnas"></tr>
+</table>

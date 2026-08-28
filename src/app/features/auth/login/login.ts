@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 const MENSAJE_CREDENCIALES_INVALIDAS = 'Usuario o contraseña incorrectos';
@@ -12,7 +12,7 @@ const MENSAJE_ERROR_CONEXION = 'No se pudo conectar con el servidor. Intenta nue
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [ReactiveFormsModule, MatIconModule, MatProgressSpinnerModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })

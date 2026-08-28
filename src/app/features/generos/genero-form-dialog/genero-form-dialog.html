@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>{{ generoExistente ? 'Editar género' : 'Nuevo género' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="guardar()">
+  <mat-dialog-content style="display:flex; flex-direction:column; gap:12px; min-width:320px;">
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre" maxlength="100" />
+      @if (form.controls.nombre.hasError('required')) {
+        <mat-error>El nombre es obligatorio</mat-error>
+      }
+      @if (form.controls.nombre.hasError('maxlength')) {
+        <mat-error>El nombre no puede superar los 100 caracteres</mat-error>
+      }
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancelar()">Cancelar</button>
+    <button mat-flat-button type="submit">Guardar</button>
+  </mat-dialog-actions>
+</form>

@@ -10,6 +10,12 @@ export const routes: Routes = [
       import('./features/auth/login/login').then(m => m.Login)
   },
   {
+    path: 'recuperar-password',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/recuperar-password/recuperar-password').then(m => m.RecuperarPassword)
+  },
+  {
     path: '',
     canActivate: [authGuard],
     loadComponent: () =>

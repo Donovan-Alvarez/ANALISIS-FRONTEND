@@ -1,1 +1,29 @@
-<p>generos works!</p>
+<div style="padding: 16px; display:flex; justify-content:flex-end;">
+  <button mat-flat-button (click)="nuevoGenero()">
+    <mat-icon>add</mat-icon>
+    Nuevo género
+  </button>
+</div>
+
+<table mat-table [dataSource]="generos()" class="mat-elevation-z2">
+
+  <ng-container matColumnDef="nombre">
+    <th mat-header-cell *matHeaderCellDef>Nombre</th>
+    <td mat-cell *matCellDef="let genero">{{ genero.nombre }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="acciones">
+    <th mat-header-cell *matHeaderCellDef>Acciones</th>
+    <td mat-cell *matCellDef="let genero">
+      <button mat-icon-button (click)="editarGenero(genero)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button (click)="eliminarGenero(genero)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnas"></tr>
+</table>
