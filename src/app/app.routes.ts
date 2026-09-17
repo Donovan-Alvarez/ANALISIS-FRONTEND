@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { cambiarPasswordGuard } from './core/guards/cambiar-password.guard';
 import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
@@ -16,8 +17,16 @@ export const routes: Routes = [
       import('./features/auth/recuperar-password/recuperar-password').then(m => m.RecuperarPassword)
   },
   {
-    path: '',
+    path: 'cambiar-password-obligatorio',
     canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/auth/cambiar-password-obligatorio/cambiar-password-obligatorio').then(
+        m => m.CambiarPasswordObligatorio,
+      )
+  },
+  {
+    path: '',
+    canActivate: [authGuard, cambiarPasswordGuard],
     loadComponent: () =>
       import('./shared/layout/shell/shell').then(m => m.Shell),
     children: [

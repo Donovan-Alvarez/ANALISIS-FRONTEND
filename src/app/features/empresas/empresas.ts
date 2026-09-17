@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { Empresa } from '../../core/models/empresa.model';
 import { EmpresaService } from '../../core/services/empresa.services';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-empresas',
@@ -12,6 +13,7 @@ import { EmpresaService } from '../../core/services/empresa.services';
 })
 export class Empresas implements OnInit {
   private readonly empresaService = inject(EmpresaService);
+  private readonly notificationService = inject(NotificationService);
   private readonly fb = inject(FormBuilder);
 
   protected readonly empresas = signal<Empresa[]>([]);
@@ -45,9 +47,12 @@ export class Empresas implements OnInit {
 
   private cargar(): void {
     this.cargando.set(true);
-    this.empresaService.findAll().subscribe(empresas => {
-      this.empresas.set(empresas);
-      this.cargando.set(false);
+    this.empresaService.findAll().subscribe({
+      next: empresas => {
+        this.empresas.set(empresas);
+        this.cargando.set(false);
+      },
+      error: () => this.cargando.set(false),
     });
   }
 
@@ -91,11 +96,13 @@ export class Empresas implements OnInit {
       ? this.empresaService.update(valores.idEmpresa, valores)
       : this.empresaService.create(valores);
 
+    const edicion = this.modoEdicion();
     peticion.subscribe({
       next: () => {
         this.guardando.set(false);
         this.modalAbierto.set(false);
         this.cargar();
+        this.notificationService.success(edicion ? 'Empresa actualizada' : 'Empresa creada');
       },
       error: () => this.guardando.set(false),
     });
@@ -119,6 +126,7 @@ export class Empresas implements OnInit {
         this.eliminando.set(false);
         this.empresaAEliminar.set(null);
         this.cargar();
+        this.notificationService.success('Empresa eliminada');
       },
       error: () => this.eliminando.set(false),
     });

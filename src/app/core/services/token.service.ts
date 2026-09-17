@@ -9,6 +9,7 @@ export interface UsuarioSesion {
   nombre: string;
   idRole: number;
   nombreRole: string;
+  requiereCambiarPassword: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -20,6 +21,7 @@ export class TokenService {
       nombre: response.nombre,
       idRole: response.idRole,
       nombreRole: response.nombreRole,
+      requiereCambiarPassword: response.requiereCambiarPassword,
     };
     localStorage.setItem(USER_KEY, JSON.stringify(usuario));
   }
@@ -31,6 +33,14 @@ export class TokenService {
   getUsuario(): UsuarioSesion | null {
     const raw = localStorage.getItem(USER_KEY);
     return raw ? (JSON.parse(raw) as UsuarioSesion) : null;
+  }
+
+  /** Se llama al terminar el cambio de password obligatorio, para desbloquear la navegación sin pedir volver a loguearse. */
+  marcarPasswordActualizado(): void {
+    const usuario = this.getUsuario();
+    if (!usuario) return;
+    usuario.requiereCambiarPassword = false;
+    localStorage.setItem(USER_KEY, JSON.stringify(usuario));
   }
 
   clear(): void {

@@ -9,8 +9,8 @@ import {
 } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
+import { NotificationService } from '../../../core/services/notification.service';
 import { RecuperarPasswordService } from '../../../core/services/recuperar-password.service';
 import { mensajeDeError } from '../../../core/utils/api-error';
 
@@ -33,7 +33,7 @@ export class RecuperarPassword {
   private readonly fb = inject(FormBuilder);
   private readonly recuperarPasswordService = inject(RecuperarPasswordService);
   private readonly router = inject(Router);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notificationService = inject(NotificationService);
 
   protected readonly paso = signal<Paso>(1);
   protected readonly cargando = signal(false);
@@ -88,11 +88,7 @@ export class RecuperarPassword {
       },
       error: (error: HttpErrorResponse) => {
         this.cargando.set(false);
-        this.snackBar.open(
-          mensajeDeError(error, 'No se encontró ese usuario'),
-          'Cerrar',
-          { duration: 5000 },
-        );
+        this.notificationService.error('No se pudo continuar', mensajeDeError(error, 'No se encontró ese usuario'));
       },
     });
   }
@@ -121,7 +117,7 @@ export class RecuperarPassword {
           error.status === 401
             ? 'La respuesta no es correcta'
             : mensajeDeError(error, 'No se pudo validar la respuesta');
-        this.snackBar.open(mensaje, 'Cerrar', { duration: 5000 });
+        this.notificationService.error('No se pudo continuar', mensaje);
       },
     });
   }
@@ -140,18 +136,15 @@ export class RecuperarPassword {
       next: () => {
         this.cargando.set(false);
         this.router.navigateByUrl('/login');
-        this.snackBar.open('Contraseña actualizada. Ya puedes iniciar sesión.', 'Cerrar', {
-          duration: 5000,
-        });
+        this.notificationService.success('Contraseña actualizada', 'Ya puedes iniciar sesión.');
       },
       error: (error: HttpErrorResponse) => {
         this.cargando.set(false);
         // Aquí caen: token inválido/expirado (400) y política de contraseña
         // no cumplida (400, mismo mensaje que ya usa Usuarios).
-        this.snackBar.open(
+        this.notificationService.error(
+          'No se pudo cambiar la contraseña',
           mensajeDeError(error, 'No se pudo cambiar la contraseña'),
-          'Cerrar',
-          { duration: 6000 },
         );
       },
     });

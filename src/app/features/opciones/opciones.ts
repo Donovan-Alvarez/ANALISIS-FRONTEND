@@ -7,6 +7,7 @@ import { Modulo } from '../../core/models/modulo.model';
 import { ModuloService } from '../../core/services/modulo.service';
 import { Opcion } from '../../core/models/opcion.model';
 import { MenuMantenimientoService } from '../../core/services/menu-mantenimiento.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { OpcionService } from '../../core/services/opcion.service';
 import { PermisosService } from '../../core/services/permisos.service';
 import { colorParaTexto } from '../../shared/utils/color-chip.util';
@@ -26,8 +27,9 @@ interface OpcionConMenu extends Opcion {
 export class Opciones implements OnInit {
   private readonly opcionService = inject(OpcionService);
   private readonly menuService = inject(MenuMantenimientoService);
-  private readonly moduloService = inject(MenuMantenimientoService);
+  private readonly moduloService = inject(ModuloService);
   private readonly permisosService = inject(PermisosService);
+  private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
 
   protected readonly opciones = signal<OpcionConMenu[]>([]);
@@ -68,9 +70,9 @@ export class Opciones implements OnInit {
     });
     ref.afterClosed().subscribe((resultado?: Opcion) => {
       if (!resultado) return;
-      this.opcionService.create(resultado).subscribe({
-        next: () => this.cargar(),
-        error: err => alert(err?.error?.detail ?? 'No se pudo crear la opción.'),
+      this.opcionService.create(resultado).subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Opción creada');
       });
     });
   }
@@ -82,9 +84,9 @@ export class Opciones implements OnInit {
     });
     ref.afterClosed().subscribe((resultado?: Opcion) => {
       if (!resultado || !opcion.idOpcion) return;
-      this.opcionService.update(opcion.idOpcion, resultado).subscribe({
-        next: () => this.cargar(),
-        error: err => alert(err?.error?.detail ?? 'No se pudo actualizar la opción.'),
+      this.opcionService.update(opcion.idOpcion, resultado).subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Opción actualizada');
       });
     });
   }
@@ -93,9 +95,9 @@ export class Opciones implements OnInit {
     if (!this.permisos().baja) return;
     if (!opcion.idOpcion) return;
     if (!confirm(`¿Eliminar "${opcion.nombre}"?`)) return;
-    this.opcionService.delete(opcion.idOpcion).subscribe({
-      next: () => this.cargar(),
-      error: err => alert(err?.error?.detail ?? 'No se pudo eliminar la opción.'),
+    this.opcionService.delete(opcion.idOpcion).subscribe(() => {
+      this.cargar();
+      this.notificationService.success('Opción eliminada');
     });
   }
 }

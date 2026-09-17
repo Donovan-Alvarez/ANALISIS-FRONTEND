@@ -3,12 +3,12 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { mensajeDeError } from '../../../core/utils/api-error';
 
 const MENSAJE_CREDENCIALES_INVALIDAS = 'Usuario o contraseña incorrectos';
-const MENSAJE_ERROR_CONEXION = 'No se pudo conectar con el servidor. Intenta nuevamente.';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +20,7 @@ export class Login {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notificationService = inject(NotificationService);
 
   protected readonly loading = signal(false);
   protected readonly hidePassword = signal(true);
@@ -43,12 +43,19 @@ export class Login {
 
     this.loading.set(true);
     this.authService.login(this.form.getRawValue()).subscribe({
-      next: () => this.router.navigateByUrl('/empresas'),
+      next: respuesta => {
+        const ruta = respuesta.requiereCambiarPassword ? '/cambiar-password-obligatorio' : '/empresas';
+        this.router.navigateByUrl(ruta);
+      },
       error: (error: HttpErrorResponse) => {
         this.loading.set(false);
-        const mensaje =
-          error.status === 401 ? MENSAJE_CREDENCIALES_INVALIDAS : MENSAJE_ERROR_CONEXION;
-        this.snackBar.open(mensaje, 'Cerrar', { duration: 4000 });
+        // El backend distingue credenciales inválidas de cuenta bloqueada/inactiva
+        // (y avisa cuántos intentos quedan antes de bloquear); mostramos ese
+        // mensaje tal cual en vez de uno genérico fijo.
+        this.notificationService.error(
+          'No se pudo iniciar sesión',
+          mensajeDeError(error, MENSAJE_CREDENCIALES_INVALIDAS),
+        );
       },
     });
   }

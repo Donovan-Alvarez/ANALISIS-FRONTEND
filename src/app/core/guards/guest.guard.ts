@@ -9,6 +9,9 @@ export const guestGuard: CanActivateFn = () => {
   if (!tokenService.isLoggedIn()) {
     return true;
   }
-  router.navigate(['/empresas']);
+  const rutaDestino = tokenService.getUsuario()?.requiereCambiarPassword
+    ? '/cambiar-password-obligatorio'
+    : '/empresas';
+  router.navigate([rutaDestino]);
   return false;
 };

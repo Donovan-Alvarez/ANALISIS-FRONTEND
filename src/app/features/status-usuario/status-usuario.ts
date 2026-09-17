@@ -4,6 +4,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { StatusUsuario as StatusUsuarioModel } from '../../core/models/status-usuario.model';
+import { NotificationService } from '../../core/services/notification.service';
 import { StatusUsuarioService } from '../../core/services/status-usuario.service';
 import { StatusUsuarioFormDialog } from './status-usuario-form-dialog/status-usuario-form-dialog';
 
@@ -15,6 +16,7 @@ import { StatusUsuarioFormDialog } from './status-usuario-form-dialog/status-usu
 })
 export class StatusUsuario implements OnInit {
   private readonly statusUsuarioService = inject(StatusUsuarioService);
+  private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
 
   protected readonly statusUsuarios = signal<StatusUsuarioModel[]>([]);
@@ -32,7 +34,10 @@ export class StatusUsuario implements OnInit {
     const ref = this.dialog.open(StatusUsuarioFormDialog, { data: null });
     ref.afterClosed().subscribe((resultado?: StatusUsuarioModel) => {
       if (!resultado) return;
-      this.statusUsuarioService.create(resultado).subscribe(() => this.cargar());
+      this.statusUsuarioService.create(resultado).subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Estatus de usuario creado');
+      });
     });
   }
 
@@ -40,13 +45,19 @@ export class StatusUsuario implements OnInit {
     const ref = this.dialog.open(StatusUsuarioFormDialog, { data: statusUsuario });
     ref.afterClosed().subscribe((resultado?: StatusUsuarioModel) => {
       if (!resultado || !statusUsuario.idStatusUsuario) return;
-      this.statusUsuarioService.update(statusUsuario.idStatusUsuario, resultado).subscribe(() => this.cargar());
+      this.statusUsuarioService.update(statusUsuario.idStatusUsuario, resultado).subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Estatus de usuario actualizado');
+      });
     });
   }
 
   protected eliminarStatusUsuario(statusUsuario: StatusUsuarioModel): void {
     if (!statusUsuario.idStatusUsuario) return;
     if (!confirm(`¿Eliminar "${statusUsuario.nombre}"?`)) return;
-    this.statusUsuarioService.delete(statusUsuario.idStatusUsuario).subscribe(() => this.cargar());
+    this.statusUsuarioService.delete(statusUsuario.idStatusUsuario).subscribe(() => {
+      this.cargar();
+      this.notificationService.success('Estatus de usuario eliminado');
+    });
   }
 }

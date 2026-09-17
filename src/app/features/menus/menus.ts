@@ -6,6 +6,7 @@ import { Menu } from '../../core/models/menu.model';
 import { Modulo } from '../../core/models/modulo.model';
 import { MenuMantenimientoService } from '../../core/services/menu-mantenimiento.service';
 import { ModuloService } from '../../core/services/modulo.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { PermisosService } from '../../core/services/permisos.service';
 import { colorParaTexto } from '../../shared/utils/color-chip.util';
 import { MenuFormDialog } from './menu-form-dialog/menu-form-dialog';
@@ -24,6 +25,7 @@ export class Menus implements OnInit {
   private readonly menuService = inject(MenuMantenimientoService);
   private readonly moduloService = inject(ModuloService);
   private readonly permisosService = inject(PermisosService);
+  private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
 
   protected readonly menus = signal<MenuConModulo[]>([]);
@@ -55,9 +57,9 @@ export class Menus implements OnInit {
     });
     ref.afterClosed().subscribe((resultado?: Menu) => {
       if (!resultado) return;
-      this.menuService.create(resultado).subscribe({
-        next: () => this.cargar(),
-        error: err => alert(err?.error?.detail ?? 'No se pudo crear el menú.'),
+      this.menuService.create(resultado).subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Menú creado');
       });
     });
   }
@@ -69,9 +71,9 @@ export class Menus implements OnInit {
     });
     ref.afterClosed().subscribe((resultado?: Menu) => {
       if (!resultado || !menu.idMenu) return;
-      this.menuService.update(menu.idMenu, resultado).subscribe({
-        next: () => this.cargar(),
-        error: err => alert(err?.error?.detail ?? 'No se pudo actualizar el menú.'),
+      this.menuService.update(menu.idMenu, resultado).subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Menú actualizado');
       });
     });
   }
@@ -80,9 +82,9 @@ export class Menus implements OnInit {
     if (!this.permisos().baja) return;
     if (!menu.idMenu) return;
     if (!confirm(`¿Eliminar "${menu.nombre}"?`)) return;
-    this.menuService.delete(menu.idMenu).subscribe({
-      next: () => this.cargar(),
-      error: err => alert(err?.error?.detail ?? 'No se pudo eliminar el menú.'),
+    this.menuService.delete(menu.idMenu).subscribe(() => {
+      this.cargar();
+      this.notificationService.success('Menú eliminado');
     });
   }
 }

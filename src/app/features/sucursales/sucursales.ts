@@ -5,6 +5,7 @@ import { forkJoin } from 'rxjs';
 import { Empresa } from '../../core/models/empresa.model';
 import { Sucursal } from '../../core/models/sucursal.model';
 import { EmpresaService } from '../../core/services/empresa.services';
+import { NotificationService } from '../../core/services/notification.service';
 import { SucursalService } from '../../core/services/sucursal.service';
 
 interface SucursalConEmpresa extends Sucursal {
@@ -19,6 +20,7 @@ interface SucursalConEmpresa extends Sucursal {
 })
 export class Sucursales implements OnInit {
   private readonly sucursalService = inject(SucursalService);
+  private readonly notificationService = inject(NotificationService);
   private readonly empresaService = inject(EmpresaService);
   private readonly fb = inject(FormBuilder);
 
@@ -49,11 +51,14 @@ export class Sucursales implements OnInit {
     forkJoin({
       sucursales: this.sucursalService.findAll(),
       empresas: this.empresaService.findAll(),
-    }).subscribe(({ sucursales, empresas }) => {
-      this.empresas.set(empresas);
-      const mapa = new Map(empresas.map(e => [e.idEmpresa, e.nombre]));
-      this.sucursales.set(sucursales.map(s => ({ ...s, nombreEmpresa: mapa.get(s.idEmpresa) ?? '—' })));
-      this.cargando.set(false);
+    }).subscribe({
+      next: ({ sucursales, empresas }) => {
+        this.empresas.set(empresas);
+        const mapa = new Map(empresas.map(e => [e.idEmpresa, e.nombre]));
+        this.sucursales.set(sucursales.map(s => ({ ...s, nombreEmpresa: mapa.get(s.idEmpresa) ?? '—' })));
+        this.cargando.set(false);
+      },
+      error: () => this.cargando.set(false),
     });
   }
 
@@ -94,11 +99,13 @@ export class Sucursales implements OnInit {
       ? this.sucursalService.update(resultado.idSucursal, resultado)
       : this.sucursalService.create(resultado);
 
+    const edicion = this.modoEdicion();
     peticion.subscribe({
       next: () => {
         this.guardando.set(false);
         this.modalAbierto.set(false);
         this.cargar();
+        this.notificationService.success(edicion ? 'Sucursal actualizada' : 'Sucursal creada');
       },
       error: () => this.guardando.set(false),
     });
@@ -122,6 +129,7 @@ export class Sucursales implements OnInit {
         this.eliminando.set(false);
         this.sucursalAEliminar.set(null);
         this.cargar();
+        this.notificationService.success('Sucursal eliminada');
       },
       error: () => this.eliminando.set(false),
     });

@@ -20,6 +20,13 @@ export class AuthService {
       .pipe(tap(response => this.tokenService.saveSession(response)));
   }
 
+  /** Cambio de password del propio usuario autenticado (incluye el cambio obligatorio tras login). */
+  cambiarPasswordPropio(passwordNuevo: string): Observable<void> {
+    return this.http
+      .post<void>(`${this.apiUrl}/cambiar-password`, { passwordNuevo })
+      .pipe(tap(() => this.tokenService.marcarPasswordActualizado()));
+  }
+
   logout(): void {
     this.tokenService.clear();
     this.menuService.limpiar();

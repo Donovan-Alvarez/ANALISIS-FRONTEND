@@ -1,6 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
 import { Modulo, Role } from '../../core/models/catalogo.model';
 import {
@@ -11,6 +10,7 @@ import {
 } from '../../core/models/permiso.model';
 import { CatalogosService } from '../../core/services/catalogos.service';
 import { MenuService } from '../../core/services/menu.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { PermisosService } from '../../core/services/permisos.service';
 import { RoleOpcionService } from '../../core/services/role-opcion.service';
 import { mensajeDeError } from '../../core/utils/api-error';
@@ -25,7 +25,7 @@ const PAGINA = 'asignacion-permisos';
   styleUrl: './asignacion-permisos.scss',
 })
 export class AsignacionPermisos implements OnInit {
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notificationService = inject(NotificationService);
   private readonly permisosService = inject(PermisosService);
   private readonly catalogosService = inject(CatalogosService);
   private readonly roleOpcionService = inject(RoleOpcionService);
@@ -60,11 +60,7 @@ export class AsignacionPermisos implements OnInit {
       },
       error: (error) => {
         this.cargandoCatalogos.set(false);
-        this.snackBar.open(
-          mensajeDeError(error, 'No se pudieron cargar los catálogos'),
-          'Cerrar',
-          { duration: 5000 },
-        );
+        this.notificationService.error('No se pudieron cargar los catálogos', mensajeDeError(error));
       },
     });
   }
@@ -129,11 +125,7 @@ export class AsignacionPermisos implements OnInit {
         this.cargandoCuadricula.set(false);
         this.menus.set([]);
         this.menusOriginales.set([]);
-        this.snackBar.open(
-          mensajeDeError(error, 'No se pudieron cargar los permisos'),
-          'Cerrar',
-          { duration: 5000 },
-        );
+        this.notificationService.error('No se pudieron cargar los permisos', mensajeDeError(error));
       },
     });
   }
@@ -261,20 +253,12 @@ export class AsignacionPermisos implements OnInit {
       next: (respuesta) => {
         this.aplicarRespuesta(respuesta.menus);
         this.guardando.set(false);
-        this.snackBar.open(
-          `Permisos de "${this.nombreRoleSeleccionado()}" actualizados`,
-          'Cerrar',
-          { duration: 3000 },
-        );
+        this.notificationService.success(`Permisos de "${this.nombreRoleSeleccionado()}" actualizados`);
         this.refrescarMenuPropio(idRole);
       },
       error: (error) => {
         this.guardando.set(false);
-        this.snackBar.open(
-          mensajeDeError(error, 'No se pudieron guardar los permisos'),
-          'Cerrar',
-          { duration: 6000 },
-        );
+        this.notificationService.error('No se pudieron guardar los permisos', mensajeDeError(error));
       },
     });
   }
@@ -290,10 +274,9 @@ export class AsignacionPermisos implements OnInit {
 
     this.menuService.cargarMenu().subscribe({
       error: () =>
-        this.snackBar.open(
-          'Los permisos se guardaron, pero el menú no se pudo refrescar. Vuelve a iniciar sesión.',
-          'Cerrar',
-          { duration: 6000 },
+        this.notificationService.warning(
+          'Los permisos se guardaron, pero el menú no se pudo refrescar',
+          'Vuelve a iniciar sesión para verlo actualizado.',
         ),
     });
   }

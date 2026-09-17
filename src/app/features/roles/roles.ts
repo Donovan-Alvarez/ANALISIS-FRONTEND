@@ -4,6 +4,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { Role } from '../../core/models/role.model';
+import { NotificationService } from '../../core/services/notification.service';
 import { RoleService } from '../../core/services/role.service';
 import { RoleFormDialog } from './role-form-dialog/role-form-dialog';
 
@@ -15,6 +16,7 @@ import { RoleFormDialog } from './role-form-dialog/role-form-dialog';
 })
 export class Roles implements OnInit {
   private readonly roleService = inject(RoleService);
+  private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
 
   protected readonly roles = signal<Role[]>([]);
@@ -32,7 +34,10 @@ export class Roles implements OnInit {
     const ref = this.dialog.open(RoleFormDialog, { data: null });
     ref.afterClosed().subscribe((resultado?: Role) => {
       if (!resultado) return;
-      this.roleService.create(resultado).subscribe(() => this.cargar());
+      this.roleService.create(resultado).subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Rol creado');
+      });
     });
   }
 
@@ -40,13 +45,19 @@ export class Roles implements OnInit {
     const ref = this.dialog.open(RoleFormDialog, { data: role });
     ref.afterClosed().subscribe((resultado?: Role) => {
       if (!resultado || !role.idRole) return;
-      this.roleService.update(role.idRole, resultado).subscribe(() => this.cargar());
+      this.roleService.update(role.idRole, resultado).subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Rol actualizado');
+      });
     });
   }
 
   protected eliminarRole(role: Role): void {
     if (!role.idRole) return;
     if (!confirm(`¿Eliminar "${role.nombre}"?`)) return;
-    this.roleService.delete(role.idRole).subscribe(() => this.cargar());
+    this.roleService.delete(role.idRole).subscribe(() => {
+      this.cargar();
+      this.notificationService.success('Rol eliminado');
+    });
   }
 }

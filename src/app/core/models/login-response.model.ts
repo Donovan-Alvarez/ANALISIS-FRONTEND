@@ -5,4 +5,5 @@ export interface LoginResponse {
   idRole: number;
   nombreRole: string;
   expiraEn: number;
+  requiereCambiarPassword: boolean;
 }

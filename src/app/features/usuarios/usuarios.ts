@@ -2,7 +2,6 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
 import {
   Empresa,
@@ -17,6 +16,7 @@ import {
   UsuarioResponse,
 } from '../../core/models/usuario.model';
 import { CatalogosService } from '../../core/services/catalogos.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { PermisosService } from '../../core/services/permisos.service';
 import { UsuariosService } from '../../core/services/usuarios.service';
 import { mensajeDeError } from '../../core/utils/api-error';
@@ -33,7 +33,7 @@ const PAGINA = 'usuarios';
 })
 export class Usuarios implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notificationService = inject(NotificationService);
   private readonly permisosService = inject(PermisosService);
   private readonly usuariosService = inject(UsuariosService);
   private readonly catalogosService = inject(CatalogosService);
@@ -123,9 +123,7 @@ export class Usuarios implements OnInit {
       },
       error: (error) => {
         this.cargando.set(false);
-        this.snackBar.open(mensajeDeError(error, 'No se pudieron cargar los usuarios'), 'Cerrar', {
-          duration: 5000,
-        });
+        this.notificationService.error('No se pudieron cargar los usuarios', mensajeDeError(error));
       },
     });
   }
@@ -134,7 +132,7 @@ export class Usuarios implements OnInit {
     this.usuariosService.listar().subscribe({
       next: (lista) => this.usuarios.set(lista),
       error: (error) =>
-        this.snackBar.open(mensajeDeError(error), 'Cerrar', { duration: 5000 }),
+        this.notificationService.error('No se pudo actualizar la lista', mensajeDeError(error)),
     });
   }
 
@@ -318,15 +316,13 @@ export class Usuarios implements OnInit {
   protected guardar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.snackBar.open('Revisa los campos marcados en rojo', 'Cerrar', { duration: 3500 });
+      this.notificationService.warning('Revisa los campos marcados en rojo');
       return;
     }
 
     const password = this.form.controls.password.value;
     if (password && !this.passwordCumplePolitica()) {
-      this.snackBar.open('La contraseña no cumple la política de la empresa', 'Cerrar', {
-        duration: 4000,
-      });
+      this.notificationService.warning('La contraseña no cumple la política de la empresa');
       return;
     }
 
@@ -360,17 +356,13 @@ export class Usuarios implements OnInit {
         this.guardando.set(false);
         this.cerrarModal();
         this.recargarUsuarios();
-        this.snackBar.open(edicion ? 'Usuario actualizado' : 'Usuario creado', 'Cerrar', {
-          duration: 3000,
-        });
+        this.notificationService.success(edicion ? 'Usuario actualizado' : 'Usuario creado');
       },
       error: (error) => {
         this.guardando.set(false);
         // Aquí caen las validaciones del servidor: política de contraseña,
         // usuario duplicado, sucursal/rol inexistente, etc.
-        this.snackBar.open(mensajeDeError(error, 'No se pudo guardar el usuario'), 'Cerrar', {
-          duration: 6000,
-        });
+        this.notificationService.error('No se pudo guardar el usuario', mensajeDeError(error));
       },
     });
   }
@@ -396,18 +388,14 @@ export class Usuarios implements OnInit {
         this.eliminando.set(false);
         this.usuarioAEliminar.set(null);
         this.recargarUsuarios();
-        this.snackBar.open('Usuario eliminado', 'Cerrar', { duration: 3000 });
+        this.notificationService.success('Usuario eliminado');
       },
       error: (error) => {
         this.eliminando.set(false);
         this.usuarioAEliminar.set(null);
         // Oracle rechaza la baja si el usuario tiene bitácora o sesiones
         // asociadas (restricción de integridad referencial).
-        this.snackBar.open(
-          mensajeDeError(error, 'No se pudo eliminar el usuario'),
-          'Cerrar',
-          { duration: 6000 },
-        );
+        this.notificationService.error('No se pudo eliminar el usuario', mensajeDeError(error));
       },
     });
   }

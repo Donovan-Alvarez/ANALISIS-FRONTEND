@@ -37,3 +37,21 @@ body {
   height: 100%;
 }
 /* You can add global styles to this file, and also import other style files */
+
+// Notificaciones (ver shared/toast + core/services/notification.service.ts).
+// MatSnackBar monta el overlay fuera del árbol del componente, así que el
+// "look" MDC por defecto (fondo oscuro, padding, radio propio) solo se puede
+// quitar con selectores globales; el diseño real vive en toast.scss.
+.toast-panel {
+  .mdc-snackbar__surface {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    min-width: 0 !important;
+  }
+
+  .mdc-snackbar__label {
+    padding: 0 !important;
+  }
+}

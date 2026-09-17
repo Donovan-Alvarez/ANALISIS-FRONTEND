@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { Genero } from '../../core/models/genero.model';
 import { GeneroService } from '../../core/services/genero.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { GeneroFormDialog } from './genero-form-dialog/genero-form-dialog';
 
 @Component({
@@ -15,6 +16,7 @@ import { GeneroFormDialog } from './genero-form-dialog/genero-form-dialog';
 })
 export class Generos implements OnInit {
   private readonly generoService = inject(GeneroService);
+  private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
 
   protected readonly generos = signal<Genero[]>([]);
@@ -32,7 +34,10 @@ export class Generos implements OnInit {
     const ref = this.dialog.open(GeneroFormDialog, { data: null });
     ref.afterClosed().subscribe((resultado?: Genero) => {
       if (!resultado) return;
-      this.generoService.create(resultado).subscribe(() => this.cargar());
+      this.generoService.create(resultado).subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Género creado');
+      });
     });
   }
 
@@ -40,13 +45,19 @@ export class Generos implements OnInit {
     const ref = this.dialog.open(GeneroFormDialog, { data: genero });
     ref.afterClosed().subscribe((resultado?: Genero) => {
       if (!resultado || !genero.idGenero) return;
-      this.generoService.update(genero.idGenero, resultado).subscribe(() => this.cargar());
+      this.generoService.update(genero.idGenero, resultado).subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Género actualizado');
+      });
     });
   }
 
   protected eliminarGenero(genero: Genero): void {
     if (!genero.idGenero) return;
     if (!confirm(`¿Eliminar "${genero.nombre}"?`)) return;
-    this.generoService.delete(genero.idGenero).subscribe(() => this.cargar());
+    this.generoService.delete(genero.idGenero).subscribe(() => {
+      this.cargar();
+      this.notificationService.success('Género eliminado');
+    });
   }
 }
