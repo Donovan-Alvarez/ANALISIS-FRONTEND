@@ -2,7 +2,7 @@
   <header class="page__head">
     <div class="page__heading">
       <h1 class="page__title">Menús</h1>
-      <p class="page__subtitle">Los subgrupos dentro de cada módulo. El color coincide con su módulo.</p>
+      <p class="page__subtitle"></p>
     </div>
     <div class="page__actions">
       <button type="button" class="btn btn--primary" [disabled]="!permisos().alta" (click)="nuevoMenu()">
@@ -13,7 +13,12 @@
   </header>
 
   <section class="card">
-    @if (!menus().length) {
+        @if (!permisos().consultar) {
+      <div class="empty-state">
+        <mat-icon>lock</mat-icon>
+        <p>No tienes permiso para consultar este catálogo.</p>
+      </div>
+    } @else if (!menus().length) {
       <div class="empty-state">
         <mat-icon>menu</mat-icon>
         <p>Todavía no hay menús. Crea el primero con el botón de arriba.</p>

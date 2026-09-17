@@ -3,6 +3,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { forkJoin } from 'rxjs';
 import { Menu } from '../../core/models/menu.model';
+import { Modulo } from '../../core/models/modulo.model';
+import { ModuloService } from '../../core/services/modulo.service';
 import { Opcion } from '../../core/models/opcion.model';
 import { MenuMantenimientoService } from '../../core/services/menu-mantenimiento.service';
 import { OpcionService } from '../../core/services/opcion.service';
@@ -12,6 +14,7 @@ import { OpcionFormDialog } from './opcion-form-dialog/opcion-form-dialog';
 
 interface OpcionConMenu extends Opcion {
   nombreMenu: string;
+  nombreModulo: string;
 }
 
 @Component({
@@ -23,6 +26,7 @@ interface OpcionConMenu extends Opcion {
 export class Opciones implements OnInit {
   private readonly opcionService = inject(OpcionService);
   private readonly menuService = inject(MenuMantenimientoService);
+  private readonly moduloService = inject(MenuMantenimientoService);
   private readonly permisosService = inject(PermisosService);
   private readonly dialog = inject(MatDialog);
 
@@ -35,15 +39,24 @@ export class Opciones implements OnInit {
     this.cargar();
   }
 
-  private cargar(): void {
+    private cargar(): void {
     forkJoin({
       opciones: this.opcionService.findAll(),
       menus: this.menuService.findAll(),
-    }).subscribe(({ opciones, menus }) => {
+      modulos: this.moduloService.findAll(),
+    }).subscribe(({ opciones, menus, modulos }) => {
       this.menus.set(menus);
-      const mapa = new Map(menus.map(m => [m.idMenu, m.nombre]));
+      const mapaModulos = new Map(modulos.map(m => [m.idModulo, m.nombre]));
+      const mapaMenus = new Map(menus.map(m => [m.idMenu, { nombre: m.nombre, idModulo: m.idModulo }]));
       this.opciones.set(
-        opciones.map(o => ({ ...o, nombreMenu: mapa.get(o.idMenu) ?? '—' })),
+        opciones.map(o => {
+          const menu = mapaMenus.get(o.idMenu);
+          return {
+            ...o,
+            nombreMenu: menu?.nombre ?? '—',
+            nombreModulo: menu ? mapaModulos.get(menu.idModulo) ?? '—' : '—',
+          };
+        }),
       );
     });
   }
