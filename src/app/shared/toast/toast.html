@@ -1,0 +1,16 @@
+<div class="toast" [class]="'toast--' + data.type">
+  <div class="toast__icon">
+    <mat-icon>{{ icono }}</mat-icon>
+  </div>
+
+  <div class="toast__body">
+    <p class="toast__title">{{ data.title }}</p>
+    @if (data.message) {
+      <p class="toast__message">{{ data.message }}</p>
+    }
+  </div>
+
+  <button type="button" class="toast__close" (click)="cerrar()" aria-label="Cerrar notificación">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>

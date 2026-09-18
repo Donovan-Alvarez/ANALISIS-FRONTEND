@@ -1,0 +1,102 @@
+@use 'colors' as *;
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 320px;
+  max-width: 420px;
+  padding: 0.9rem 1rem;
+  background: $color-surface;
+  border: 1px solid $color-border-soft;
+  border-radius: 16px;
+  box-shadow: 0 16px 36px -18px rgba(35, 35, 69, 0.35);
+  box-sizing: border-box;
+}
+
+.toast__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.toast__body {
+  flex: 1;
+  min-width: 0;
+  padding-top: 0.1rem;
+}
+
+.toast__title {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: $color-text;
+  line-height: 1.3;
+}
+
+.toast__message {
+  margin: 0.2rem 0 0;
+  font-size: 0.8rem;
+  color: $color-text-muted;
+  line-height: 1.4;
+}
+
+.toast__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: $color-text-muted;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  mat-icon {
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+  }
+
+  &:hover {
+    background: $color-bg-page;
+    color: $color-text;
+  }
+}
+
+/* ── Color por tipo (mismo patrón que .badge en _ui.scss) ───────────── */
+
+.toast--success .toast__icon {
+  background: rgba(47, 158, 111, 0.12);
+  color: $color-success;
+}
+
+.toast--error .toast__icon {
+  background: rgba(210, 69, 69, 0.12);
+  color: $color-error;
+}
+
+.toast--warning .toast__icon {
+  background: rgba(201, 138, 27, 0.14);
+  color: $color-warning;
+}
+
+.toast--info .toast__icon {
+  background: rgba(47, 111, 214, 0.12);
+  color: $color-info;
+}
