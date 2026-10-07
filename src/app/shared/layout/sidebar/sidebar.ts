@@ -14,6 +14,23 @@ const ICONOS_POR_PAGINA: Record<string, string> = {
   opciones: 'list_alt',
   usuarios: 'group',
   'asignacion-permisos': 'security',
+  // Planilla (Fase 2): los 16 slugs de contrato-rutas.md.
+  'estados-civiles': 'family_restroom',
+  'status-empleado': 'how_to_reg',
+  'flujo-status-empleado': 'account_tree',
+  'tipos-documento': 'description',
+  departamentos: 'apartment',
+  puestos: 'work',
+  personas: 'person',
+  'documentos-persona': 'folder_shared',
+  bancos: 'account_balance',
+  empleados: 'badge',
+  'cuentas-bancarias': 'credit_card',
+  inasistencias: 'event_busy',
+  'calculo-planilla': 'calculate',
+  'reporte-planilla': 'summarize',
+  'boletas-pago': 'receipt_long',
+  liquidacion: 'request_quote',
 };
 const ICONO_DEFECTO = 'chevron_right';
 

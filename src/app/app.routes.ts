@@ -80,6 +80,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/asignacion-permisos/asignacion-permisos').then(m => m.AsignacionPermisos)
       },
+      {
+        path: 'estados-civiles',
+        loadComponent: () =>
+          import('./features/estados-civiles/estados-civiles').then(m => m.EstadosCiviles)
+      },
       { path: '', redirectTo: 'empresas', pathMatch: 'full' }
     ]
   },
