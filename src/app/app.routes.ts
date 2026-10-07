@@ -85,6 +85,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/estados-civiles/estados-civiles').then(m => m.EstadosCiviles)
       },
+      {
+        path: 'status-empleado',
+        loadComponent: () =>
+          import('./features/status-empleado/status-empleado').then(m => m.StatusEmpleado)
+      },
+      {
+        path: 'tipos-documento',
+        loadComponent: () =>
+          import('./features/tipos-documento/tipos-documento').then(m => m.TiposDocumento)
+      },
+      {
+        path: 'bancos',
+        loadComponent: () =>
+          import('./features/bancos/bancos').then(m => m.Bancos)
+      },
       { path: '', redirectTo: 'empresas', pathMatch: 'full' }
     ]
   },

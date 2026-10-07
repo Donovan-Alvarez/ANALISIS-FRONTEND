@@ -27,7 +27,7 @@
             "stylePreprocessorOptions": {
               "includePaths": ["src/styles"]
             },
-            "allowedCommonJsDependencies": ["exceljs"],
+            "allowedCommonJsDependencies": ["exceljs", "html2canvas", "canvg", "core-js", "raf", "rgbcolor"],
             "assets": [
               {
                 "glob": "**/*",
