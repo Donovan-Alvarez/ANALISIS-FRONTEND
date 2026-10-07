@@ -1,0 +1,17 @@
+@use 'colors' as *;
+
+.catalogo-form__campos {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 360px;
+}
+
+.catalogo-form__contador {
+  text-align: right;
+}
+
+select:disabled {
+  color: $color-text-muted;
+  cursor: not-allowed;
+}

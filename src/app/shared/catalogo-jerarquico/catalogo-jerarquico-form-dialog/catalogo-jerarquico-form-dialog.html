@@ -1,0 +1,59 @@
+<h2 mat-dialog-title>{{ data.titulo }}</h2>
+
+<form (submit)="guardar($event)" novalidate>
+  <mat-dialog-content>
+    <div class="catalogo-form__campos">
+      @for (combo of data.combos; track combo.clave) {
+        <div class="field">
+          <label class="field__label" [for]="'combo-' + combo.clave">
+            {{ combo.etiqueta }} <span class="field__req">*</span>
+          </label>
+          <div class="field__control">
+            <select [id]="'combo-' + combo.clave" [formControl]="combos[combo.clave]">
+              <option [ngValue]="null" disabled>{{ textoVacio(combo) }}</option>
+              @for (opcion of opciones()[combo.clave] ?? []; track opcion.id) {
+                <option [ngValue]="opcion.id">{{ opcion.nombre }}</option>
+              }
+            </select>
+            <mat-icon class="field__icon">expand_more</mat-icon>
+          </div>
+          @if (sinOpciones(combo)) {
+            <p class="field__error">{{ combo.sinOpciones }}</p>
+          }
+        </div>
+      }
+
+      <div class="field">
+        <label class="field__label" for="catalogo-nombre">
+          {{ data.etiqueta }} <span class="field__req">*</span>
+        </label>
+        <div class="field__control" [class.field__control--invalid]="nombre.invalid && nombre.touched">
+          <input
+            id="catalogo-nombre"
+            [formControl]="nombre"
+            [attr.maxlength]="data.longitudMaxima"
+            [placeholder]="data.placeholder ?? ''"
+            autocomplete="off"
+          />
+        </div>
+
+        @if (nombre.touched && nombre.hasError('required')) {
+          <p class="field__error">{{ data.etiqueta }} es obligatorio.</p>
+        } @else if (nombre.touched && nombre.hasError('soloEspacios')) {
+          <p class="field__error">{{ data.etiqueta }} no puede quedar solo con espacios.</p>
+        } @else if (nombre.hasError('maxlength')) {
+          <p class="field__error">Máximo {{ data.longitudMaxima }} caracteres.</p>
+        } @else {
+          <p class="field__hint catalogo-form__contador">{{ nombre.value.length }}/{{ data.longitudMaxima }}</p>
+        }
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button type="button" class="btn btn--ghost" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
+    <button type="submit" class="btn btn--primary" [disabled]="guardando() || inicializando() || !completo()">
+      {{ guardando() ? 'Guardando…' : 'Guardar' }}
+    </button>
+  </mat-dialog-actions>
+</form>

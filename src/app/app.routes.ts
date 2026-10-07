@@ -100,6 +100,16 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/bancos/bancos').then(m => m.Bancos)
       },
+      {
+        path: 'departamentos',
+        loadComponent: () =>
+          import('./features/departamentos/departamentos').then(m => m.Departamentos)
+      },
+      {
+        path: 'puestos',
+        loadComponent: () =>
+          import('./features/puestos/puestos').then(m => m.Puestos)
+      },
       { path: '', redirectTo: 'empresas', pathMatch: 'full' }
     ]
   },
