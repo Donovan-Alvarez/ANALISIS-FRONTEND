@@ -1,0 +1,18 @@
+@use 'colors' as *;
+
+.confirm__titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.confirm__icono {
+  color: $color-error;
+}
+
+.confirm__mensaje {
+  margin: 0;
+  max-width: 420px;
+  color: $color-text;
+  line-height: 1.5;
+}

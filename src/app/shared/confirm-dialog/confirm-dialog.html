@@ -1,0 +1,26 @@
+<h2 mat-dialog-title class="confirm__titulo">
+  @if (peligro) {
+    <mat-icon class="confirm__icono">warning</mat-icon>
+  }
+  {{ data.titulo }}
+</h2>
+
+<mat-dialog-content>
+  <p class="confirm__mensaje">{{ data.mensaje }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <!-- Foco inicial en Cancelar: un Enter accidental no confirma. -->
+  <button type="button" class="btn btn--ghost" [mat-dialog-close]="false" cdkFocusInitial>
+    {{ data.textoCancelar ?? 'Cancelar' }}
+  </button>
+  <button
+    type="button"
+    class="btn"
+    [class.btn--danger]="peligro"
+    [class.btn--primary]="!peligro"
+    [mat-dialog-close]="true"
+  >
+    {{ data.textoConfirmar ?? 'Eliminar' }}
+  </button>
+</mat-dialog-actions>

@@ -4,6 +4,10 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
+// Primitivos de UI (.page, .card, .btn, .data-table, .field, .empty-state...)
+// globales, para que los componentes compartidos no los copien en su CSS
+// (presupuesto anyComponentStyle). Decisión Paso C, Fase B2.
+@use 'ui';
 
 html {
   height: 100%;

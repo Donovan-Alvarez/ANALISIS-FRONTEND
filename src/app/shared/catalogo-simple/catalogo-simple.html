@@ -1,0 +1,134 @@
+<div class="page">
+  <header class="page__head">
+    <div class="page__heading">
+      <h1 class="page__title">{{ config().titulo }}</h1>
+      <p class="page__subtitle"></p>
+    </div>
+    <div class="page__actions">
+      <button
+        type="button"
+        class="btn btn--ghost"
+        [disabled]="!permisos().imprimir || procesando() || !filtrados().length"
+        (click)="imprimir()"
+        [title]="permisos().imprimir ? 'Imprimir la lista' : 'Tu rol no tiene permiso para imprimir'"
+      >
+        <mat-icon>print</mat-icon>
+        <span>Imprimir</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn--ghost"
+        [disabled]="!permisos().exportar || procesando() || !filtrados().length"
+        [matMenuTriggerFor]="menuExportar"
+        [title]="permisos().exportar ? 'Exportar la lista' : 'Tu rol no tiene permiso para exportar'"
+      >
+        <mat-icon>download</mat-icon>
+        <span>Exportar</span>
+      </button>
+      <mat-menu #menuExportar="matMenu" xPosition="before">
+        <button mat-menu-item type="button" (click)="exportarPdf()">
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </button>
+        <button mat-menu-item type="button" (click)="exportarExcel()">
+          <mat-icon>table_view</mat-icon>
+          <span>Excel</span>
+        </button>
+      </mat-menu>
+      <button
+        type="button"
+        class="btn btn--primary"
+        [disabled]="!permisos().alta || procesando()"
+        (click)="nuevo()"
+        [title]="permisos().alta ? '' : 'Tu rol no tiene permiso para crear'"
+      >
+        <mat-icon>add</mat-icon>
+        <span>Nuevo {{ config().singular }}</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="card">
+    @if (sinAcceso()) {
+      <div class="empty-state">
+        <mat-icon>lock</mat-icon>
+        <p>No tienes acceso a esta opción.</p>
+      </div>
+    } @else {
+      <div class="card__head">
+        <h2 class="card__title">{{ filtrados().length }} registro(s)</h2>
+        <div class="field catalogo__buscador">
+          <div class="field__control">
+            <mat-icon class="field__icon">search</mat-icon>
+            <input
+              type="search"
+              [placeholder]="'Buscar por ' + config().etiqueta.toLowerCase() + '…'"
+              [value]="filtro()"
+              (input)="filtro.set($any($event.target).value)"
+              [attr.aria-label]="'Buscar en ' + config().titulo"
+            />
+          </div>
+        </div>
+      </div>
+
+      @if (cargando() && !items().length) {
+        <div class="empty-state">
+          <mat-icon>hourglass_empty</mat-icon>
+          <p>Cargando…</p>
+        </div>
+      } @else if (!items().length) {
+        <div class="empty-state">
+          <mat-icon>{{ config().icono }}</mat-icon>
+          <p>Todavía no hay registros. Crea el primero con el botón de arriba.</p>
+        </div>
+      } @else if (!filtrados().length) {
+        <div class="empty-state">
+          <mat-icon>search_off</mat-icon>
+          <p>Ningún registro coincide con la búsqueda.</p>
+        </div>
+      } @else {
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ config().etiqueta }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of filtrados(); track item.id) {
+                <tr>
+                  <td>{{ item.nombre }}</td>
+                  <td>
+                    <div class="data-table__actions">
+                      <button
+                        type="button"
+                        class="btn-icon"
+                        [disabled]="!permisos().cambio || procesando()"
+                        (click)="editar(item)"
+                        title="Editar"
+                        [attr.aria-label]="'Editar ' + item.nombre"
+                      >
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-icon btn-icon--danger"
+                        [disabled]="!permisos().baja || procesando()"
+                        (click)="eliminar(item)"
+                        title="Eliminar"
+                        [attr.aria-label]="'Eliminar ' + item.nombre"
+                      >
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </section>
+</div>
