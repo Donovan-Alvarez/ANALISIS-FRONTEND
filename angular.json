@@ -27,6 +27,7 @@
             "stylePreprocessorOptions": {
               "includePaths": ["src/styles"]
             },
+            "allowedCommonJsDependencies": ["exceljs"],
             "assets": [
               {
                 "glob": "**/*",
