@@ -1,0 +1,74 @@
+<h2 mat-dialog-title>{{ data.titulo }}</h2>
+
+<form (submit)="guardar($event)" novalidate>
+  <mat-dialog-content>
+    <div class="inasistencia-form__campos">
+      <div class="field">
+        <label class="field__label" for="inas-empleado">Empleado <span class="field__req">*</span></label>
+        <div class="field__control inasistencia-form__buscar">
+          <mat-icon class="field__icon">search</mat-icon>
+          <input
+            type="search"
+            placeholder="Buscar por nombre, puesto o departamento…"
+            [value]="busqueda()"
+            (input)="busqueda.set($any($event.target).value)"
+            [disabled]="cargandoEmpleados() || guardando()"
+            aria-label="Buscar empleado"
+          />
+        </div>
+        <div class="field__control">
+          <select id="inas-empleado" [formControl]="idEmpleado">
+            <option [ngValue]="null" disabled>{{ textoVacioEmpleado() }}</option>
+            @for (e of empleadosFiltrados(); track e.idEmpleado) {
+              <option [ngValue]="e.idEmpleado">{{ e.nombreCompleto }} — {{ e.nombrePuesto }}</option>
+            }
+          </select>
+          <mat-icon class="field__icon">expand_more</mat-icon>
+        </div>
+      </div>
+
+      <div class="inasistencia-form__fechas">
+        <div class="field">
+          <label class="field__label" for="inas-inicial">Fecha inicial <span class="field__req">*</span></label>
+          <div class="field__control" [class.field__control--invalid]="fechasInvertidas()">
+            <input id="inas-inicial" type="date" [formControl]="fechaInicial" />
+          </div>
+        </div>
+        <div class="field">
+          <label class="field__label" for="inas-final">Fecha final <span class="field__req">*</span></label>
+          <div class="field__control" [class.field__control--invalid]="fechasInvertidas()">
+            <input id="inas-final" type="date" [formControl]="fechaFinal" />
+          </div>
+        </div>
+      </div>
+      @if (fechasInvertidas()) {
+        <p class="field__error">La fecha final no puede ser anterior a la fecha inicial.</p>
+      }
+
+      <div class="field">
+        <label class="field__label" for="inas-motivo">Motivo</label>
+        <div class="field__control" [class.field__control--invalid]="motivo.invalid">
+          <textarea
+            id="inas-motivo"
+            rows="3"
+            [formControl]="motivo"
+            [attr.maxlength]="maxMotivo"
+            placeholder="Ej. Cita médica, permiso personal…"
+          ></textarea>
+        </div>
+        @if (motivo.hasError('maxlength')) {
+          <p class="field__error">Máximo {{ maxMotivo }} caracteres.</p>
+        } @else {
+          <p class="field__hint inasistencia-form__contador">{{ longitudMotivo() }}/{{ maxMotivo }}</p>
+        }
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button type="button" class="btn btn--ghost" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
+    <button type="submit" class="btn btn--primary" [disabled]="!puedeGuardar()">
+      {{ guardando() ? 'Guardando…' : 'Guardar' }}
+    </button>
+  </mat-dialog-actions>
+</form>

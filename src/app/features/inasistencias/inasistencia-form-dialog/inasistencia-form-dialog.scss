@@ -1,0 +1,37 @@
+@use 'colors' as *;
+
+.inasistencia-form__campos {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 420px;
+}
+
+.inasistencia-form__buscar {
+  margin-bottom: 0.5rem;
+}
+
+.inasistencia-form__fechas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.inasistencia-form__contador {
+  text-align: right;
+}
+
+textarea {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  resize: vertical;
+}
+
+select:disabled {
+  color: $color-text-muted;
+  cursor: not-allowed;
+}
