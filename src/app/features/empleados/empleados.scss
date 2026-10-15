@@ -1,0 +1,13 @@
+@use 'colors' as *;
+@use 'ui' as *;
+
+.empleados__buscador {
+  min-width: 280px;
+}
+
+// La tabla tiene 12 columnas: el scroll horizontal vive en .table-wrap
+// (de _ui.scss) para que la página nunca se desplace de lado.
+.data-table__num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
