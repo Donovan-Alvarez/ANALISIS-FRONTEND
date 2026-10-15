@@ -111,17 +111,24 @@ export const routes: Routes = [
           import('./features/puestos/puestos').then(m => m.Puestos)
       },
       {
-        // La ruta debe ser idéntica a OPCION.Pagina: el sidebar arma el
-        // enlace con ese valor y el interceptor resuelve ahí los permisos.
         path: 'empleados',
         loadComponent: () =>
           import('./features/empleados/empleados').then(m => m.Empleados)
       },
       {
-        // Singular, como lo sembró 04_fase2_rbac.sql.
         path: 'liquidacion',
         loadComponent: () =>
           import('./features/liquidacion/liquidacion').then(m => m.Liquidacion)
+      },
+      {
+        path: 'personas',
+        loadComponent: () =>
+          import('./features/personas/personas').then(m => m.Personas)
+      },
+      {
+        path: 'documentos-persona',
+        loadComponent: () =>
+          import('./features/documentos-personas/documentos-persona').then(m => m.DocumentosPersona)
       },
       { path: '', redirectTo: 'empresas', pathMatch: 'full' }
     ]

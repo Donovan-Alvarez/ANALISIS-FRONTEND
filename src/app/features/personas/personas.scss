@@ -1,0 +1,9 @@
+.personas__buscador {
+  width: min(320px, 100%);
+}
+
+.table-wrap {
+  max-height: calc(100dvh - 18rem);
+  min-height: 12rem;
+  overflow: auto;
+}
