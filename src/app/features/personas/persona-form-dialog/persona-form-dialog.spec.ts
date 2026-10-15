@@ -97,7 +97,7 @@ describe('PersonaFormDialog', () => {
     expect(c.form.controls.fechaNacimiento.errors?.['fechaNacimiento']).toContain('futura');
 
     c.form.patchValue({ ...VALIDOS, fechaNacimiento: '2020-01-01' });
-    expect(c.form.controls.fechaNacimiento.errors?.['fechaNacimiento']).toContain('al menos 18');
+    expect(c.form.controls.fechaNacimiento.errors?.['fechaNacimiento']).toContain('al menos 14');
 
     c.form.patchValue({ ...VALIDOS, telefono: '123' });
     expect(c.form.controls.telefono.errors?.['telefono']).toBeTruthy();

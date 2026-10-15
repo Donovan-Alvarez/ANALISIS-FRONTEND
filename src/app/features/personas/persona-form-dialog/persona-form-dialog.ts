@@ -52,7 +52,7 @@ export class PersonaFormDialog implements OnInit {
   protected readonly generos = signal<OpcionCombo[]>([]);
   protected readonly estadosCiviles = signal<OpcionCombo[]>([]);
 
-  /** El usuario no puede elegir una fecha que ya incumpla la edad mínima. */
+  /** El usuario no puede elegir una fecha que ya incumpla la edad mínima (EDAD_MINIMA). */
   protected readonly fechaMaxima = fechaMaximaNacimiento();
 
   protected readonly form = new FormGroup({

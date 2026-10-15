@@ -33,15 +33,16 @@ describe('validaciones-persona', () => {
     });
 
     it(`exige al menos ${EDAD_MINIMA} años y como máximo ${EDAD_MAXIMA}`, () => {
-      expect(errorFechaNacimiento('2008-10-13', HOY)).toBeNull(); // cumple 18 hoy
-      expect(errorFechaNacimiento('2008-10-14', HOY)).toContain('al menos 18');
+      expect(errorFechaNacimiento('2012-10-13', HOY)).toBeNull(); // cumple 14 hoy
+      expect(errorFechaNacimiento('2009-02-14', HOY)).toBeNull(); // 17 años: hay personas así en el seed oficial
+      expect(errorFechaNacimiento('2012-10-14', HOY)).toContain('al menos 14');
       expect(errorFechaNacimiento('1926-10-13', HOY)).toBeNull(); // 100 años exactos
       expect(errorFechaNacimiento('1925-10-12', HOY)).toContain('no es razonable');
     });
 
-    it('la fecha máxima del selector es hoy menos 18 años (y maneja el 29 de febrero)', () => {
-      expect(fechaMaximaNacimiento(HOY)).toBe('2008-10-13');
-      expect(fechaMaximaNacimiento('2028-02-29')).toBe('2010-02-28');
+    it('la fecha máxima del selector es hoy menos 14 años (y maneja el 29 de febrero)', () => {
+      expect(fechaMaximaNacimiento(HOY)).toBe('2012-10-13');
+      expect(fechaMaximaNacimiento('2028-02-29')).toBe('2014-02-28');
       expect(errorFechaNacimiento(fechaMaximaNacimiento(HOY), HOY)).toBeNull();
     });
 
