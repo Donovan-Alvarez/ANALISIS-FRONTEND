@@ -1,0 +1,179 @@
+<div class="page">
+  <header class="page__head">
+    <div class="page__heading">
+      <h1 class="page__title">Calcular planilla</h1>
+      <p class="page__subtitle">Genera la planilla de un período con el salario de cada empleado activo y sus inasistencias pendientes.</p>
+    </div>
+    <div class="page__actions">
+      <button
+        type="button"
+        class="btn btn--ghost"
+        [disabled]="!permisos().imprimir || exportando() || calculando() || !filas().length"
+        (click)="imprimir()"
+        [title]="permisos().imprimir ? 'Imprimir la lista de períodos' : 'Tu rol no tiene permiso para imprimir'"
+      >
+        <mat-icon>print</mat-icon>
+        <span>Imprimir</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn--ghost"
+        [disabled]="!permisos().exportar || exportando() || calculando() || !filas().length"
+        [matMenuTriggerFor]="menuExportar"
+        [title]="permisos().exportar ? 'Exportar la lista de períodos' : 'Tu rol no tiene permiso para exportar'"
+      >
+        <mat-icon>download</mat-icon>
+        <span>Exportar</span>
+      </button>
+      <mat-menu #menuExportar="matMenu" xPosition="before">
+        <button mat-menu-item type="button" (click)="exportarPdf()">
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </button>
+        <button mat-menu-item type="button" (click)="exportarExcel()">
+          <mat-icon>table_view</mat-icon>
+          <span>Excel</span>
+        </button>
+      </mat-menu>
+    </div>
+  </header>
+
+  @if (sinAcceso()) {
+    <section class="card">
+      <div class="empty-state">
+        <mat-icon>lock</mat-icon>
+        <p>No tienes acceso a esta opción.</p>
+      </div>
+    </section>
+  } @else {
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Nuevo cálculo</h2>
+      </div>
+      <div class="card__body calculo__cuerpo">
+        <div class="calculo__fila">
+          <div class="field calculo__periodo">
+            <label class="field__label" for="calculo-periodo">Período de planilla</label>
+            <div class="field__control">
+              <select
+                id="calculo-periodo"
+                [value]="claveSeleccionada()"
+                (change)="seleccionar($any($event.target).value)"
+                [disabled]="cargando() || calculando()"
+              >
+                <option value="" disabled>{{ cargando() ? 'Cargando…' : 'Selecciona un período…' }}</option>
+                @for (p of filas(); track p.clave) {
+                  <option [value]="p.clave" [selected]="p.clave === claveSeleccionada()">
+                    {{ p.etiqueta }} · {{ p.estado }}
+                  </option>
+                }
+              </select>
+              <mat-icon class="field__icon">expand_more</mat-icon>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn--primary"
+            [disabled]="!puedeCalcular()"
+            (click)="calcular()"
+            [title]="motivoNoCalcular()"
+          >
+            <mat-icon>calculate</mat-icon>
+            <span>{{ calculando() ? 'Calculando…' : 'Calcular planilla' }}</span>
+          </button>
+        </div>
+
+        @if (seleccionado(); as s) {
+          <div class="calculo__info">
+            <span>Del {{ fecha(s.fechaInicio) }} al {{ fecha(s.fechaFin) }}</span>
+            @if (s.calculado) {
+              <span class="badge badge--ok">Calculada</span>
+            } @else {
+              <span class="badge badge--warn">Pendiente</span>
+            }
+          </div>
+
+          @if (s.calculado) {
+            <p class="calculo__aviso">
+              <mat-icon>info</mat-icon>
+              Esta planilla ya fue calculada el {{ fechaHora(s.fechaHoraProcesada) }}
+              @if (s.usuarioProceso) { por {{ s.usuarioProceso }} }
+              y no se puede calcular otra vez.
+            </p>
+            <div class="calculo__resumen">
+              <div><span>Empleados</span><strong>{{ s.empleadosCalculados }}</strong></div>
+              <div><span>Total ingresos</span><strong>{{ moneda(s.totalIngresos) }}</strong></div>
+              <div><span>Total descuentos</span><strong>{{ moneda(s.totalDescuentos) }}</strong></div>
+              <div><span>Salario neto</span><strong>{{ moneda(s.salarioNeto) }}</strong></div>
+            </div>
+          }
+
+          @if (resultadoVisible(); as r) {
+            <p class="calculo__aviso calculo__aviso--ok">
+              <mat-icon>check_circle</mat-icon>
+              Cálculo terminado: {{ r.empleadosProcesados }} empleado(s) y {{ r.inasistenciasProcesadas }} inasistencia(s) descontada(s).
+            </p>
+          }
+        } @else {
+          <p class="calculo__ayuda">Selecciona un período para ver su estado y calcular su planilla.</p>
+        }
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Períodos de planilla</h2>
+      </div>
+
+      @if (cargando() && !filas().length) {
+        <div class="empty-state">
+          <mat-icon>hourglass_empty</mat-icon>
+          <p>Cargando…</p>
+        </div>
+      } @else if (!filas().length) {
+        <div class="empty-state">
+          <mat-icon>calendar_month</mat-icon>
+          <p>No hay períodos de planilla registrados.</p>
+        </div>
+      } @else {
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Período</th>
+                <th>Estado</th>
+                <th class="data-table__num">Empleados</th>
+                <th class="data-table__num">Total ingresos</th>
+                <th class="data-table__num">Total descuentos</th>
+                <th class="data-table__num">Salario neto</th>
+                <th>Procesada</th>
+                <th>Usuario</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (f of filas(); track f.clave) {
+                <tr>
+                  <td>{{ f.etiqueta }}</td>
+                  <td>
+                    @if (f.calculado) {
+                      <span class="badge badge--ok">Calculada</span>
+                    } @else {
+                      <span class="badge badge--warn">Pendiente</span>
+                    }
+                  </td>
+                  <td class="data-table__num">{{ f.calculado ? f.empleadosCalculados : '—' }}</td>
+                  <td class="data-table__num">{{ moneda(f.totalIngresos) }}</td>
+                  <td class="data-table__num">{{ moneda(f.totalDescuentos) }}</td>
+                  <td class="data-table__num">{{ moneda(f.salarioNeto) }}</td>
+                  <td>{{ fechaHora(f.fechaHoraProcesada) || '—' }}</td>
+                  <td>{{ f.usuarioProceso || '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  }
+</div>

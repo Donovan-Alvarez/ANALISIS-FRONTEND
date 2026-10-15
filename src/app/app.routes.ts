@@ -110,7 +110,20 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/puestos/puestos').then(m => m.Puestos)
       },
+                  {
+        path: 'inasistencias',
+        loadComponent: () =>
+          import('./features/inasistencias/inasistencias').then(m => m.Inasistencias)
+      },
+      {
+        path: 'calculo-planilla',
+        loadComponent: () =>
+          import('./features/calculo-planilla/calculo-planilla').then(m => m.CalculoPlanilla)
+      },
+
       { path: '', redirectTo: 'empresas', pathMatch: 'full' }
+      
+
     ]
   },
 
