@@ -1,0 +1,161 @@
+<h2 mat-dialog-title>Calcular liquidación</h2>
+
+<form [formGroup]="form" (ngSubmit)="guardar()">
+  <mat-dialog-content class="liquidacion-form">
+    <div class="form-section">
+      <h3 class="form-section__title">Empleado</h3>
+
+      <div class="field">
+        <label class="field__label" for="idEmpleado">
+          Empleado a liquidar <span class="field__req">*</span>
+        </label>
+        <div class="field__control">
+          <select id="idEmpleado" formControlName="idEmpleado">
+            <option [ngValue]="null" disabled>
+              {{ empleados().length ? 'Selecciona…' : 'No hay empleados pendientes de liquidar' }}
+            </option>
+            @for (e of empleados(); track e.idEmpleado) {
+              <option [ngValue]="e.idEmpleado">{{ e.nombrePersona }}</option>
+            }
+          </select>
+          <mat-icon class="field__icon">expand_more</mat-icon>
+        </div>
+        <p class="field__hint">Solo aparecen empleados que todavía no tienen liquidación.</p>
+      </div>
+
+      @if (seleccionado(); as emp) {
+        <!-- Puesto y montos: solo lectura, los toma el backend del empleado -->
+        <dl class="datos-empleado">
+          <div class="datos-empleado__item">
+            <dt>Puesto</dt>
+            <dd>{{ emp.nombrePuesto }}</dd>
+          </div>
+          <div class="datos-empleado__item">
+            <dt>Fecha de contratación</dt>
+            <dd>{{ emp.fechaContratacion }}</dd>
+          </div>
+          <div class="datos-empleado__item">
+            <dt>Sueldo base</dt>
+            <dd>Q {{ emp.ingresoSueldoBase | number: '1.2-2' }}</dd>
+          </div>
+          <div class="datos-empleado__item">
+            <dt>Bonificación decreto</dt>
+            <dd>Q {{ emp.ingresoBonificacionDecreto | number: '1.2-2' }}</dd>
+          </div>
+          <div class="datos-empleado__item">
+            <dt>Otros ingresos</dt>
+            <dd>Q {{ emp.ingresoOtrosIngresos | number: '1.2-2' }}</dd>
+          </div>
+          <div class="datos-empleado__item">
+            <dt>IGSS</dt>
+            <dd>Q {{ emp.descuentoIgss | number: '1.2-2' }}</dd>
+          </div>
+          <div class="datos-empleado__item">
+            <dt>ISR</dt>
+            <dd>Q {{ emp.descuentoIsr | number: '1.2-2' }}</dd>
+          </div>
+          <div class="datos-empleado__item">
+            <dt>Inasistencias</dt>
+            <dd>Q {{ emp.descuentoInasistencias | number: '1.2-2' }}</dd>
+          </div>
+        </dl>
+      }
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section__title">Egreso</h3>
+
+      <div class="form-grid">
+        <div class="field">
+          <label class="field__label" for="fechaEgreso">
+            Fecha de egreso <span class="field__req">*</span>
+          </label>
+          <div class="field__control">
+            <input
+              id="fechaEgreso"
+              type="date"
+              [max]="hoy"
+              [attr.min]="minimoEgreso()"
+              formControlName="fechaEgreso"
+            />
+          </div>
+          @if (minimoEgreso(); as minimo) {
+            <p class="field__hint">No puede ser anterior al {{ minimo }}.</p>
+          }
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="fechaLiquidacion">
+            Fecha de liquidación <span class="field__req">*</span>
+          </label>
+          <div class="field__control">
+            <input
+              id="fechaLiquidacion"
+              type="date"
+              [attr.min]="form.controls.fechaEgreso.value || null"
+              formControlName="fechaLiquidacion"
+            />
+          </div>
+        </div>
+
+        <div class="field form-grid__full">
+          <label class="field__label" for="motivoEgreso">
+            Motivo de egreso <span class="field__req">*</span>
+          </label>
+          <div class="field__control">
+            <input
+              id="motivoEgreso"
+              type="text"
+              maxlength="50"
+              placeholder="Ej. Renuncia voluntaria"
+              formControlName="motivoEgreso"
+            />
+          </div>
+          @if (form.controls.motivoEgreso.hasError('required') && form.controls.motivoEgreso.touched) {
+            <p class="field__error">El motivo es obligatorio</p>
+          }
+        </div>
+      </div>
+    </div>
+
+    @if (totales(); as t) {
+      <div class="form-section">
+        <h3 class="form-section__title">Cálculo</h3>
+        <dl class="totales">
+          <div class="totales__item">
+            <dt>Total ingresos</dt>
+            <dd>Q {{ t.ingresos | number: '1.2-2' }}</dd>
+          </div>
+          <div class="totales__item">
+            <dt>Total descuentos</dt>
+            <dd>Q {{ t.descuentos | number: '1.2-2' }}</dd>
+          </div>
+          <div class="totales__item">
+            <dt>Salario neto</dt>
+            <dd>Q {{ t.salarioNeto | number: '1.2-2' }}</dd>
+          </div>
+          <div class="totales__item totales__item--destacado">
+            <dt>Total neto</dt>
+            <dd>Q {{ t.totalNeto | number: '1.2-2' }}</dd>
+          </div>
+        </dl>
+        <p class="field__hint">
+          Vista previa. El cálculo definitivo lo hace el procedimiento almacenado al guardar.
+        </p>
+      </div>
+    }
+
+    <p class="aviso-permanente">
+      <mat-icon>lock</mat-icon>
+      <span>Una vez creada, la liquidación queda como historial y no se puede editar ni eliminar.</span>
+    </p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button type="button" class="btn btn--ghost" (click)="cancelar()">Cancelar</button>
+    <button type="submit" class="btn btn--primary" [disabled]="guardando()">
+      <mat-icon>calculate</mat-icon>
+      <span>{{ guardando() ? 'Calculando…' : 'Calcular y guardar' }}</span>
+    </button>
+  </mat-dialog-actions>
+</form>

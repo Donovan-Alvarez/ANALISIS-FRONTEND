@@ -1,0 +1,86 @@
+<section class="boletas">
+  <h1>Boletas de Pago</h1>
+  <p>Consulte el pago individual de un período procesado.</p>
+  @if (!permisos().consultar) {
+    <p role="alert">No tiene permiso para consultar boletas.</p>
+  } @else {
+    <div class="filtros">
+      <label
+        >Período<select [(ngModel)]="periodo" (ngModelChange)="cambiarPeriodo()">
+          <option value="">Seleccione un período</option>
+          @for (p of periodos(); track p.anio + '/' + p.mes) {
+            <option [value]="p.anio + '/' + p.mes">{{ p.anio }} / {{ p.mes }}</option>
+          }
+        </select></label
+      >
+      <label
+        >Empleado<select
+          [(ngModel)]="empleado"
+          (ngModelChange)="consultar()"
+          [disabled]="!periodo || cargando()"
+        >
+          <option [ngValue]="null">Seleccione un empleado</option>
+          @for (e of empleados(); track e.idEmpleado) {
+            <option [ngValue]="e.idEmpleado">{{ e.nombre }}</option>
+          }
+        </select></label
+      >
+    </div>
+    @if (!periodos().length) {
+      <p>No hay períodos procesados disponibles.</p>
+    }
+    @if (periodo && !cargando() && !empleados().length) {
+      <p>Este período no tiene empleados con detalle de pago.</p>
+    }
+  }
+  <div class="acciones">
+    <button disabled title="Boleta de solo lectura">Nuevo</button
+    ><button disabled title="Boleta de solo lectura">Editar</button
+    ><button disabled title="Boleta de solo lectura">Eliminar</button>
+    <button [disabled]="!permisos().imprimir || !boleta()" (click)="archivo('imprimir')">
+      Imprimir
+    </button>
+    <button [disabled]="!permisos().exportar || !boleta()" (click)="archivo('excel')">
+      Exportar Excel
+    </button>
+    <button [disabled]="!permisos().exportar || !boleta()" (click)="archivo('pdf')">
+      Exportar PDF
+    </button>
+  </div>
+  @if (cargando()) {
+    <p role="status">Cargando…</p>
+  }
+  @if (errorArchivo()) {
+    <p role="alert">{{ errorArchivo() }}</p>
+  }
+  @if (boleta(); as b) {
+    <article>
+      <h2>{{ b.detalle.empleado }}</h2>
+      <p>
+        Período {{ b.detalle.anio }} / {{ b.detalle.mes }} · Boleta
+        {{ b.detalle.idPlanillaDetalle }}
+      </p>
+      <table>
+        <caption>
+          Detalle de pago almacenado
+        </caption>
+        <thead>
+          <tr>
+            <th>Concepto</th>
+            <th>Dato</th>
+            <th>Monto</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (f of filas(); track $index) {
+            <tr>
+              <th>{{ f.concepto }}</th>
+              <td>{{ f.dato }}</td>
+              <td>{{ f.monto == null ? '' : (f.monto | currency: 'GTQ' : 'symbol' : '1.2-2') }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </article>
+  }
+</section>

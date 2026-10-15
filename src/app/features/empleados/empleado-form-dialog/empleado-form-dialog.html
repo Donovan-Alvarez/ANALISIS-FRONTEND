@@ -1,0 +1,217 @@
+<h2 mat-dialog-title>{{ data.titulo }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="guardar()">
+  <mat-dialog-content class="empleado-form">
+    <!-- Asignación -->
+    <div class="form-section">
+      <h3 class="form-section__title">Asignación</h3>
+
+      <div class="form-grid">
+        <div class="field">
+          <label class="field__label" for="idPersona">Persona <span class="field__req">*</span></label>
+          <div class="field__control">
+            <select id="idPersona" formControlName="idPersona">
+              <option [ngValue]="null" disabled>Selecciona…</option>
+              @for (p of personas(); track p.idPersona) {
+                <option [ngValue]="p.idPersona">{{ p.nombreCompleto }}</option>
+              }
+            </select>
+            <mat-icon class="field__icon">expand_more</mat-icon>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="idEmpresa">Empresa <span class="field__req">*</span></label>
+          <div class="field__control">
+            <select id="idEmpresa" formControlName="idEmpresa">
+              <option [ngValue]="null" disabled>Selecciona…</option>
+              @for (e of empresas(); track e.id) {
+                <option [ngValue]="e.id">{{ e.nombre }}</option>
+              }
+            </select>
+            <mat-icon class="field__icon">expand_more</mat-icon>
+          </div>
+          <p class="field__hint">Filtra sucursales y departamentos. No se guarda.</p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="idSucursal">Sucursal <span class="field__req">*</span></label>
+          <div class="field__control">
+            <select id="idSucursal" formControlName="idSucursal">
+              <option [ngValue]="null" disabled>
+                {{ sucursales().length ? 'Selecciona…' : 'Elige una empresa primero' }}
+              </option>
+              @for (s of sucursales(); track s.id) {
+                <option [ngValue]="s.id">{{ s.nombre }}</option>
+              }
+            </select>
+            <mat-icon class="field__icon">expand_more</mat-icon>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="idDepartamento">Departamento <span class="field__req">*</span></label>
+          <div class="field__control">
+            <select id="idDepartamento" formControlName="idDepartamento">
+              <option [ngValue]="null" disabled>
+                {{ departamentos().length ? 'Selecciona…' : 'Elige una empresa primero' }}
+              </option>
+              @for (d of departamentos(); track d.id) {
+                <option [ngValue]="d.id">{{ d.nombre }}</option>
+              }
+            </select>
+            <mat-icon class="field__icon">expand_more</mat-icon>
+          </div>
+          <p class="field__hint">Filtra los puestos. No se guarda.</p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="idPuesto">Puesto <span class="field__req">*</span></label>
+          <div class="field__control">
+            <select id="idPuesto" formControlName="idPuesto">
+              <option [ngValue]="null" disabled>
+                {{ puestos().length ? 'Selecciona…' : 'Elige un departamento primero' }}
+              </option>
+              @for (p of puestos(); track p.id) {
+                <option [ngValue]="p.id">{{ p.nombre }}</option>
+              }
+            </select>
+            <mat-icon class="field__icon">expand_more</mat-icon>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="idStatusEmpleado">
+            Status del empleado <span class="field__req">*</span>
+          </label>
+          <div class="field__control">
+            <select id="idStatusEmpleado" formControlName="idStatusEmpleado">
+              <option [ngValue]="null" disabled>Selecciona…</option>
+              @for (s of statusDisponibles(); track s.idStatusEmpleado) {
+                <option [ngValue]="s.idStatusEmpleado">
+                  {{ s.nombre }}@if (s.nombreEvento !== 'Sin cambio') { · {{ s.nombreEvento }} }
+                </option>
+              }
+            </select>
+            <mat-icon class="field__icon">expand_more</mat-icon>
+          </div>
+          @if (esEdicion) {
+            <p class="field__hint">
+              Solo aparecen las transiciones configuradas en Flujos Status Empleado.
+            </p>
+          }
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="fechaContratacion">
+            Fecha de contratación <span class="field__req">*</span>
+          </label>
+          <div class="field__control">
+            <input id="fechaContratacion" type="date" [max]="hoy" formControlName="fechaContratacion" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ingresos -->
+    <div class="form-section">
+      <h3 class="form-section__title">Ingresos</h3>
+      <div class="form-grid">
+        <div class="field">
+          <label class="field__label" for="ingresoSueldoBase">Sueldo base <span class="field__req">*</span></label>
+          <div class="field__control">
+            <span class="field__prefijo">Q</span>
+            <input id="ingresoSueldoBase" type="number" min="0" step="0.01" formControlName="ingresoSueldoBase" />
+          </div>
+          @if (form.controls.ingresoSueldoBase.hasError('min') && form.controls.ingresoSueldoBase.touched) {
+            <p class="field__error">No puede ser negativo</p>
+          }
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="ingresoBonificacionDecreto">
+            Bonificación decreto <span class="field__req">*</span>
+          </label>
+          <div class="field__control">
+            <span class="field__prefijo">Q</span>
+            <input
+              id="ingresoBonificacionDecreto"
+              type="number"
+              min="0"
+              step="0.01"
+              formControlName="ingresoBonificacionDecreto"
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="ingresoOtrosIngresos">Otros ingresos <span class="field__req">*</span></label>
+          <div class="field__control">
+            <span class="field__prefijo">Q</span>
+            <input id="ingresoOtrosIngresos" type="number" min="0" step="0.01" formControlName="ingresoOtrosIngresos" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Descuentos -->
+    <div class="form-section">
+      <h3 class="form-section__title">Descuentos</h3>
+      <div class="form-grid">
+        <div class="field">
+          <label class="field__label" for="descuentoIgss">IGSS <span class="field__req">*</span></label>
+          <div class="field__control">
+            <span class="field__prefijo">Q</span>
+            <input id="descuentoIgss" type="number" min="0" step="0.01" formControlName="descuentoIgss" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="descuentoIsr">ISR <span class="field__req">*</span></label>
+          <div class="field__control">
+            <span class="field__prefijo">Q</span>
+            <input id="descuentoIsr" type="number" min="0" step="0.01" formControlName="descuentoIsr" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="descuentoInasistencias">Inasistencias <span class="field__req">*</span></label>
+          <div class="field__control">
+            <span class="field__prefijo">Q</span>
+            <input
+              id="descuentoInasistencias"
+              type="number"
+              min="0"
+              step="0.01"
+              formControlName="descuentoInasistencias"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista previa: el cálculo que hará Calcular Planilla con estos datos -->
+      <dl class="totales">
+        <div class="totales__item">
+          <dt>Total ingresos</dt>
+          <dd>Q {{ totales().ingresos | number: '1.2-2' }}</dd>
+        </div>
+        <div class="totales__item">
+          <dt>Total descuentos</dt>
+          <dd>Q {{ totales().descuentos | number: '1.2-2' }}</dd>
+        </div>
+        <div class="totales__item totales__item--destacado">
+          <dt>Neto</dt>
+          <dd>Q {{ totales().neto | number: '1.2-2' }}</dd>
+        </div>
+      </dl>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button type="button" class="btn btn--ghost" (click)="cancelar()">Cancelar</button>
+    <button type="submit" class="btn btn--primary" [disabled]="guardando()">
+      <mat-icon>save</mat-icon>
+      <span>{{ guardando() ? 'Guardando…' : 'Guardar' }}</span>
+    </button>
+  </mat-dialog-actions>
+</form>

@@ -1,0 +1,62 @@
+<h2 mat-dialog-title>{{ data.titulo }}</h2>
+
+<form [formGroup]="form" (submit)="guardar($event)" novalidate>
+  <mat-dialog-content>
+    <div class="documento-form__campos">
+      <div class="field">
+        <label class="field__label" for="documento-persona">Persona <span class="field__req">*</span></label>
+        <div class="field__control">
+          <select id="documento-persona" [formControl]="idPersona">
+            <option [ngValue]="null" disabled>
+              {{ cargandoOpciones() ? 'Cargando…' : personas().length ? 'Selecciona…' : 'No hay personas registradas' }}
+            </option>
+            @for (p of personas(); track p.id) {
+              <option [ngValue]="p.id">{{ p.nombre }}</option>
+            }
+          </select>
+          <mat-icon class="field__icon">expand_more</mat-icon>
+        </div>
+        @if (esEdicion) {
+          <p class="field__hint">La persona y el tipo no se pueden cambiar. Para moverlos, elimina el documento y crea otro.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="documento-tipo">Tipo de documento <span class="field__req">*</span></label>
+        <div class="field__control" [class.field__control--invalid]="duplicado()">
+          <select id="documento-tipo" [formControl]="idTipoDocumento">
+            <option [ngValue]="null" disabled>
+              {{ cargandoOpciones() ? 'Cargando…' : tipos().length ? 'Selecciona…' : 'No hay tipos de documento registrados' }}
+            </option>
+            @for (t of tipos(); track t.id) {
+              <option [ngValue]="t.id">{{ t.nombre }}</option>
+            }
+          </select>
+          <mat-icon class="field__icon">expand_more</mat-icon>
+        </div>
+        @if (duplicado()) {
+          <p class="field__error">Esta persona ya tiene registrado un documento de este tipo.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="documento-numero">Número de documento <span class="field__req">*</span></label>
+        <div class="field__control" [class.field__control--invalid]="errorNumero()">
+          <input id="documento-numero" [formControl]="noDocumento" maxlength="50" autocomplete="off" />
+        </div>
+        @if (errorNumero(); as msg) {
+          <p class="field__error">{{ msg }}</p>
+        } @else {
+          <p class="field__hint">{{ ayuda() }}</p>
+        }
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button type="button" class="btn btn--ghost" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
+    <button type="submit" class="btn btn--primary" [disabled]="guardando() || cargandoOpciones() || duplicado()">
+      {{ guardando() ? 'Guardando…' : 'Guardar' }}
+    </button>
+  </mat-dialog-actions>
+</form>

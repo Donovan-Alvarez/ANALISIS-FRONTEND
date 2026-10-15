@@ -1,0 +1,129 @@
+<div class="page">
+  <header class="page__head">
+    <div class="page__heading">
+      <h1 class="page__title">Liquidación de empleado</h1>
+      <p class="page__subtitle">Registro y cálculo de la liquidación al finalizar la relación laboral</p>
+    </div>
+
+    <div class="page__actions">
+      <button
+        type="button"
+        class="btn btn--ghost"
+        [disabled]="!permisos().imprimir || procesando() || !filtrados().length"
+        (click)="imprimir()"
+        [title]="permisos().imprimir ? 'Imprimir la lista' : 'Tu rol no tiene permiso para imprimir'"
+      >
+        <mat-icon>print</mat-icon>
+        <span>Imprimir</span>
+      </button>
+
+      <button
+        type="button"
+        class="btn btn--ghost"
+        [disabled]="!permisos().exportar || procesando() || !filtrados().length"
+        [matMenuTriggerFor]="menuExportar"
+        [title]="permisos().exportar ? 'Exportar la lista' : 'Tu rol no tiene permiso para exportar'"
+      >
+        <mat-icon>download</mat-icon>
+        <span>Exportar</span>
+      </button>
+      <mat-menu #menuExportar="matMenu" xPosition="before">
+        <button mat-menu-item type="button" (click)="exportarPdf()">
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </button>
+        <button mat-menu-item type="button" (click)="exportarExcel()">
+          <mat-icon>table_view</mat-icon>
+          <span>Excel</span>
+        </button>
+      </mat-menu>
+
+      <button
+        type="button"
+        class="btn btn--primary"
+        [disabled]="!permisos().alta || procesando()"
+        (click)="nueva()"
+        [title]="permisos().alta ? '' : 'Tu rol no tiene permiso para liquidar'"
+      >
+        <mat-icon>calculate</mat-icon>
+        <span>Nueva liquidación</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="card">
+    @if (sinAcceso()) {
+      <div class="empty-state">
+        <mat-icon>lock</mat-icon>
+        <p>No tienes acceso a esta opción.</p>
+      </div>
+    } @else {
+      <div class="card__head">
+        <h2 class="card__title">{{ filtrados().length }} liquidación(es)</h2>
+        <div class="field liquidacion__buscador">
+          <div class="field__control">
+            <mat-icon class="field__icon">search</mat-icon>
+            <input
+              type="search"
+              placeholder="Buscar por empleado, puesto o motivo…"
+              [value]="filtro()"
+              (input)="filtro.set($any($event.target).value)"
+              aria-label="Buscar liquidaciones"
+            />
+          </div>
+        </div>
+      </div>
+
+      @if (cargando() && !liquidaciones().length) {
+        <div class="empty-state">
+          <mat-icon>hourglass_empty</mat-icon>
+          <p>Cargando…</p>
+        </div>
+      } @else if (!liquidaciones().length) {
+        <div class="empty-state">
+          <mat-icon>receipt_long</mat-icon>
+          <p>Todavía no hay liquidaciones registradas.</p>
+        </div>
+      } @else if (!filtrados().length) {
+        <div class="empty-state">
+          <mat-icon>search_off</mat-icon>
+          <p>Ninguna liquidación coincide con la búsqueda.</p>
+        </div>
+      } @else {
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                @for (columna of columnas; track columna.campo) {
+                  <th [class.data-table__num]="columna.formato === 'moneda'">{{ columna.encabezado }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of filtrados(); track fila.idLiquidacion) {
+                <tr>
+                  @for (columna of columnas; track columna.campo) {
+                    <td
+                      [class.data-table__num]="columna.formato === 'moneda'"
+                      [class.liquidacion__total]="columna.campo === 'totalNeto'"
+                    >
+                      {{ celda(fila, columna.campo, columna.formato) }}
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </section>
+
+  <p class="liquidacion__nota">
+    <mat-icon>info</mat-icon>
+    <span>
+      Las liquidaciones no se editan ni se eliminan: son el historial permanente del empleado.
+      Los totales los calcula el procedimiento almacenado al registrarlas.
+    </span>
+  </p>
+</div>

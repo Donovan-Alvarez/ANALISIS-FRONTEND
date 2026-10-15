@@ -121,6 +121,34 @@ export const routes: Routes = [
           import('./features/calculo-planilla/calculo-planilla').then(m => m.CalculoPlanilla)
       },
 
+      {
+        path: 'empleados',
+        loadComponent: () =>
+          import('./features/empleados/empleados').then(m => m.Empleados)
+      },
+      {
+        path: 'liquidacion',
+        loadComponent: () =>
+          import('./features/liquidacion/liquidacion').then(m => m.Liquidacion)
+      },
+      {
+        path: 'personas',
+        loadComponent: () =>
+          import('./features/personas/personas').then(m => m.Personas)
+      },
+      {
+        path: 'documentos-persona',
+        loadComponent: () =>
+          import('./features/documentos-personas/documentos-persona').then(m => m.DocumentosPersona)
+      },
+      {
+        path: 'flujo-status-empleado',
+        loadComponent: () => import('./features/flujo-status-empleado/flujo-status-empleado').then(m => m.FlujoStatusEmpleado)
+      },
+      {
+        path: 'boletas-pago',
+        loadComponent: () => import('./features/boletas-pago/boletas-pago').then(m => m.BoletasPago)
+      },
       { path: '', redirectTo: 'empresas', pathMatch: 'full' }
       
 

@@ -1,0 +1,35 @@
+@use 'colors' as *;
+@use 'ui' as *;
+
+.liquidacion__buscador {
+  min-width: 280px;
+}
+
+.data-table__num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+// El total neto es la cifra que importa de cada fila: se destaca para que
+// se encuentre de un vistazo entre las diez columnas.
+.liquidacion__total {
+  font-weight: 700;
+  color: $color-primary-dark;
+}
+
+.liquidacion__nota {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.8rem;
+  color: $color-text-muted;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $color-primary;
+    flex-shrink: 0;
+  }
+}

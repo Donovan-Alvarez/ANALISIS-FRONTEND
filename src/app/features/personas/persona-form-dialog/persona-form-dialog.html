@@ -1,0 +1,114 @@
+<h2 mat-dialog-title>{{ data.titulo }}</h2>
+
+<form [formGroup]="form" (submit)="guardar($event)" novalidate>
+  <mat-dialog-content>
+    <div class="form-grid persona-form__grid">
+      <div class="field">
+        <label class="field__label" for="persona-nombre">Nombre <span class="field__req">*</span></label>
+        <div class="field__control" [class.field__control--invalid]="error(form.controls.nombre, 'El nombre')">
+          <input id="persona-nombre" formControlName="nombre" maxlength="50" placeholder="Ej. Ana María" autocomplete="off" />
+        </div>
+        @if (error(form.controls.nombre, 'El nombre', 'Solo letras, espacios, apóstrofe, punto y guion.'); as msg) {
+          <p class="field__error">{{ msg }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="persona-apellido">Apellido <span class="field__req">*</span></label>
+        <div class="field__control" [class.field__control--invalid]="error(form.controls.apellido, 'El apellido')">
+          <input id="persona-apellido" formControlName="apellido" maxlength="50" placeholder="Ej. López Pérez" autocomplete="off" />
+        </div>
+        @if (error(form.controls.apellido, 'El apellido', 'Solo letras, espacios, apóstrofe, punto y guion.'); as msg) {
+          <p class="field__error">{{ msg }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="persona-fecha">Fecha de nacimiento <span class="field__req">*</span></label>
+        <div class="field__control" [class.field__control--invalid]="error(form.controls.fechaNacimiento, 'La fecha de nacimiento')">
+          <input id="persona-fecha" type="date" formControlName="fechaNacimiento" [max]="fechaMaxima" />
+        </div>
+        @if (error(form.controls.fechaNacimiento, 'La fecha de nacimiento'); as msg) {
+          <p class="field__error">{{ msg }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="persona-genero">Género <span class="field__req">*</span></label>
+        <div class="field__control" [class.field__control--invalid]="error(form.controls.idGenero, 'El género')">
+          <select id="persona-genero" formControlName="idGenero">
+            <option [ngValue]="null" disabled>
+              {{ cargandoOpciones() ? 'Cargando…' : generos().length ? 'Selecciona…' : 'No hay géneros registrados' }}
+            </option>
+            @for (g of generos(); track g.id) {
+              <option [ngValue]="g.id">{{ g.nombre }}</option>
+            }
+          </select>
+          <mat-icon class="field__icon">expand_more</mat-icon>
+        </div>
+        @if (error(form.controls.idGenero, 'El género'); as msg) {
+          <p class="field__error">{{ msg }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="persona-estado-civil">Estado civil <span class="field__req">*</span></label>
+        <div class="field__control" [class.field__control--invalid]="error(form.controls.idEstadoCivil, 'El estado civil')">
+          <select id="persona-estado-civil" formControlName="idEstadoCivil">
+            <option [ngValue]="null" disabled>
+              {{ cargandoOpciones() ? 'Cargando…' : estadosCiviles().length ? 'Selecciona…' : 'No hay estados civiles registrados' }}
+            </option>
+            @for (e of estadosCiviles(); track e.id) {
+              <option [ngValue]="e.id">{{ e.nombre }}</option>
+            }
+          </select>
+          <mat-icon class="field__icon">expand_more</mat-icon>
+        </div>
+        @if (error(form.controls.idEstadoCivil, 'El estado civil'); as msg) {
+          <p class="field__error">{{ msg }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="persona-telefono">Teléfono <span class="field__req">*</span></label>
+        <div class="field__control" [class.field__control--invalid]="error(form.controls.telefono, 'El teléfono')">
+          <input id="persona-telefono" formControlName="telefono" maxlength="50" inputmode="tel" placeholder="Ej. 5318-0319" autocomplete="off" />
+        </div>
+        @if (error(form.controls.telefono, 'El teléfono'); as msg) {
+          <p class="field__error">{{ msg }}</p>
+        }
+      </div>
+
+      <div class="field form-grid__full">
+        <label class="field__label" for="persona-correo">Correo electrónico</label>
+        <div class="field__control" [class.field__control--invalid]="error(form.controls.correoElectronico, 'El correo')">
+          <input id="persona-correo" type="email" formControlName="correoElectronico" maxlength="50" placeholder="nombre@empresa.com" autocomplete="off" />
+        </div>
+        @if (error(form.controls.correoElectronico, 'El correo', 'El correo no tiene un formato válido (ej. nombre@empresa.com).'); as msg) {
+          <p class="field__error">{{ msg }}</p>
+        } @else {
+          <p class="field__hint">Opcional.</p>
+        }
+      </div>
+
+      <div class="field form-grid__full">
+        <label class="field__label" for="persona-direccion">Dirección <span class="field__req">*</span></label>
+        <div class="field__control" [class.field__control--invalid]="error(form.controls.direccion, 'La dirección')">
+          <input id="persona-direccion" formControlName="direccion" maxlength="100" placeholder="Ej. Zona 1, Guatemala, Guatemala" autocomplete="off" />
+        </div>
+        @if (error(form.controls.direccion, 'La dirección'); as msg) {
+          <p class="field__error">{{ msg }}</p>
+        } @else {
+          <p class="field__hint persona-form__contador">{{ form.controls.direccion.value.length }}/100</p>
+        }
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button type="button" class="btn btn--ghost" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
+    <button type="submit" class="btn btn--primary" [disabled]="guardando() || cargandoOpciones()">
+      {{ guardando() ? 'Guardando…' : 'Guardar' }}
+    </button>
+  </mat-dialog-actions>
+</form>
