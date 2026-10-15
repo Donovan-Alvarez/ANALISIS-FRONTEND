@@ -1,13 +1,7 @@
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 
-/**
- * Validaciones de Personas y Documentos de Persona. Son el ESPEJO de las del backend
- * (PersonaDTO, PersonaService, NumeroDocumentoValidador): aquí solo dan respuesta
- * inmediata al usuario; la que manda siempre es la del backend. Si se cambia una regla,
- * se cambia en los dos lados.
- */
 
-/** 14 = edad mínima laboral en Guatemala; el seed oficial trae personas de 16-17 años. Igual que PersonaService. */
+
 export const EDAD_MINIMA = 14;
 export const EDAD_MAXIMA = 100;
 
@@ -54,11 +48,11 @@ export function edadEn(fechaNacimiento: string, hoy: string): number | null {
   return edad;
 }
 
-/** Fecha más reciente que todavía cumple la edad mínima: hoy menos EDAD_MINIMA años. Sirve de `max` del <input type="date">. */
+/** Fecha más reciente que todavía cumple la edad mínima: hoy menos 18 años. Sirve de `max` del <input type="date">. */
 export function fechaMaximaNacimiento(hoy: string = hoyGuatemala()): string {
   const h = partesDeFecha(hoy);
   if (!h) return '';
-  // 29 de febrero -> 28 si el año de hace EDAD_MINIMA años no es bisiesto.
+  // 29 de febrero -> 28 si el año de hace 18 años no es bisiesto.
   const anio = h.anio - EDAD_MINIMA;
   const esBisiesto = (anio % 4 === 0 && anio % 100 !== 0) || anio % 400 === 0;
   const dia = h.mes === 2 && h.dia === 29 && !esBisiesto ? 28 : h.dia;
