@@ -4,7 +4,6 @@
   <mat-dialog-content>
     <div class="inasistencia-form__campos">
       <div class="field">
-        <label class="field__label" for="inas-empleado">Empleado <span class="field__req">*</span></label>
         <div class="field__control inasistencia-form__buscar">
           <mat-icon class="field__icon">search</mat-icon>
           <input
@@ -16,15 +15,14 @@
             aria-label="Buscar empleado"
           />
         </div>
-        <div class="field__control">
-          <select id="inas-empleado" [formControl]="idEmpleado">
-            <option [ngValue]="null" disabled>{{ textoVacioEmpleado() }}</option>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Empleado</mat-label>
+          <mat-select id="inas-empleado" [formControl]="idEmpleado" [placeholder]="textoVacioEmpleado()">
             @for (e of empleadosFiltrados(); track e.idEmpleado) {
-              <option [ngValue]="e.idEmpleado">{{ e.nombreCompleto }} — {{ e.nombrePuesto }}</option>
+              <mat-option [value]="e.idEmpleado">{{ e.nombreCompleto }} — {{ e.nombrePuesto }}</mat-option>
             }
-          </select>
-          <mat-icon class="field__icon">expand_more</mat-icon>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="inasistencia-form__fechas">

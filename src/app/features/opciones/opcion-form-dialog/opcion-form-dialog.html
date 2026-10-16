@@ -4,15 +4,14 @@
   <mat-dialog-content style="min-width: 340px;">
     <div class="form-grid">
       <div class="field form-grid__full">
-        <label class="field__label" for="idMenu">Menú</label>
-        <div class="field__control">
-          <select id="idMenu" formControlName="idMenu">
-            <option [ngValue]="null" disabled>Selecciona un menú…</option>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Menú</mat-label>
+          <mat-select id="idMenu" formControlName="idMenu" placeholder="Selecciona un menú…">
             @for (menu of menus; track menu.idMenu) {
-              <option [ngValue]="menu.idMenu">{{ menu.nombre }}</option>
+              <mat-option [value]="menu.idMenu">{{ menu.nombre }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="field form-grid__full">
@@ -23,15 +22,14 @@
       </div>
 
       <div class="field">
-        <label class="field__label" for="pagina">Página (ruta)</label>
-        <div class="field__control">
-          <select id="pagina" formControlName="pagina">
-            <option value="" disabled>Selecciona una página…</option>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Página (ruta)</mat-label>
+          <mat-select id="pagina" formControlName="pagina" placeholder="Selecciona una página…">
             @for (pagina of paginas; track pagina) {
-              <option [value]="pagina">{{ pagina }}</option>
+              <mat-option [value]="pagina">{{ pagina }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="field">

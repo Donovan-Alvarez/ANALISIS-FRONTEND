@@ -6,9 +6,11 @@ import { BoletasPagoService } from '../../core/services/boletas-pago.service';
 import { BoletaPago, PeriodoPago, EmpleadoPago } from '../../core/models/boleta-pago.model';
 import { PermisosService } from '../../core/services/permisos.service';
 import { ExportacionService, ColumnaExport } from '../../core/services/exportacion.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'app-boletas-pago',
-  imports: [CommonModule, FormsModule],
+  imports: [MatFormFieldModule, MatSelectModule, CommonModule, FormsModule],
   templateUrl: './boletas-pago.html',
   styleUrl: './boletas-pago.scss',
 })

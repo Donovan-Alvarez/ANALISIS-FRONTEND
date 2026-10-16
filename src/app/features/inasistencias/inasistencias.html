@@ -59,14 +59,14 @@
         <h2 class="card__title">{{ filtrados().length }} registro(s)</h2>
         <div class="inasistencias__filtros">
           <div class="field inasistencias__estado">
-            <div class="field__control">
-              <select [value]="estado()" (change)="cambiarEstado($any($event.target).value)" aria-label="Filtrar por estado">
-                <option value="todas">Todas</option>
-                <option value="pendientes">Pendientes</option>
-                <option value="procesadas">Procesadas</option>
-              </select>
-              <mat-icon class="field__icon">expand_more</mat-icon>
-            </div>
+            <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+              <mat-label>Estado</mat-label>
+              <mat-select [value]="estado()" (selectionChange)="cambiarEstado($event.value)" aria-label="Filtrar por estado">
+                <mat-option value="todas">Todas</mat-option>
+                <mat-option value="pendientes">Pendientes</mat-option>
+                <mat-option value="procesadas">Procesadas</mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
           <div class="field inasistencias__buscador">
             <div class="field__control">

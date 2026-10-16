@@ -2,6 +2,8 @@ import { Component, DestroyRef, computed, effect, inject, signal, untracked } fr
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { Subscription, finalize } from 'rxjs';
 import { PeriodoReporte, ReportePlanillaResultado } from '../../core/models/reporte-planilla.model';
 import { ColumnaExport, ExportacionService, textoCelda } from '../../core/services/exportacion.service';
@@ -37,7 +39,7 @@ const clave = (anio: number, mes: number) => `${anio}-${mes}`;
 /** Reporte de solo lectura: no tiene Nuevo/Editar/Eliminar; solo Consultar, Imprimir y Exportar. */
 @Component({
   selector: 'app-reporte-planilla',
-  imports: [MatIconModule, MatMenuModule],
+  imports: [MatFormFieldModule, MatSelectModule, MatIconModule, MatMenuModule],
   templateUrl: './reporte-planilla.html',
   styleUrl: './reporte-planilla.scss',
 })

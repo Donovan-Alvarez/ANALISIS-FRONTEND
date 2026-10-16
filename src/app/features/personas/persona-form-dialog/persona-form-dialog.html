@@ -34,36 +34,28 @@
       </div>
 
       <div class="field">
-        <label class="field__label" for="persona-genero">Género <span class="field__req">*</span></label>
-        <div class="field__control" [class.field__control--invalid]="error(form.controls.idGenero, 'El género')">
-          <select id="persona-genero" formControlName="idGenero">
-            <option [ngValue]="null" disabled>
-              {{ cargandoOpciones() ? 'Cargando…' : generos().length ? 'Selecciona…' : 'No hay géneros registrados' }}
-            </option>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Género</mat-label>
+          <mat-select id="persona-genero" formControlName="idGenero" [placeholder]="cargandoOpciones() ? 'Cargando…' : generos().length ? 'Selecciona…' : 'No hay géneros registrados'">
             @for (g of generos(); track g.id) {
-              <option [ngValue]="g.id">{{ g.nombre }}</option>
+              <mat-option [value]="g.id">{{ g.nombre }}</mat-option>
             }
-          </select>
-          <mat-icon class="field__icon">expand_more</mat-icon>
-        </div>
+          </mat-select>
+        </mat-form-field>
         @if (error(form.controls.idGenero, 'El género'); as msg) {
           <p class="field__error">{{ msg }}</p>
         }
       </div>
 
       <div class="field">
-        <label class="field__label" for="persona-estado-civil">Estado civil <span class="field__req">*</span></label>
-        <div class="field__control" [class.field__control--invalid]="error(form.controls.idEstadoCivil, 'El estado civil')">
-          <select id="persona-estado-civil" formControlName="idEstadoCivil">
-            <option [ngValue]="null" disabled>
-              {{ cargandoOpciones() ? 'Cargando…' : estadosCiviles().length ? 'Selecciona…' : 'No hay estados civiles registrados' }}
-            </option>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Estado civil</mat-label>
+          <mat-select id="persona-estado-civil" formControlName="idEstadoCivil" [placeholder]="cargandoOpciones() ? 'Cargando…' : estadosCiviles().length ? 'Selecciona…' : 'No hay estados civiles registrados'">
             @for (e of estadosCiviles(); track e.id) {
-              <option [ngValue]="e.id">{{ e.nombre }}</option>
+              <mat-option [value]="e.id">{{ e.nombre }}</mat-option>
             }
-          </select>
-          <mat-icon class="field__icon">expand_more</mat-icon>
-        </div>
+          </mat-select>
+        </mat-form-field>
         @if (error(form.controls.idEstadoCivil, 'El estado civil'); as msg) {
           <p class="field__error">{{ msg }}</p>
         }

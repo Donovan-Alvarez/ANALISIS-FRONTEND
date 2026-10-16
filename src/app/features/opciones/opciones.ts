@@ -67,6 +67,7 @@ export class Opciones implements OnInit {
     if (!this.permisos().alta) return;
     const ref = this.dialog.open(OpcionFormDialog, {
       data: { opcion: null, menus: this.menus() },
+      width: '540px',
     });
     ref.afterClosed().subscribe((resultado?: Opcion) => {
       if (!resultado) return;
@@ -81,6 +82,7 @@ export class Opciones implements OnInit {
     if (!this.permisos().cambio) return;
     const ref = this.dialog.open(OpcionFormDialog, {
       data: { opcion, menus: this.menus() },
+      width: '540px',
     });
     ref.afterClosed().subscribe((resultado?: Opcion) => {
       if (!resultado || !opcion.idOpcion) return;

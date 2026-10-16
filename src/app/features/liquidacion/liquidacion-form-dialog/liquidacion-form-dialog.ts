@@ -4,6 +4,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { finalize } from 'rxjs';
 import { EmpleadoLiquidable } from '../../../core/models/liquidacion.model';
 import { LiquidacionService } from '../../../core/services/liquidacion.service';
@@ -23,7 +25,7 @@ import { LiquidacionService } from '../../../core/services/liquidacion.service';
  */
 @Component({
   selector: 'app-liquidacion-form-dialog',
-  imports: [ReactiveFormsModule, MatDialogModule, MatIconModule, DecimalPipe],
+  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule, DecimalPipe],
   templateUrl: './liquidacion-form-dialog.html',
   styleUrl: './liquidacion-form-dialog.scss',
 })

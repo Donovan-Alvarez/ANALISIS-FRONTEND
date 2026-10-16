@@ -52,25 +52,16 @@
       </div>
       <div class="card__body reporte__cuerpo">
         <div class="field reporte__periodo">
-          <label class="field__label" for="reporte-periodo">Período de planilla</label>
-          <div class="field__control">
-            <select
-              id="reporte-periodo"
-              [value]="claveSeleccionada()"
-              (change)="seleccionar($any($event.target).value)"
-              [disabled]="cargandoPeriodos() || !periodos().length"
-            >
-              <option value="" disabled>
-                {{ cargandoPeriodos() ? 'Cargando…' : periodos().length ? 'Selecciona un período…' : 'No hay planillas calculadas' }}
-              </option>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Período de planilla</mat-label>
+            <mat-select id="reporte-periodo" [value]="claveSeleccionada()" (selectionChange)="seleccionar($event.value)" [disabled]="cargandoPeriodos() || !periodos().length" [placeholder]="cargandoPeriodos() ? 'Cargando…' : periodos().length ? 'Selecciona un período…' : 'No hay planillas calculadas'">
               @for (p of periodos(); track p.clave) {
-                <option [value]="p.clave" [selected]="p.clave === claveSeleccionada()">
+                <mat-option [value]="p.clave">
                   {{ p.etiqueta }} · {{ p.empleados }} empleado(s)
-                </option>
+                </mat-option>
               }
-            </select>
-            <mat-icon class="field__icon">expand_more</mat-icon>
-          </div>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         @if (!cargandoPeriodos() && !periodos().length) {

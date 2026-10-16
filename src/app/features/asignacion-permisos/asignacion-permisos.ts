@@ -1,5 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { forkJoin } from 'rxjs';
 import { Modulo, Role } from '../../core/models/catalogo.model';
 import {
@@ -20,7 +22,7 @@ const PAGINA = 'asignacion-permisos';
 
 @Component({
   selector: 'app-asignacion-permisos',
-  imports: [MatIconModule],
+  imports: [MatFormFieldModule, MatSelectModule, MatIconModule],
   templateUrl: './asignacion-permisos.html',
   styleUrl: './asignacion-permisos.scss',
 })

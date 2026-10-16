@@ -62,14 +62,14 @@
         </h2>
         <div class="cuentas__filtros">
           <div class="field cuentas__estado">
-            <div class="field__control">
-              <select [value]="estado()" (change)="cambiarEstado($any($event.target).value)" aria-label="Filtrar por estado">
-                <option value="todas">Todas</option>
-                <option value="activas">Solo activas</option>
-                <option value="inactivas">Solo inactivas</option>
-              </select>
-              <mat-icon class="field__icon">expand_more</mat-icon>
-            </div>
+            <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+              <mat-label>Estado</mat-label>
+              <mat-select [value]="estado()" (selectionChange)="cambiarEstado($event.value)" aria-label="Filtrar por estado">
+                <mat-option value="todas">Todas</mat-option>
+                <mat-option value="activas">Solo activas</mat-option>
+                <mat-option value="inactivas">Solo inactivas</mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
           <div class="field cuentas__buscador">
             <div class="field__control">

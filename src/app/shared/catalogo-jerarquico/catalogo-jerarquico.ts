@@ -147,7 +147,7 @@ export class CatalogoJerarquico {
       guardar,
     };
     this.dialog
-      .open<CatalogoJerarquicoFormDialog, CatalogoJerarquicoFormData, boolean>(CatalogoJerarquicoFormDialog, { data })
+      .open<CatalogoJerarquicoFormDialog, CatalogoJerarquicoFormData, boolean>(CatalogoJerarquicoFormDialog, { data, width: '480px' })
       .afterClosed()
       .pipe(filter((guardado) => guardado === true))
       .subscribe(() => {

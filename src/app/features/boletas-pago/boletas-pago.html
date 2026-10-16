@@ -5,26 +5,27 @@
     <p role="alert">No tiene permiso para consultar boletas.</p>
   } @else {
     <div class="filtros">
-      <label
-        >Período<select [(ngModel)]="periodo" (ngModelChange)="cambiarPeriodo()">
-          <option value="">Seleccione un período</option>
+      <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+        <mat-label>Período</mat-label>
+        <mat-select [(ngModel)]="periodo" (ngModelChange)="cambiarPeriodo()" placeholder="Seleccione un período">
           @for (p of periodos(); track p.anio + '/' + p.mes) {
-            <option [value]="p.anio + '/' + p.mes">{{ p.anio }} / {{ p.mes }}</option>
+            <mat-option [value]="p.anio + '/' + p.mes">{{ p.anio }} / {{ p.mes }}</mat-option>
           }
-        </select></label
-      >
-      <label
-        >Empleado<select
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+        <mat-label>Empleado</mat-label>
+        <mat-select
           [(ngModel)]="empleado"
           (ngModelChange)="consultar()"
           [disabled]="!periodo || cargando()"
+          placeholder="Seleccione un empleado"
         >
-          <option [ngValue]="null">Seleccione un empleado</option>
           @for (e of empleados(); track e.idEmpleado) {
-            <option [ngValue]="e.idEmpleado">{{ e.nombre }}</option>
+            <mat-option [value]="e.idEmpleado">{{ e.nombre }}</mat-option>
           }
-        </select></label
-      >
+        </mat-select>
+      </mat-form-field>
     </div>
     @if (!periodos().length) {
       <p>No hay períodos procesados disponibles.</p>

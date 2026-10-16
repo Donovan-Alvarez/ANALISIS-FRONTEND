@@ -1,6 +1,8 @@
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { filter, finalize, switchMap } from 'rxjs';
 import {
   PeriodoPlanilla,
@@ -36,7 +38,7 @@ const aClave = (anio: number, mes: number) => `${anio}-${mes}`;
 
 @Component({
   selector: 'app-calculo-planilla',
-  imports: [MatIconModule, MatMenuModule],
+  imports: [MatFormFieldModule, MatSelectModule, MatIconModule, MatMenuModule],
   templateUrl: './calculo-planilla.html',
   styleUrl: './calculo-planilla.scss',
 })

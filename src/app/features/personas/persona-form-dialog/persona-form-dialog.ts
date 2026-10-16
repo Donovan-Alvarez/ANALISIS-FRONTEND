@@ -2,6 +2,8 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { Observable, catchError, finalize, forkJoin, map, of } from 'rxjs';
 import { OpcionCombo } from '../../../core/models/catalogo-jerarquico.model';
 import { Persona, PersonaPayload } from '../../../core/models/persona.model';
@@ -37,7 +39,7 @@ export interface PersonaFormData {
  */
 @Component({
   selector: 'app-persona-form-dialog',
-  imports: [ReactiveFormsModule, MatDialogModule, MatIconModule],
+  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule],
   templateUrl: './persona-form-dialog.html',
   styleUrl: './persona-form-dialog.scss',
 })

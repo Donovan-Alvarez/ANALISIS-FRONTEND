@@ -4,36 +4,28 @@
   <mat-dialog-content>
     <div class="documento-form__campos">
       <div class="field">
-        <label class="field__label" for="documento-persona">Persona <span class="field__req">*</span></label>
-        <div class="field__control">
-          <select id="documento-persona" [formControl]="idPersona">
-            <option [ngValue]="null" disabled>
-              {{ cargandoOpciones() ? 'Cargando…' : personas().length ? 'Selecciona…' : 'No hay personas registradas' }}
-            </option>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Persona</mat-label>
+          <mat-select id="documento-persona" [formControl]="idPersona" [placeholder]="cargandoOpciones() ? 'Cargando…' : personas().length ? 'Selecciona…' : 'No hay personas registradas'">
             @for (p of personas(); track p.id) {
-              <option [ngValue]="p.id">{{ p.nombre }}</option>
+              <mat-option [value]="p.id">{{ p.nombre }}</mat-option>
             }
-          </select>
-          <mat-icon class="field__icon">expand_more</mat-icon>
-        </div>
+          </mat-select>
+        </mat-form-field>
         @if (esEdicion) {
           <p class="field__hint">La persona y el tipo no se pueden cambiar. Para moverlos, elimina el documento y crea otro.</p>
         }
       </div>
 
       <div class="field">
-        <label class="field__label" for="documento-tipo">Tipo de documento <span class="field__req">*</span></label>
-        <div class="field__control" [class.field__control--invalid]="duplicado()">
-          <select id="documento-tipo" [formControl]="idTipoDocumento">
-            <option [ngValue]="null" disabled>
-              {{ cargandoOpciones() ? 'Cargando…' : tipos().length ? 'Selecciona…' : 'No hay tipos de documento registrados' }}
-            </option>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Tipo de documento</mat-label>
+          <mat-select id="documento-tipo" [formControl]="idTipoDocumento" [placeholder]="cargandoOpciones() ? 'Cargando…' : tipos().length ? 'Selecciona…' : 'No hay tipos de documento registrados'">
             @for (t of tipos(); track t.id) {
-              <option [ngValue]="t.id">{{ t.nombre }}</option>
+              <mat-option [value]="t.id">{{ t.nombre }}</mat-option>
             }
-          </select>
-          <mat-icon class="field__icon">expand_more</mat-icon>
-        </div>
+          </mat-select>
+        </mat-form-field>
         @if (duplicado()) {
           <p class="field__error">Esta persona ya tiene registrado un documento de este tipo.</p>
         }

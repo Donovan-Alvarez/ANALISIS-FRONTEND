@@ -4,7 +4,6 @@
   <mat-dialog-content>
     <div class="cuenta-form__campos">
       <div class="field">
-        <label class="field__label" for="cuenta-empleado">Empleado <span class="field__req">*</span></label>
         <div class="field__control cuenta-form__buscar">
           <mat-icon class="field__icon">search</mat-icon>
           <input
@@ -16,28 +15,25 @@
             aria-label="Buscar empleado"
           />
         </div>
-        <div class="field__control">
-          <select id="cuenta-empleado" [formControl]="idEmpleado">
-            <option [ngValue]="null" disabled>{{ textoVacioEmpleado() }}</option>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Empleado</mat-label>
+          <mat-select id="cuenta-empleado" [formControl]="idEmpleado" [placeholder]="textoVacioEmpleado()">
             @for (e of empleadosFiltrados(); track e.idEmpleado) {
-              <option [ngValue]="e.idEmpleado">{{ e.nombreCompleto }} — {{ e.nombrePuesto }}</option>
+              <mat-option [value]="e.idEmpleado">{{ e.nombreCompleto }} — {{ e.nombrePuesto }}</mat-option>
             }
-          </select>
-          <mat-icon class="field__icon">expand_more</mat-icon>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="field">
-        <label class="field__label" for="cuenta-banco">Banco <span class="field__req">*</span></label>
-        <div class="field__control">
-          <select id="cuenta-banco" [formControl]="idBanco">
-            <option [ngValue]="null" disabled>{{ textoVacioBanco() }}</option>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Banco</mat-label>
+          <mat-select id="cuenta-banco" [formControl]="idBanco" [placeholder]="textoVacioBanco()">
             @for (b of bancos(); track b.id) {
-              <option [ngValue]="b.id">{{ b.nombre }}</option>
+              <mat-option [value]="b.id">{{ b.nombre }}</mat-option>
             }
-          </select>
-          <mat-icon class="field__icon">expand_more</mat-icon>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="field">

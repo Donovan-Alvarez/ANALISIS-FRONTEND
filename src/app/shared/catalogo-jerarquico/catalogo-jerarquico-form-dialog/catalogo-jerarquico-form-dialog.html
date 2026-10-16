@@ -5,18 +5,14 @@
     <div class="catalogo-form__campos">
       @for (combo of data.combos; track combo.clave) {
         <div class="field">
-          <label class="field__label" [for]="'combo-' + combo.clave">
-            {{ combo.etiqueta }} <span class="field__req">*</span>
-          </label>
-          <div class="field__control">
-            <select [id]="'combo-' + combo.clave" [formControl]="combos[combo.clave]">
-              <option [ngValue]="null" disabled>{{ textoVacio(combo) }}</option>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>{{ combo.etiqueta }}</mat-label>
+            <mat-select [id]="'combo-' + combo.clave" [formControl]="combos[combo.clave]" [placeholder]="textoVacio(combo)">
               @for (opcion of opciones()[combo.clave] ?? []; track opcion.id) {
-                <option [ngValue]="opcion.id">{{ opcion.nombre }}</option>
+                <mat-option [value]="opcion.id">{{ opcion.nombre }}</mat-option>
               }
-            </select>
-            <mat-icon class="field__icon">expand_more</mat-icon>
-          </div>
+            </mat-select>
+          </mat-form-field>
           @if (sinOpciones(combo)) {
             <p class="field__error">{{ combo.sinOpciones }}</p>
           }

@@ -2,6 +2,8 @@ import { Component, computed, effect, inject, signal, untracked } from '@angular
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { filter, finalize, switchMap } from 'rxjs';
 import { CuentaBancaria, CuentaBancariaFila, CuentaBancariaPayload } from '../../core/models/cuenta-bancaria.model';
 import { CuentaBancariaService } from '../../core/services/cuenta-bancaria.service';
@@ -34,7 +36,7 @@ function normalizar(texto: string): string {
 
 @Component({
   selector: 'app-cuentas-bancarias',
-  imports: [MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatFormFieldModule, MatSelectModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './cuentas-bancarias.html',
   styleUrl: './cuentas-bancarias.scss',
 })
@@ -126,7 +128,7 @@ export class CuentasBancarias {
   ): void {
     const data: CuentaBancariaFormData = { titulo, cuenta, guardar };
     this.dialog
-      .open<CuentaBancariaFormDialog, CuentaBancariaFormData, boolean>(CuentaBancariaFormDialog, { data })
+      .open<CuentaBancariaFormDialog, CuentaBancariaFormData, boolean>(CuentaBancariaFormDialog, { data, width: '560px' })
       .afterClosed()
       .pipe(filter((guardado) => guardado === true))
       .subscribe(() => {

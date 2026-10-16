@@ -3,6 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { Observable, catchError, finalize, forkJoin, map, of } from 'rxjs';
 import { OpcionCombo } from '../../../core/models/catalogo-jerarquico.model';
 import { DocumentoPersona, DocumentoPersonaPayload } from '../../../core/models/documento-persona.model';
@@ -33,7 +35,7 @@ export interface DocumentoPersonaFormData {
  */
 @Component({
   selector: 'app-documento-persona-form-dialog',
-  imports: [ReactiveFormsModule, MatDialogModule, MatIconModule],
+  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule],
   templateUrl: './documento-persona-form-dialog.html',
   styleUrl: './documento-persona-form-dialog.scss',
 })

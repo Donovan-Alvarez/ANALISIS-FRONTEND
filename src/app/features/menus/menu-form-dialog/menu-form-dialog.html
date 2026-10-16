@@ -4,15 +4,14 @@
   <mat-dialog-content style="min-width: 340px;">
     <div class="form-grid">
       <div class="field form-grid__full">
-        <label class="field__label" for="idModulo">Módulo</label>
-        <div class="field__control">
-          <select id="idModulo" formControlName="idModulo">
-            <option [ngValue]="null" disabled>Selecciona un módulo…</option>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Módulo</mat-label>
+          <mat-select id="idModulo" formControlName="idModulo" placeholder="Selecciona un módulo…">
             @for (modulo of modulos; track modulo.idModulo) {
-              <option [ngValue]="modulo.idModulo">{{ modulo.nombre }}</option>
+              <mat-option [value]="modulo.idModulo">{{ modulo.nombre }}</mat-option>
             }
-          </select>
-        </div>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="field form-grid__full">

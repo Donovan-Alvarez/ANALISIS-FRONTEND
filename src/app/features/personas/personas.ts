@@ -121,7 +121,11 @@ export class Personas {
 
   private abrirFormulario(data: PersonaFormData, mensajeExito: string): void {
     this.dialog
-      .open<PersonaFormDialog, PersonaFormData, boolean>(PersonaFormDialog, { data })
+      .open<PersonaFormDialog, PersonaFormData, boolean>(PersonaFormDialog, {
+        data,
+        width: '640px',
+        panelClass: 'dialog-ancho-amplio',
+      })
       .afterClosed()
       .pipe(filter((guardado) => guardado === true))
       .subscribe(() => {

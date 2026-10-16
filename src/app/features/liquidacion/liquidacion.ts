@@ -92,7 +92,10 @@ export class Liquidacion {
   protected nueva(): void {
     if (!this.permisos().alta) return;
     this.dialog
-      .open<LiquidacionFormDialog, undefined, boolean>(LiquidacionFormDialog)
+      .open<LiquidacionFormDialog, undefined, boolean>(LiquidacionFormDialog, {
+        width: '820px',
+        panelClass: 'dialog-ancho-amplio',
+      })
       .afterClosed()
       .pipe(filter((guardada) => guardada === true))
       .subscribe(() => {

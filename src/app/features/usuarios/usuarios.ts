@@ -2,6 +2,8 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { forkJoin } from 'rxjs';
 import {
   Empresa,
@@ -27,7 +29,7 @@ const PAGINA = 'usuarios';
 
 @Component({
   selector: 'app-usuarios',
-  imports: [ReactiveFormsModule, MatIconModule],
+  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './usuarios.html',
   styleUrl: './usuarios.scss',
 })

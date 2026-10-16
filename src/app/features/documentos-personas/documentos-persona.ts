@@ -123,7 +123,7 @@ export class DocumentosPersona {
 
   private abrirFormulario(data: DocumentoPersonaFormData, mensajeExito: string): void {
     this.dialog
-      .open<DocumentoPersonaFormDialog, DocumentoPersonaFormData, boolean>(DocumentoPersonaFormDialog, { data })
+      .open<DocumentoPersonaFormDialog, DocumentoPersonaFormData, boolean>(DocumentoPersonaFormDialog, { data, width: '520px' })
       .afterClosed()
       .pipe(filter((guardado) => guardado === true))
       .subscribe(() => {

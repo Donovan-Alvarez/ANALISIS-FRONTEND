@@ -34,7 +34,7 @@ export class Modulos implements OnInit {
 
   protected nuevoModulo(): void {
     if (!this.permisos().alta) return;
-    const ref = this.dialog.open(ModuloFormDialog, { data: null });
+    const ref = this.dialog.open(ModuloFormDialog, { data: null, width: '540px' });
     ref.afterClosed().subscribe((resultado?: Modulo) => {
       if (!resultado) return;
       this.moduloService.create(resultado).subscribe(() => {
@@ -46,7 +46,7 @@ export class Modulos implements OnInit {
 
   protected editarModulo(modulo: Modulo): void {
     if (!this.permisos().cambio) return;
-    const ref = this.dialog.open(ModuloFormDialog, { data: modulo });
+    const ref = this.dialog.open(ModuloFormDialog, { data: modulo, width: '540px' });
     ref.afterClosed().subscribe((resultado?: Modulo) => {
       if (!resultado || !modulo.idModulo) return;
       this.moduloService.update(modulo.idModulo, resultado).subscribe(() => {

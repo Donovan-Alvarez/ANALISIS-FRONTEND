@@ -8,93 +8,73 @@
 
       <div class="form-grid">
         <div class="field">
-          <label class="field__label" for="idPersona">Persona <span class="field__req">*</span></label>
-          <div class="field__control">
-            <select id="idPersona" formControlName="idPersona">
-              <option [ngValue]="null" disabled>Selecciona…</option>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Persona</mat-label>
+            <mat-select id="idPersona" formControlName="idPersona" placeholder="Selecciona…">
               @for (p of personas(); track p.idPersona) {
-                <option [ngValue]="p.idPersona">{{ p.nombreCompleto }}</option>
+                <mat-option [value]="p.idPersona">{{ p.nombreCompleto }}</mat-option>
               }
-            </select>
-            <mat-icon class="field__icon">expand_more</mat-icon>
-          </div>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         <div class="field">
-          <label class="field__label" for="idEmpresa">Empresa <span class="field__req">*</span></label>
-          <div class="field__control">
-            <select id="idEmpresa" formControlName="idEmpresa">
-              <option [ngValue]="null" disabled>Selecciona…</option>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Empresa</mat-label>
+            <mat-select id="idEmpresa" formControlName="idEmpresa" placeholder="Selecciona…">
               @for (e of empresas(); track e.id) {
-                <option [ngValue]="e.id">{{ e.nombre }}</option>
+                <mat-option [value]="e.id">{{ e.nombre }}</mat-option>
               }
-            </select>
-            <mat-icon class="field__icon">expand_more</mat-icon>
-          </div>
+            </mat-select>
+          </mat-form-field>
           <p class="field__hint">Filtra sucursales y departamentos. No se guarda.</p>
         </div>
 
         <div class="field">
-          <label class="field__label" for="idSucursal">Sucursal <span class="field__req">*</span></label>
-          <div class="field__control">
-            <select id="idSucursal" formControlName="idSucursal">
-              <option [ngValue]="null" disabled>
-                {{ sucursales().length ? 'Selecciona…' : 'Elige una empresa primero' }}
-              </option>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Sucursal</mat-label>
+            <mat-select id="idSucursal" formControlName="idSucursal" [placeholder]="sucursales().length ? 'Selecciona…' : 'Elige una empresa primero'">
               @for (s of sucursales(); track s.id) {
-                <option [ngValue]="s.id">{{ s.nombre }}</option>
+                <mat-option [value]="s.id">{{ s.nombre }}</mat-option>
               }
-            </select>
-            <mat-icon class="field__icon">expand_more</mat-icon>
-          </div>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         <div class="field">
-          <label class="field__label" for="idDepartamento">Departamento <span class="field__req">*</span></label>
-          <div class="field__control">
-            <select id="idDepartamento" formControlName="idDepartamento">
-              <option [ngValue]="null" disabled>
-                {{ departamentos().length ? 'Selecciona…' : 'Elige una empresa primero' }}
-              </option>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Departamento</mat-label>
+            <mat-select id="idDepartamento" formControlName="idDepartamento" [placeholder]="departamentos().length ? 'Selecciona…' : 'Elige una empresa primero'">
               @for (d of departamentos(); track d.id) {
-                <option [ngValue]="d.id">{{ d.nombre }}</option>
+                <mat-option [value]="d.id">{{ d.nombre }}</mat-option>
               }
-            </select>
-            <mat-icon class="field__icon">expand_more</mat-icon>
-          </div>
+            </mat-select>
+          </mat-form-field>
           <p class="field__hint">Filtra los puestos. No se guarda.</p>
         </div>
 
         <div class="field">
-          <label class="field__label" for="idPuesto">Puesto <span class="field__req">*</span></label>
-          <div class="field__control">
-            <select id="idPuesto" formControlName="idPuesto">
-              <option [ngValue]="null" disabled>
-                {{ puestos().length ? 'Selecciona…' : 'Elige un departamento primero' }}
-              </option>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Puesto</mat-label>
+            <mat-select id="idPuesto" formControlName="idPuesto" [placeholder]="puestos().length ? 'Selecciona…' : 'Elige un departamento primero'">
               @for (p of puestos(); track p.id) {
-                <option [ngValue]="p.id">{{ p.nombre }}</option>
+                <mat-option [value]="p.id">{{ p.nombre }}</mat-option>
               }
-            </select>
-            <mat-icon class="field__icon">expand_more</mat-icon>
-          </div>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         <div class="field">
-          <label class="field__label" for="idStatusEmpleado">
-            Status del empleado <span class="field__req">*</span>
-          </label>
-          <div class="field__control">
-            <select id="idStatusEmpleado" formControlName="idStatusEmpleado">
-              <option [ngValue]="null" disabled>Selecciona…</option>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Status del empleado</mat-label>
+            <mat-select id="idStatusEmpleado" formControlName="idStatusEmpleado" placeholder="Selecciona…">
               @for (s of statusDisponibles(); track s.idStatusEmpleado) {
-                <option [ngValue]="s.idStatusEmpleado">
+                <mat-option [value]="s.idStatusEmpleado">
                   {{ s.nombre }}@if (s.nombreEvento !== 'Sin cambio') { · {{ s.nombreEvento }} }
-                </option>
+                </mat-option>
               }
-            </select>
-            <mat-icon class="field__icon">expand_more</mat-icon>
-          </div>
+            </mat-select>
+          </mat-form-field>
           @if (esEdicion) {
             <p class="field__hint">
               Solo aparecen las transiciones configuradas en Flujos Status Empleado.

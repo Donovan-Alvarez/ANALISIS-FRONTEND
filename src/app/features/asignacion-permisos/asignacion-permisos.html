@@ -36,35 +36,27 @@
     <div class="card__body">
       <div class="selectores">
         <div class="field">
-          <label class="field__label" for="idRole">Rol</label>
-          <div class="field__control">
-            <mat-icon class="field__icon">admin_panel_settings</mat-icon>
-            <select id="idRole" (change)="onRoleChange($any($event.target).value)">
-              <option value="">
-                {{ cargandoCatalogos() ? 'Cargando…' : 'Selecciona un rol…' }}
-              </option>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Rol</mat-label>
+            <mat-icon matPrefix>admin_panel_settings</mat-icon>
+            <mat-select id="idRole" (selectionChange)="onRoleChange($event.value)" [placeholder]="cargandoCatalogos() ? 'Cargando…' : 'Selecciona un rol…'">
               @for (rol of roles(); track rol.idRole) {
-                <option [value]="rol.idRole">{{ rol.nombre }}</option>
+                <mat-option [value]="rol.idRole">{{ rol.nombre }}</mat-option>
               }
-            </select>
-            <mat-icon class="field__icon">expand_more</mat-icon>
-          </div>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         <div class="field">
-          <label class="field__label" for="idModulo">Módulo</label>
-          <div class="field__control">
-            <mat-icon class="field__icon">widgets</mat-icon>
-            <select id="idModulo" (change)="onModuloChange($any($event.target).value)">
-              <option value="">
-                {{ cargandoCatalogos() ? 'Cargando…' : 'Selecciona un módulo…' }}
-              </option>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Módulo</mat-label>
+            <mat-icon matPrefix>widgets</mat-icon>
+            <mat-select id="idModulo" (selectionChange)="onModuloChange($event.value)" [placeholder]="cargandoCatalogos() ? 'Cargando…' : 'Selecciona un módulo…'">
               @for (modulo of modulos(); track modulo.idModulo) {
-                <option [value]="modulo.idModulo">{{ modulo.nombre }}</option>
+                <mat-option [value]="modulo.idModulo">{{ modulo.nombre }}</mat-option>
               }
-            </select>
-            <mat-icon class="field__icon">expand_more</mat-icon>
-          </div>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         @if (seleccionCompleta() && totalOpciones() > 0) {

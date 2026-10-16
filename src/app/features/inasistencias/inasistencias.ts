@@ -2,6 +2,8 @@ import { Component, computed, effect, inject, signal, untracked } from '@angular
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { filter, finalize, switchMap } from 'rxjs';
 import { Inasistencia, InasistenciaFila, InasistenciaPayload } from '../../core/models/inasistencia.model';
 import { ColumnaExport, ExportacionService, textoCelda } from '../../core/services/exportacion.service';
@@ -38,7 +40,7 @@ function normalizar(texto: string): string {
 
 @Component({
   selector: 'app-inasistencias',
-  imports: [MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatFormFieldModule, MatSelectModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './inasistencias.html',
   styleUrl: './inasistencias.scss',
 })
@@ -131,7 +133,7 @@ export class Inasistencias {
   ): void {
     const data: InasistenciaFormData = { titulo, inasistencia, guardar };
     this.dialog
-      .open<InasistenciaFormDialog, InasistenciaFormData, boolean>(InasistenciaFormDialog, { data })
+      .open<InasistenciaFormDialog, InasistenciaFormData, boolean>(InasistenciaFormDialog, { data, width: '560px' })
       .afterClosed()
       .pipe(filter((guardado) => guardado === true))
       .subscribe(() => {

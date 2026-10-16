@@ -53,23 +53,16 @@
       <div class="card__body calculo__cuerpo">
         <div class="calculo__fila">
           <div class="field calculo__periodo">
-            <label class="field__label" for="calculo-periodo">Período de planilla</label>
-            <div class="field__control">
-              <select
-                id="calculo-periodo"
-                [value]="claveSeleccionada()"
-                (change)="seleccionar($any($event.target).value)"
-                [disabled]="cargando() || calculando()"
-              >
-                <option value="" disabled>{{ cargando() ? 'Cargando…' : 'Selecciona un período…' }}</option>
+            <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+              <mat-label>Período de planilla</mat-label>
+              <mat-select id="calculo-periodo" [value]="claveSeleccionada()" (selectionChange)="seleccionar($event.value)" [disabled]="cargando() || calculando()" [placeholder]="cargando() ? 'Cargando…' : 'Selecciona un período…'">
                 @for (p of filas(); track p.clave) {
-                  <option [value]="p.clave" [selected]="p.clave === claveSeleccionada()">
+                  <mat-option [value]="p.clave">
                     {{ p.etiqueta }} · {{ p.estado }}
-                  </option>
+                  </mat-option>
                 }
-              </select>
-              <mat-icon class="field__icon">expand_more</mat-icon>
-            </div>
+              </mat-select>
+            </mat-form-field>
           </div>
 
           <button

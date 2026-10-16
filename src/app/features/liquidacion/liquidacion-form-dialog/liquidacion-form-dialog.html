@@ -6,20 +6,14 @@
       <h3 class="form-section__title">Empleado</h3>
 
       <div class="field">
-        <label class="field__label" for="idEmpleado">
-          Empleado a liquidar <span class="field__req">*</span>
-        </label>
-        <div class="field__control">
-          <select id="idEmpleado" formControlName="idEmpleado">
-            <option [ngValue]="null" disabled>
-              {{ empleados().length ? 'Selecciona…' : 'No hay empleados pendientes de liquidar' }}
-            </option>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Empleado a liquidar</mat-label>
+          <mat-select id="idEmpleado" formControlName="idEmpleado" [placeholder]="empleados().length ? 'Selecciona…' : 'No hay empleados pendientes de liquidar'">
             @for (e of empleados(); track e.idEmpleado) {
-              <option [ngValue]="e.idEmpleado">{{ e.nombrePersona }}</option>
+              <mat-option [value]="e.idEmpleado">{{ e.nombrePersona }}</mat-option>
             }
-          </select>
-          <mat-icon class="field__icon">expand_more</mat-icon>
-        </div>
+          </mat-select>
+        </mat-form-field>
         <p class="field__hint">Solo aparecen empleados que todavía no tienen liquidación.</p>
       </div>
 

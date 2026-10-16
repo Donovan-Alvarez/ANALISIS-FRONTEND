@@ -3,6 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { Observable, finalize, forkJoin } from 'rxjs';
 import { ItemCatalogo } from '../../../core/models/catalogo-simple.model';
 import {
@@ -35,7 +37,7 @@ function normalizar(texto: string): string {
 /** La app es zoneless: todo lo que lee la plantilla vive en signals. */
 @Component({
   selector: 'app-cuenta-bancaria-form-dialog',
-  imports: [ReactiveFormsModule, MatDialogModule, MatIconModule],
+  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule],
   templateUrl: './cuenta-bancaria-form-dialog.html',
   styleUrl: './cuenta-bancaria-form-dialog.scss',
 })

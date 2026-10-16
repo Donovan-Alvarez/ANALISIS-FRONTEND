@@ -4,6 +4,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { finalize } from 'rxjs';
 import { Empleado, PersonaCombo, StatusPermitido } from '../../../core/models/empleado.model';
 import { OpcionCombo } from '../../../core/models/catalogo-jerarquico.model';
@@ -34,7 +36,7 @@ export interface EmpleadoFormData {
  */
 @Component({
   selector: 'app-empleado-form-dialog',
-  imports: [ReactiveFormsModule, MatDialogModule, MatIconModule, DecimalPipe],
+  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule, DecimalPipe],
   templateUrl: './empleado-form-dialog.html',
   styleUrl: './empleado-form-dialog.scss',
 })

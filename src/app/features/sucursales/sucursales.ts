@@ -1,6 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { forkJoin } from 'rxjs';
 import { Empresa } from '../../core/models/empresa.model';
 import { Sucursal } from '../../core/models/sucursal.model';
@@ -14,7 +16,7 @@ interface SucursalConEmpresa extends Sucursal {
 
 @Component({
   selector: 'app-sucursales',
-  imports: [ReactiveFormsModule, MatIconModule],
+  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './sucursales.html',
   styleUrl: './sucursales.scss',
 })

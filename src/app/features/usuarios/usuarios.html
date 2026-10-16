@@ -277,23 +277,14 @@
             </div>
 
             <div class="field">
-              <label class="field__label" for="idGenero">
-                Género <span class="field__req">*</span>
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.idGenero.invalid && form.controls.idGenero.touched
-                "
-              >
-                <select id="idGenero" formControlName="idGenero">
-                  <option [ngValue]="null" disabled>Selecciona…</option>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Género</mat-label>
+                <mat-select id="idGenero" formControlName="idGenero" placeholder="Selecciona…">
                   @for (g of generos(); track g.idGenero) {
-                    <option [ngValue]="g.idGenero">{{ g.nombre }}</option>
+                    <mat-option [value]="g.idGenero">{{ g.nombre }}</mat-option>
                   }
-                </select>
-                <mat-icon class="field__icon">expand_more</mat-icon>
-              </div>
+                </mat-select>
+              </mat-form-field>
             </div>
           </div>
         </div>
@@ -304,86 +295,48 @@
 
           <div class="form-grid">
             <div class="field">
-              <label class="field__label" for="idEmpresa">
-                Empresa <span class="field__req">*</span>
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.idEmpresa.invalid && form.controls.idEmpresa.touched
-                "
-              >
-                <select id="idEmpresa" formControlName="idEmpresa">
-                  <option [ngValue]="null" disabled>Selecciona…</option>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Empresa</mat-label>
+                <mat-select id="idEmpresa" formControlName="idEmpresa" placeholder="Selecciona…">
                   @for (e of empresas(); track e.idEmpresa) {
-                    <option [ngValue]="e.idEmpresa">{{ e.nombre }}</option>
+                    <mat-option [value]="e.idEmpresa">{{ e.nombre }}</mat-option>
                   }
-                </select>
-                <mat-icon class="field__icon">expand_more</mat-icon>
-              </div>
+                </mat-select>
+              </mat-form-field>
               <p class="field__hint">Filtra las sucursales y define la política de contraseña.</p>
             </div>
 
             <div class="field">
-              <label class="field__label" for="idSucursal">
-                Sucursal <span class="field__req">*</span>
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.idSucursal.invalid && form.controls.idSucursal.touched
-                "
-              >
-                <select id="idSucursal" formControlName="idSucursal">
-                  <option [ngValue]="null" disabled>
-                    {{ sucursalesFiltradas().length === 0 ? 'Elige una empresa primero' : 'Selecciona…' }}
-                  </option>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Sucursal</mat-label>
+                <mat-select id="idSucursal" formControlName="idSucursal" [placeholder]="sucursalesFiltradas().length === 0 ? 'Elige una empresa primero' : 'Selecciona…'">
                   @for (s of sucursalesFiltradas(); track s.idSucursal) {
-                    <option [ngValue]="s.idSucursal">{{ s.nombre }}</option>
+                    <mat-option [value]="s.idSucursal">{{ s.nombre }}</mat-option>
                   }
-                </select>
-                <mat-icon class="field__icon">expand_more</mat-icon>
-              </div>
+                </mat-select>
+              </mat-form-field>
             </div>
 
             <div class="field">
-              <label class="field__label" for="idRole">
-                Rol <span class="field__req">*</span>
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.idRole.invalid && form.controls.idRole.touched
-                "
-              >
-                <select id="idRole" formControlName="idRole">
-                  <option [ngValue]="null" disabled>Selecciona…</option>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Rol</mat-label>
+                <mat-select id="idRole" formControlName="idRole" placeholder="Selecciona…">
                   @for (r of roles(); track r.idRole) {
-                    <option [ngValue]="r.idRole">{{ r.nombre }}</option>
+                    <mat-option [value]="r.idRole">{{ r.nombre }}</mat-option>
                   }
-                </select>
-                <mat-icon class="field__icon">expand_more</mat-icon>
-              </div>
+                </mat-select>
+              </mat-form-field>
             </div>
 
             <div class="field">
-              <label class="field__label" for="idStatusUsuario">
-                Estatus del usuario <span class="field__req">*</span>
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.idStatusUsuario.invalid && form.controls.idStatusUsuario.touched
-                "
-              >
-                <select id="idStatusUsuario" formControlName="idStatusUsuario">
-                  <option [ngValue]="null" disabled>Selecciona…</option>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Estatus del usuario</mat-label>
+                <mat-select id="idStatusUsuario" formControlName="idStatusUsuario" placeholder="Selecciona…">
                   @for (e of estatus(); track e.idStatusUsuario) {
-                    <option [ngValue]="e.idStatusUsuario">{{ e.nombre }}</option>
+                    <mat-option [value]="e.idStatusUsuario">{{ e.nombre }}</mat-option>
                   }
-                </select>
-                <mat-icon class="field__icon">expand_more</mat-icon>
-              </div>
+                </mat-select>
+              </mat-form-field>
             </div>
           </div>
         </div>

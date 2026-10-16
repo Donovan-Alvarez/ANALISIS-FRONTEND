@@ -81,18 +81,14 @@
           <h3 class="form-section__title">Datos de la sucursal</h3>
           <div class="form-grid">
             <div class="field form-grid__full">
-              <label class="field__label" for="idEmpresa">Empresa <span class="field__req">*</span></label>
-              <div class="field__control" [class.field__control--invalid]="form.controls.idEmpresa.invalid && form.controls.idEmpresa.touched">
-                <select id="idEmpresa" formControlName="idEmpresa">
-                  <option [ngValue]="null" disabled>
-                    {{ empresas().length === 0 ? 'No hay empresas registradas' : 'Selecciona…' }}
-                  </option>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Empresa</mat-label>
+                <mat-select id="idEmpresa" formControlName="idEmpresa" [placeholder]="empresas().length === 0 ? 'No hay empresas registradas' : 'Selecciona…'">
                   @for (e of empresas(); track e.idEmpresa) {
-                    <option [ngValue]="e.idEmpresa">{{ e.nombre }}</option>
+                    <mat-option [value]="e.idEmpresa">{{ e.nombre }}</mat-option>
                   }
-                </select>
-                <mat-icon class="field__icon">expand_more</mat-icon>
-              </div>
+                </mat-select>
+              </mat-form-field>
               @if (form.controls.idEmpresa.invalid && form.controls.idEmpresa.touched) {
                 <p class="field__error">Debes seleccionar la empresa propietaria</p>
               }

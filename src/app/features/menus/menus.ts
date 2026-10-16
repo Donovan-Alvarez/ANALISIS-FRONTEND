@@ -54,6 +54,7 @@ export class Menus implements OnInit {
     if (!this.permisos().alta) return;
     const ref = this.dialog.open(MenuFormDialog, {
       data: { menu: null, modulos: this.modulos() },
+      width: '540px',
     });
     ref.afterClosed().subscribe((resultado?: Menu) => {
       if (!resultado) return;
@@ -68,6 +69,7 @@ export class Menus implements OnInit {
     if (!this.permisos().cambio) return;
     const ref = this.dialog.open(MenuFormDialog, {
       data: { menu, modulos: this.modulos() },
+      width: '540px',
     });
     ref.afterClosed().subscribe((resultado?: Menu) => {
       if (!resultado || !menu.idMenu) return;

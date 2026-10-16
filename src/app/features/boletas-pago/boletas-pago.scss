@@ -14,12 +14,9 @@
   gap: 16px;
   margin: 24px 0;
 }
-label {
-  display: grid;
-  gap: 8px;
+.filtros .mat-mdc-form-field {
   min-width: 240px;
 }
-select,
 button {
   padding: 10px 14px;
   border: 1px solid #d7d5e7;

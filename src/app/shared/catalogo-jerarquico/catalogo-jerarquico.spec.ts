@@ -2,6 +2,8 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSelect } from '@angular/material/select';
+import { By } from '@angular/platform-browser';
 import { Observable, Subject, of } from 'rxjs';
 import {
   CatalogoJerarquicoConfig,
@@ -222,9 +224,11 @@ describe('CatalogoJerarquicoFormDialog · combo dependiente Empresa -> Departame
     respuestas.get(1)!.next(DEPTOS_SOFTWARE); // llega tarde: debe ignorarse
     await refrescar();
 
-    const opciones = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('#combo-idDepartamento option')).map(
-      (o) => o.textContent?.trim(),
-    );
+    // mat-select solo renderiza sus mat-option con el panel abierto.
+    const combo = fixture.debugElement.query(By.css('#combo-idDepartamento')).componentInstance as MatSelect;
+    combo.open();
+    await refrescar();
+    const opciones = combo.options.map((o) => o.viewValue);
     expect(opciones).toContain('Departamento de prueba');
     expect(opciones).not.toContain('Finanzas');
   });

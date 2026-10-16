@@ -8,6 +8,7 @@
 // globales, para que los componentes compartidos no los copien en su CSS
 // (presupuesto anyComponentStyle). Decisión Paso C, Fase B2.
 @use 'ui';
+@use 'colors' as *;
 
 html {
   height: 100%;
@@ -21,6 +22,74 @@ html {
       density: 0,
     )
   );
+
+  // mat-select (mat-form-field outline) con la paleta de la app en vez del
+  // azul del tema; solo se tocan los tokens de estos tres componentes.
+  @include mat.form-field-overrides(
+    (
+      outlined-outline-color: $color-border,
+      outlined-hover-outline-color: $color-primary,
+      outlined-focus-outline-color: $color-primary,
+      outlined-label-text-color: $color-text-muted,
+      outlined-hover-label-text-color: $color-primary-dark,
+      outlined-focus-label-text-color: $color-primary-dark,
+      outlined-input-text-color: $color-text,
+      outlined-container-shape: 12px,
+      outlined-error-outline-color: $color-error,
+      outlined-error-hover-outline-color: $color-error,
+      outlined-error-focus-outline-color: $color-error,
+      outlined-error-label-text-color: $color-error,
+      focus-select-arrow-color: $color-primary,
+      container-height: 46px,
+      container-vertical-padding: 11px,
+    )
+  );
+  @include mat.select-overrides(
+    (
+      panel-background-color: $color-surface,
+      enabled-trigger-text-color: $color-text,
+      placeholder-text-color: $color-text-muted,
+      enabled-arrow-color: $color-text-muted,
+      focused-arrow-color: $color-primary,
+      trigger-text-size: 0.88rem,
+    )
+  );
+  @include mat.option-overrides(
+    (
+      label-text-color: $color-text,
+      label-text-size: 0.88rem,
+      hover-state-layer-color: rgba(108, 105, 224, 0.08),
+      focus-state-layer-color: rgba(108, 105, 224, 0.12),
+      selected-state-layer-color: rgba(108, 105, 224, 0.14),
+      selected-state-label-text-color: $color-primary-dark,
+    )
+  );
+  @include mat.pseudo-checkbox-overrides(
+    (
+      minimal-selected-checkmark-color: $color-primary,
+    )
+  );
+}
+
+// El mat-form-field ocupa todo el ancho del .field, igual que los inputs.
+.field > .mat-mdc-form-field {
+  width: 100%;
+}
+
+// Material 3 limita los diálogos a 560px (--mat-dialog-container-max-width).
+// Los formularios grandes (Empleados, Liquidación, Personas) se abren con
+// panelClass: 'dialog-ancho-amplio' y su propio width; en pantallas chicas
+// sigue mandando el maxWidth de 80vw que trae MatDialog por defecto.
+.dialog-ancho-amplio {
+  --mat-dialog-container-max-width: 960px;
+}
+
+// Panel desplegable del mat-select: esquinas y sombra como las cards de la app.
+.mat-mdc-select-panel {
+  border-radius: 12px !important;
+  box-shadow:
+    0 10px 30px rgba(35, 35, 69, 0.14),
+    0 2px 6px rgba(35, 35, 69, 0.08) !important;
 }
 
 body {

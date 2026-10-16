@@ -114,7 +114,11 @@ export class Empleados {
 
   private abrirFormulario(data: EmpleadoFormData, mensajeExito: string): void {
     this.dialog
-      .open<EmpleadoFormDialog, EmpleadoFormData, boolean>(EmpleadoFormDialog, { data })
+      .open<EmpleadoFormDialog, EmpleadoFormData, boolean>(EmpleadoFormDialog, {
+        data,
+        width: '900px',
+        panelClass: 'dialog-ancho-amplio',
+      })
       .afterClosed()
       .pipe(filter((guardado) => guardado === true))
       .subscribe(() => {
