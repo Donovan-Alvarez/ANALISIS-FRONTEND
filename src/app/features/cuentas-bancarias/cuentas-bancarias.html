@@ -1,0 +1,164 @@
+<div class="page">
+  <header class="page__head">
+    <div class="page__heading">
+      <h1 class="page__title">Cuentas bancarias de empleados</h1>
+      <p class="page__subtitle">Cuentas donde se deposita el pago. Las Boletas de Pago muestran las cuentas activas.</p>
+    </div>
+    <div class="page__actions">
+      <button
+        type="button"
+        class="btn btn--ghost"
+        [disabled]="!permisos().imprimir || procesando() || !filtrados().length"
+        (click)="imprimir()"
+        [title]="permisos().imprimir ? 'Imprimir la lista' : 'Tu rol no tiene permiso para imprimir'"
+      >
+        <mat-icon>print</mat-icon>
+        <span>Imprimir</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn--ghost"
+        [disabled]="!permisos().exportar || procesando() || !filtrados().length"
+        [matMenuTriggerFor]="menuExportar"
+        [title]="permisos().exportar ? 'Exportar la lista' : 'Tu rol no tiene permiso para exportar'"
+      >
+        <mat-icon>download</mat-icon>
+        <span>Exportar</span>
+      </button>
+      <mat-menu #menuExportar="matMenu" xPosition="before">
+        <button mat-menu-item type="button" (click)="exportarPdf()">
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </button>
+        <button mat-menu-item type="button" (click)="exportarExcel()">
+          <mat-icon>table_view</mat-icon>
+          <span>Excel</span>
+        </button>
+      </mat-menu>
+      <button
+        type="button"
+        class="btn btn--primary"
+        [disabled]="!permisos().alta || procesando()"
+        (click)="nueva()"
+        [title]="permisos().alta ? '' : 'Tu rol no tiene permiso para crear'"
+      >
+        <mat-icon>add</mat-icon>
+        <span>Nueva cuenta</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="card">
+    @if (sinAcceso()) {
+      <div class="empty-state">
+        <mat-icon>lock</mat-icon>
+        <p>No tienes acceso a esta opción.</p>
+      </div>
+    } @else {
+      <div class="card__head">
+        <h2 class="card__title">
+          {{ filtrados().length }} registro(s)
+          <span class="cuentas__resumen">· {{ totalActivas() }} activa(s) de {{ items().length }}</span>
+        </h2>
+        <div class="cuentas__filtros">
+          <div class="field cuentas__estado">
+            <div class="field__control">
+              <select [value]="estado()" (change)="cambiarEstado($any($event.target).value)" aria-label="Filtrar por estado">
+                <option value="todas">Todas</option>
+                <option value="activas">Solo activas</option>
+                <option value="inactivas">Solo inactivas</option>
+              </select>
+              <mat-icon class="field__icon">expand_more</mat-icon>
+            </div>
+          </div>
+          <div class="field cuentas__buscador">
+            <div class="field__control">
+              <mat-icon class="field__icon">search</mat-icon>
+              <input
+                type="search"
+                placeholder="Buscar…"
+                [value]="filtro()"
+                (input)="filtro.set($any($event.target).value)"
+                aria-label="Buscar cuentas bancarias"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      @if (cargando() && !items().length) {
+        <div class="empty-state">
+          <mat-icon>hourglass_empty</mat-icon>
+          <p>Cargando…</p>
+        </div>
+      } @else if (!items().length) {
+        <div class="empty-state">
+          <mat-icon>credit_card</mat-icon>
+          <p>Todavía no hay cuentas bancarias. Registra la primera con el botón de arriba.</p>
+        </div>
+      } @else if (!filtrados().length) {
+        <div class="empty-state">
+          <mat-icon>search_off</mat-icon>
+          <p>Ninguna cuenta coincide con el filtro.</p>
+        </div>
+      } @else {
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>Banco</th>
+                <th>Número de cuenta</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of filtrados(); track item.idCuentaBancaria) {
+                <tr>
+                  <td>
+                    <div>{{ item.nombreEmpleado }}</div>
+                    <div class="cuentas__detalle">{{ item.nombrePuesto }}</div>
+                  </td>
+                  <td>{{ item.nombreBanco }}</td>
+                  <td class="cuentas__numero">{{ item.numeroDeCuenta }}</td>
+                  <td>
+                    @if (item.activa) {
+                      <span class="badge badge--ok">Activa</span>
+                    } @else {
+                      <span class="badge badge--off">Inactiva</span>
+                    }
+                  </td>
+                  <td>
+                    <div class="data-table__actions">
+                      <button
+                        type="button"
+                        class="btn-icon"
+                        [disabled]="!permisos().cambio || procesando()"
+                        (click)="editar(item)"
+                        title="Editar"
+                        [attr.aria-label]="'Editar cuenta ' + item.numeroDeCuenta + ' de ' + item.nombreEmpleado"
+                      >
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-icon btn-icon--danger"
+                        [disabled]="!permisos().baja || procesando()"
+                        (click)="eliminar(item)"
+                        title="Eliminar"
+                        [attr.aria-label]="'Eliminar cuenta ' + item.numeroDeCuenta + ' de ' + item.nombreEmpleado"
+                      >
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </section>
+</div>

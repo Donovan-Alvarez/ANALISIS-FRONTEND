@@ -1,0 +1,199 @@
+<div class="page">
+  <header class="page__head">
+    <div class="page__heading">
+      <h1 class="page__title">Reporte de planilla</h1>
+      <p class="page__subtitle">Consulta la planilla de un período ya calculado. Solo lectura: no recalcula ningún valor.</p>
+    </div>
+    <div class="page__actions">
+      <button
+        type="button"
+        class="btn btn--ghost"
+        [disabled]="!permisos().imprimir || procesando() || !reporte()"
+        (click)="imprimir()"
+        [title]="permisos().imprimir ? 'Imprimir el reporte' : 'Tu rol no tiene permiso para imprimir'"
+      >
+        <mat-icon>print</mat-icon>
+        <span>Imprimir</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn--ghost"
+        [disabled]="!permisos().exportar || procesando() || !reporte()"
+        [matMenuTriggerFor]="menuExportar"
+        [title]="permisos().exportar ? 'Exportar el reporte' : 'Tu rol no tiene permiso para exportar'"
+      >
+        <mat-icon>download</mat-icon>
+        <span>Exportar</span>
+      </button>
+      <mat-menu #menuExportar="matMenu" xPosition="before">
+        <button mat-menu-item type="button" (click)="exportarPdf()">
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </button>
+        <button mat-menu-item type="button" (click)="exportarExcel()">
+          <mat-icon>table_view</mat-icon>
+          <span>Excel</span>
+        </button>
+      </mat-menu>
+    </div>
+  </header>
+
+  @if (sinAcceso()) {
+    <section class="card">
+      <div class="empty-state">
+        <mat-icon>lock</mat-icon>
+        <p>No tienes acceso a esta opción.</p>
+      </div>
+    </section>
+  } @else {
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Período</h2>
+      </div>
+      <div class="card__body reporte__cuerpo">
+        <div class="field reporte__periodo">
+          <label class="field__label" for="reporte-periodo">Período de planilla</label>
+          <div class="field__control">
+            <select
+              id="reporte-periodo"
+              [value]="claveSeleccionada()"
+              (change)="seleccionar($any($event.target).value)"
+              [disabled]="cargandoPeriodos() || !periodos().length"
+            >
+              <option value="" disabled>
+                {{ cargandoPeriodos() ? 'Cargando…' : periodos().length ? 'Selecciona un período…' : 'No hay planillas calculadas' }}
+              </option>
+              @for (p of periodos(); track p.clave) {
+                <option [value]="p.clave" [selected]="p.clave === claveSeleccionada()">
+                  {{ p.etiqueta }} · {{ p.empleados }} empleado(s)
+                </option>
+              }
+            </select>
+            <mat-icon class="field__icon">expand_more</mat-icon>
+          </div>
+        </div>
+
+        @if (!cargandoPeriodos() && !periodos().length) {
+          <p class="reporte__ayuda">
+            Todavía no hay planillas calculadas. Ejecuta primero <strong>Calcular Planilla</strong> para un período.
+          </p>
+        }
+
+        @if (reporte(); as r) {
+          <div class="reporte__info">
+            <span>Del {{ fecha(r.fechaInicio) }} al {{ fecha(r.fechaFin) }}</span>
+            <span>· Calculada el {{ fechaHora(r.fechaHoraProcesada) }} por {{ r.usuarioProceso }}</span>
+            @if (r.cuadraConCabecera) {
+              <span class="badge badge--ok" title="La suma del detalle coincide al centavo con la cabecera almacenada">
+                <mat-icon class="reporte__badge-icono">verified</mat-icon>
+                Cuadra con la cabecera
+              </span>
+            } @else {
+              <span class="badge badge--warn" title="La suma del detalle no coincide con la cabecera almacenada">
+                <mat-icon class="reporte__badge-icono">warning</mat-icon>
+                No cuadra con la cabecera
+              </span>
+            }
+          </div>
+
+          <div class="reporte__resumen">
+            <div><span>Empleados</span><strong>{{ r.totales.empleados }}</strong></div>
+            <div><span>Total ingresos</span><strong>{{ moneda(r.cabecera.totalIngresos) }}</strong></div>
+            <div><span>Total descuentos</span><strong>{{ moneda(r.cabecera.totalDescuentos) }}</strong></div>
+            <div class="reporte__resumen-neto"><span>Salario neto</span><strong>{{ moneda(r.cabecera.salarioNeto) }}</strong></div>
+          </div>
+
+          @if (!r.cuadraConCabecera) {
+            <p class="reporte__aviso">
+              <mat-icon>warning</mat-icon>
+              La suma del detalle ({{ moneda(r.totales.salarioNeto) }} de salario neto) no coincide con la cabecera
+              almacenada. Revisa la planilla con el responsable de Calcular Planilla.
+            </p>
+          }
+        }
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Detalle por empleado</h2>
+      </div>
+
+      @if (cargandoReporte()) {
+        <div class="empty-state">
+          <mat-icon>hourglass_empty</mat-icon>
+          <p>Cargando…</p>
+        </div>
+      } @else if (reporte(); as r) {
+        @if (!r.detalle.length) {
+          <div class="empty-state">
+            <mat-icon>summarize</mat-icon>
+            <p>Esta planilla no tiene filas de detalle.</p>
+          </div>
+        } @else {
+          <div class="table-wrap">
+            <table class="data-table reporte__tabla">
+              <thead>
+                <tr>
+                  <th>Empleado</th>
+                  <th class="reporte__num">Sueldo base</th>
+                  <th class="reporte__num">Bonificación</th>
+                  <th class="reporte__num">Otros ingresos</th>
+                  <th class="reporte__num reporte__col-total">Total ingresos</th>
+                  <th class="reporte__num">IGSS</th>
+                  <th class="reporte__num">ISR</th>
+                  <th class="reporte__num">Inasistencias</th>
+                  <th class="reporte__num reporte__col-total">Total descuentos</th>
+                  <th class="reporte__num reporte__col-neto">Salario neto</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (d of r.detalle; track d.idPlanillaDetalle) {
+                  <tr>
+                    <td>
+                      <div>{{ d.nombreEmpleado }}</div>
+                      <div class="reporte__detalle">{{ d.nombrePuesto }} · {{ d.nombreDepartamento }}</div>
+                    </td>
+                    <td class="reporte__num">{{ moneda(d.ingresoSueldoBase) }}</td>
+                    <td class="reporte__num">{{ moneda(d.ingresoBonificacionDecreto) }}</td>
+                    <td class="reporte__num">{{ moneda(d.ingresoOtrosIngresos) }}</td>
+                    <td class="reporte__num reporte__col-total">{{ moneda(d.totalIngresos) }}</td>
+                    <td class="reporte__num">{{ moneda(d.descuentoIgss) }}</td>
+                    <td class="reporte__num">{{ moneda(d.descuentoIsr) }}</td>
+                    <td class="reporte__num">
+                      {{ moneda(d.descuentoInasistencias) }}
+                      @if (d.diasInasistencia) {
+                        <div class="reporte__detalle">{{ d.diasInasistencia }} día(s)</div>
+                      }
+                    </td>
+                    <td class="reporte__num reporte__col-total">{{ moneda(d.totalDescuentos) }}</td>
+                    <td class="reporte__num reporte__col-neto">{{ moneda(d.salarioNeto) }}</td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th scope="row">Totales generales ({{ r.totales.empleados }})</th>
+                  <td class="reporte__num">{{ moneda(r.totales.ingresoSueldoBase) }}</td>
+                  <td class="reporte__num">{{ moneda(r.totales.ingresoBonificacionDecreto) }}</td>
+                  <td class="reporte__num">{{ moneda(r.totales.ingresoOtrosIngresos) }}</td>
+                  <td class="reporte__num reporte__col-total">{{ moneda(r.totales.totalIngresos) }}</td>
+                  <td class="reporte__num">{{ moneda(r.totales.descuentoIgss) }}</td>
+                  <td class="reporte__num">{{ moneda(r.totales.descuentoIsr) }}</td>
+                  <td class="reporte__num">{{ moneda(r.totales.descuentoInasistencias) }}</td>
+                  <td class="reporte__num reporte__col-total">{{ moneda(r.totales.totalDescuentos) }}</td>
+                  <td class="reporte__num reporte__col-neto">{{ moneda(r.totales.salarioNeto) }}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        }
+      } @else {
+        <div class="empty-state">
+          <mat-icon>summarize</mat-icon>
+          <p>Selecciona un período para ver su planilla.</p>
+        </div>
+      }
+    </section>
+  }
+</div>

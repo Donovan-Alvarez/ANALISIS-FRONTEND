@@ -1,0 +1,81 @@
+<h2 mat-dialog-title>{{ data.titulo }}</h2>
+
+<form (submit)="guardar($event)" novalidate>
+  <mat-dialog-content>
+    <div class="cuenta-form__campos">
+      <div class="field">
+        <label class="field__label" for="cuenta-empleado">Empleado <span class="field__req">*</span></label>
+        <div class="field__control cuenta-form__buscar">
+          <mat-icon class="field__icon">search</mat-icon>
+          <input
+            type="search"
+            placeholder="Buscar por nombre, puesto o departamento…"
+            [value]="busqueda()"
+            (input)="busqueda.set($any($event.target).value)"
+            [disabled]="cargandoOpciones() || guardando()"
+            aria-label="Buscar empleado"
+          />
+        </div>
+        <div class="field__control">
+          <select id="cuenta-empleado" [formControl]="idEmpleado">
+            <option [ngValue]="null" disabled>{{ textoVacioEmpleado() }}</option>
+            @for (e of empleadosFiltrados(); track e.idEmpleado) {
+              <option [ngValue]="e.idEmpleado">{{ e.nombreCompleto }} — {{ e.nombrePuesto }}</option>
+            }
+          </select>
+          <mat-icon class="field__icon">expand_more</mat-icon>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="cuenta-banco">Banco <span class="field__req">*</span></label>
+        <div class="field__control">
+          <select id="cuenta-banco" [formControl]="idBanco">
+            <option [ngValue]="null" disabled>{{ textoVacioBanco() }}</option>
+            @for (b of bancos(); track b.id) {
+              <option [ngValue]="b.id">{{ b.nombre }}</option>
+            }
+          </select>
+          <mat-icon class="field__icon">expand_more</mat-icon>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="cuenta-numero">Número de cuenta <span class="field__req">*</span></label>
+        <div class="field__control" [class.field__control--invalid]="errorNumero()">
+          <input
+            id="cuenta-numero"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            [formControl]="numeroDeCuenta"
+            [attr.maxlength]="maxNumero"
+            placeholder="Ej. 001-438715"
+            (blur)="tocarNumero()"
+          />
+        </div>
+        @if (errorNumero(); as error) {
+          <p class="field__error">{{ error }}</p>
+        } @else {
+          <p class="field__hint">Dígitos separados por guiones, de {{ minNumero }} a {{ maxNumero }} caracteres.</p>
+        }
+      </div>
+
+      <label class="check check--labeled cuenta-form__activa">
+        <input type="checkbox" [formControl]="activa" />
+        <span class="check__box"><mat-icon>check</mat-icon></span>
+        <span>Cuenta activa</span>
+      </label>
+      <p class="field__hint cuenta-form__ayuda">
+        Las Boletas de Pago muestran solo las cuentas activas. Un empleado puede tener una sola cuenta activa por banco.
+      </p>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button type="button" class="btn btn--ghost" (click)="cancelar()" [disabled]="guardando()">Cancelar</button>
+    <button type="submit" class="btn btn--primary" [disabled]="!puedeGuardar()">
+      {{ guardando() ? 'Guardando…' : 'Guardar' }}
+    </button>
+  </mat-dialog-actions>
+</form>

@@ -1,0 +1,31 @@
+@use 'colors' as *;
+
+.cuentas__filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.cuentas__estado {
+  width: 170px;
+}
+
+.cuentas__buscador {
+  width: min(280px, 100%);
+}
+
+.cuentas__resumen {
+  font-weight: 400;
+  color: $color-text-muted;
+}
+
+.cuentas__detalle {
+  font-size: 0.8rem;
+  color: $color-text-muted;
+}
+
+.cuentas__numero {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}

@@ -149,6 +149,16 @@ export const routes: Routes = [
         path: 'boletas-pago',
         loadComponent: () => import('./features/boletas-pago/boletas-pago').then(m => m.BoletasPago)
       },
+      {
+        path: 'cuentas-bancarias',
+        loadComponent: () =>
+          import('./features/cuentas-bancarias/cuentas-bancarias').then(m => m.CuentasBancarias)
+      },
+      {
+        path: 'reporte-planilla',
+        loadComponent: () =>
+          import('./features/reporte-planilla/reporte-planilla').then(m => m.ReportePlanilla)
+      },
       { path: '', redirectTo: 'empresas', pathMatch: 'full' }
       
 
