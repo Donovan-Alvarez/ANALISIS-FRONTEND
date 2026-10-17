@@ -2,6 +2,8 @@ import { Component, computed, effect, inject, input, signal, untracked } from '@
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { filter, finalize, switchMap } from 'rxjs';
 import { CatalogoSimpleConfig, ItemCatalogo } from '../../core/models/catalogo-simple.model';
 import { ColumnaExport, ExportacionService } from '../../core/services/exportacion.service';
@@ -37,7 +39,7 @@ function capitalizar(texto: string): string {
  */
 @Component({
   selector: 'app-catalogo-simple',
-  imports: [MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './catalogo-simple.html',
   styleUrl: './catalogo-simple.scss',
 })

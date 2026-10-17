@@ -2,6 +2,8 @@ import { Component, computed, effect, inject, signal, untracked } from '@angular
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { filter, finalize, switchMap } from 'rxjs';
 import { DocumentoPersona } from '../../core/models/documento-persona.model';
 import { DocumentoPersonaService } from '../../core/services/documento-persona.service';
@@ -37,7 +39,7 @@ function normalizar(texto: string): string {
  */
 @Component({
   selector: 'app-documentos-persona',
-  imports: [MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './documentos-persona.html',
   styleUrl: './documentos-persona.scss',
 })

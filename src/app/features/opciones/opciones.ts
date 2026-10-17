@@ -1,7 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { forkJoin } from 'rxjs';
+import { filter, forkJoin, switchMap } from 'rxjs';
 import { Menu } from '../../core/models/menu.model';
 import { Modulo } from '../../core/models/modulo.model';
 import { ModuloService } from '../../core/services/modulo.service';
@@ -12,6 +12,7 @@ import { OpcionService } from '../../core/services/opcion.service';
 import { PermisosService } from '../../core/services/permisos.service';
 import { colorParaTexto } from '../../shared/utils/color-chip.util';
 import { OpcionFormDialog } from './opcion-form-dialog/opcion-form-dialog';
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 
 interface OpcionConMenu extends Opcion {
   nombreMenu: string;
@@ -31,6 +32,7 @@ export class Opciones implements OnInit {
   private readonly permisosService = inject(PermisosService);
   private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly opciones = signal<OpcionConMenu[]>([]);
   protected readonly menus = signal<Menu[]>([]);
@@ -95,11 +97,20 @@ export class Opciones implements OnInit {
 
   protected eliminarOpcion(opcion: Opcion): void {
     if (!this.permisos().baja) return;
-    if (!opcion.idOpcion) return;
-    if (!confirm(`¿Eliminar "${opcion.nombre}"?`)) return;
-    this.opcionService.delete(opcion.idOpcion).subscribe(() => {
-      this.cargar();
-      this.notificationService.success('Opción eliminada');
-    });
+    const id = opcion.idOpcion;
+    if (!id) return;
+    this.confirmDialog
+      .confirmar({
+        titulo: '¿Eliminar opción?',
+        mensaje: `Se eliminará "${opcion.nombre}". Esta acción no se puede deshacer.`,
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.opcionService.delete(id)),
+      )
+      .subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Opción eliminada');
+      });
   }
 }

@@ -1,60 +1,140 @@
-:host {
-  display: block;
-  padding: 24px;
-  color: #282744;
-}
-.boletas {
-  max-width: 1100px;
-  margin: auto;
-}
-.filtros,
-.acciones {
+@use 'colors' as *;
+
+.boletas__cuerpo {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin: 24px 0;
+  flex-direction: column;
+  gap: 1.25rem;
 }
-.filtros .mat-mdc-form-field {
-  min-width: 240px;
+
+.boletas__filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  max-width: 760px;
 }
-button {
-  padding: 10px 14px;
-  border: 1px solid #d7d5e7;
-  border-radius: 8px;
-  background: white;
-  color: inherit;
-  font: inherit;
+
+.boletas__ayuda {
+  margin: 0;
+  color: $color-text-muted;
 }
-button:not(:disabled) {
-  cursor: pointer;
-  background: #615ad4;
-  color: white;
+
+.boletas__encabezado {
+  align-items: flex-start;
 }
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+
+.boletas__puesto {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: $color-text-muted;
 }
-article {
-  background: white;
-  border: 1px solid #dedcec;
-  padding: 24px;
-  border-radius: 12px;
-  overflow-x: auto;
+
+/* Datos generales: mismo "fondo hundido" que los datos de solo lectura de Liquidación. */
+.boletas__datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.75rem 1.25rem;
+  margin: 0;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: $color-bg-page;
+  border: 1px solid $color-border-soft;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  dt {
+    font-size: 0.75rem;
+    color: $color-text-muted;
+  }
+
+  dd {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    font-weight: 600;
+    color: $color-text;
+  }
 }
-table {
-  width: 100%;
-  border-collapse: collapse;
+
+.boletas__cuenta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-variant-numeric: tabular-nums;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: $color-primary;
+  }
 }
-th,
-td {
-  text-align: left;
-  padding: 12px;
-  border-bottom: 1px solid #ecebf3;
+
+.boletas__montos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
 }
-td:last-child {
-  text-align: right;
+
+.boletas__bloque {
+  border: 1px solid $color-border-soft;
+  border-radius: 14px;
+  overflow: hidden;
 }
-caption {
-  text-align: left;
-  margin: 16px 0;
+
+.boletas__subtitulo {
+  margin: 0;
+  padding: 0.7rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $color-text-muted;
+  background: $color-panel-light;
+  border-bottom: 1px solid $color-border-soft;
+}
+
+.boletas__num {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.boletas__bloque tfoot {
+  th,
+  td {
+    padding: 0.75rem 1rem;
+    font-weight: 700;
+    border-top: 2px solid $color-border-soft;
+  }
+
+  th {
+    text-align: left;
+  }
+}
+
+.boletas__neto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  background: rgba(108, 105, 224, 0.1);
+  border: 1px solid rgba(108, 105, 224, 0.25);
+
+  span {
+    font-weight: 600;
+    color: $color-primary-dark;
+  }
+
+  strong {
+    font-size: 1.4rem;
+    font-variant-numeric: tabular-nums;
+    color: $color-primary-dark;
+  }
 }

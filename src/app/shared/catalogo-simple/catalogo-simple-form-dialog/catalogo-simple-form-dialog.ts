@@ -1,6 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormControl, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { Observable } from 'rxjs';
 
 export interface CatalogoSimpleFormData {
@@ -25,7 +27,7 @@ function noSoloEspacios(control: AbstractControl<string>): ValidationErrors | nu
 
 @Component({
   selector: 'app-catalogo-simple-form-dialog',
-  imports: [ReactiveFormsModule, MatDialogModule],
+  imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatDialogModule],
   templateUrl: './catalogo-simple-form-dialog.html',
   styleUrl: './catalogo-simple-form-dialog.scss',
 })

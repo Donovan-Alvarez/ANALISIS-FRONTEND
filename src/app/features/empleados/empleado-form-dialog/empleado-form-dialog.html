@@ -83,12 +83,10 @@
         </div>
 
         <div class="field">
-          <label class="field__label" for="fechaContratacion">
-            Fecha de contratación <span class="field__req">*</span>
-          </label>
-          <div class="field__control">
-            <input id="fechaContratacion" type="date" [max]="hoy" formControlName="fechaContratacion" />
-          </div>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Fecha de contratación</mat-label>
+            <input matInput id="fechaContratacion" type="date" [max]="hoy" formControlName="fechaContratacion" />
+          </mat-form-field>
         </div>
       </div>
     </div>
@@ -98,38 +96,36 @@
       <h3 class="form-section__title">Ingresos</h3>
       <div class="form-grid">
         <div class="field">
-          <label class="field__label" for="ingresoSueldoBase">Sueldo base <span class="field__req">*</span></label>
-          <div class="field__control">
-            <span class="field__prefijo">Q</span>
-            <input id="ingresoSueldoBase" type="number" min="0" step="0.01" formControlName="ingresoSueldoBase" />
-          </div>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Sueldo base</mat-label>
+            <span matTextPrefix>Q&nbsp;</span>
+            <input matInput id="ingresoSueldoBase" type="number" min="0" step="0.01" formControlName="ingresoSueldoBase" />
+          </mat-form-field>
           @if (form.controls.ingresoSueldoBase.hasError('min') && form.controls.ingresoSueldoBase.touched) {
             <p class="field__error">No puede ser negativo</p>
           }
         </div>
 
         <div class="field">
-          <label class="field__label" for="ingresoBonificacionDecreto">
-            Bonificación decreto <span class="field__req">*</span>
-          </label>
-          <div class="field__control">
-            <span class="field__prefijo">Q</span>
-            <input
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Bonificación decreto</mat-label>
+            <span matTextPrefix>Q&nbsp;</span>
+            <input matInput
               id="ingresoBonificacionDecreto"
               type="number"
               min="0"
               step="0.01"
               formControlName="ingresoBonificacionDecreto"
             />
-          </div>
+          </mat-form-field>
         </div>
 
         <div class="field">
-          <label class="field__label" for="ingresoOtrosIngresos">Otros ingresos <span class="field__req">*</span></label>
-          <div class="field__control">
-            <span class="field__prefijo">Q</span>
-            <input id="ingresoOtrosIngresos" type="number" min="0" step="0.01" formControlName="ingresoOtrosIngresos" />
-          </div>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Otros ingresos</mat-label>
+            <span matTextPrefix>Q&nbsp;</span>
+            <input matInput id="ingresoOtrosIngresos" type="number" min="0" step="0.01" formControlName="ingresoOtrosIngresos" />
+          </mat-form-field>
         </div>
       </div>
     </div>
@@ -139,33 +135,33 @@
       <h3 class="form-section__title">Descuentos</h3>
       <div class="form-grid">
         <div class="field">
-          <label class="field__label" for="descuentoIgss">IGSS <span class="field__req">*</span></label>
-          <div class="field__control">
-            <span class="field__prefijo">Q</span>
-            <input id="descuentoIgss" type="number" min="0" step="0.01" formControlName="descuentoIgss" />
-          </div>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>IGSS</mat-label>
+            <span matTextPrefix>Q&nbsp;</span>
+            <input matInput id="descuentoIgss" type="number" min="0" step="0.01" formControlName="descuentoIgss" />
+          </mat-form-field>
         </div>
 
         <div class="field">
-          <label class="field__label" for="descuentoIsr">ISR <span class="field__req">*</span></label>
-          <div class="field__control">
-            <span class="field__prefijo">Q</span>
-            <input id="descuentoIsr" type="number" min="0" step="0.01" formControlName="descuentoIsr" />
-          </div>
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>ISR</mat-label>
+            <span matTextPrefix>Q&nbsp;</span>
+            <input matInput id="descuentoIsr" type="number" min="0" step="0.01" formControlName="descuentoIsr" />
+          </mat-form-field>
         </div>
 
         <div class="field">
-          <label class="field__label" for="descuentoInasistencias">Inasistencias <span class="field__req">*</span></label>
-          <div class="field__control">
-            <span class="field__prefijo">Q</span>
-            <input
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-label>Inasistencias</mat-label>
+            <span matTextPrefix>Q&nbsp;</span>
+            <input matInput
               id="descuentoInasistencias"
               type="number"
               min="0"
               step="0.01"
               formControlName="descuentoInasistencias"
             />
-          </div>
+          </mat-form-field>
         </div>
       </div>
 

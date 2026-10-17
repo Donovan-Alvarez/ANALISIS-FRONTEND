@@ -26,16 +26,16 @@
       <h2 class="card__title">{{ usuariosFiltrados().length }} usuario(s)</h2>
 
       <div class="field usuarios__buscador">
-        <div class="field__control">
-          <mat-icon class="field__icon">search</mat-icon>
-          <input
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput
             type="search"
             placeholder="Buscar por usuario, nombre o correo…"
             [value]="filtro()"
             (input)="filtro.set($any($event.target).value)"
             aria-label="Buscar usuarios"
           />
-        </div>
+        </mat-form-field>
       </div>
     </div>
 
@@ -170,18 +170,11 @@
 
           <div class="form-grid">
             <div class="field">
-              <label class="field__label" for="idUsuario">
-                Usuario <span class="field__req">*</span>
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.idUsuario.invalid && form.controls.idUsuario.touched
-                "
-              >
-                <mat-icon class="field__icon">badge</mat-icon>
-                <input id="idUsuario" type="text" formControlName="idUsuario" autocomplete="off" />
-              </div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Usuario</mat-label>
+                <mat-icon matPrefix>badge</mat-icon>
+                <input matInput id="idUsuario" type="text" formControlName="idUsuario" autocomplete="off" />
+              </mat-form-field>
               @if (modoEdicion()) {
                 <p class="field__hint">El identificador es la llave primaria y no se modifica.</p>
               } @else if (form.controls.idUsuario.invalid && form.controls.idUsuario.touched) {
@@ -190,87 +183,52 @@
             </div>
 
             <div class="field">
-              <label class="field__label" for="nombre">
-                Nombre <span class="field__req">*</span>
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.nombre.invalid && form.controls.nombre.touched
-                "
-              >
-                <input id="nombre" type="text" formControlName="nombre" />
-              </div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Nombre</mat-label>
+                <input matInput id="nombre" type="text" formControlName="nombre" />
+              </mat-form-field>
               @if (form.controls.nombre.invalid && form.controls.nombre.touched) {
                 <p class="field__error">El nombre es obligatorio</p>
               }
             </div>
 
             <div class="field">
-              <label class="field__label" for="apellido">
-                Apellidos <span class="field__req">*</span>
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.apellido.invalid && form.controls.apellido.touched
-                "
-              >
-                <input id="apellido" type="text" formControlName="apellido" />
-              </div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Apellidos</mat-label>
+                <input matInput id="apellido" type="text" formControlName="apellido" />
+              </mat-form-field>
               @if (form.controls.apellido.invalid && form.controls.apellido.touched) {
                 <p class="field__error">Los apellidos son obligatorios</p>
               }
             </div>
 
             <div class="field">
-              <label class="field__label" for="fechaNacimiento">
-                Fecha de nacimiento <span class="field__req">*</span>
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.fechaNacimiento.invalid && form.controls.fechaNacimiento.touched
-                "
-              >
-                <input id="fechaNacimiento" type="date" formControlName="fechaNacimiento" />
-              </div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Fecha de nacimiento</mat-label>
+                <input matInput id="fechaNacimiento" type="date" formControlName="fechaNacimiento" />
+              </mat-form-field>
               @if (form.controls.fechaNacimiento.invalid && form.controls.fechaNacimiento.touched) {
                 <p class="field__error">La fecha de nacimiento es obligatoria</p>
               }
             </div>
 
             <div class="field">
-              <label class="field__label" for="correoElectronico">
-                Correo electrónico <span class="field__req">*</span>
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.correoElectronico.invalid && form.controls.correoElectronico.touched
-                "
-              >
-                <mat-icon class="field__icon">mail</mat-icon>
-                <input id="correoElectronico" type="email" formControlName="correoElectronico" />
-              </div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Correo electrónico</mat-label>
+                <mat-icon matPrefix>mail</mat-icon>
+                <input matInput id="correoElectronico" type="email" formControlName="correoElectronico" />
+              </mat-form-field>
               @if (form.controls.correoElectronico.invalid && form.controls.correoElectronico.touched) {
                 <p class="field__error">Ingresa un correo válido</p>
               }
             </div>
 
             <div class="field">
-              <label class="field__label" for="telefonoMovil">
-                Teléfono móvil <span class="field__req">*</span>
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.telefonoMovil.invalid && form.controls.telefonoMovil.touched
-                "
-              >
-                <mat-icon class="field__icon">smartphone</mat-icon>
-                <input id="telefonoMovil" type="tel" formControlName="telefonoMovil" />
-              </div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Teléfono móvil</mat-label>
+                <mat-icon matPrefix>smartphone</mat-icon>
+                <input matInput id="telefonoMovil" type="tel" formControlName="telefonoMovil" />
+              </mat-form-field>
               @if (form.controls.telefonoMovil.invalid && form.controls.telefonoMovil.touched) {
                 <p class="field__error">El teléfono es obligatorio</p>
               }
@@ -347,25 +305,15 @@
 
           <div class="form-grid">
             <div class="field">
-              <label class="field__label" for="password">
-                Contraseña
-                @if (!modoEdicion()) {
-                  <span class="field__req">*</span>
-                }
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.password.invalid && form.controls.password.touched
-                "
-              >
-                <input
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Contraseña@if (!modoEdicion()) {<span class="field__req">*</span>}</mat-label>
+                <input matInput
                   id="password"
                   [type]="verPassword() ? 'text' : 'password'"
                   formControlName="password"
                   autocomplete="new-password"
                 />
-                <button
+                <button matSuffix
                   type="button"
                   class="btn-icon"
                   (click)="alternarPassword()"
@@ -373,39 +321,25 @@
                 >
                   <mat-icon>{{ verPassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
                 </button>
-              </div>
+              </mat-form-field>
               @if (modoEdicion()) {
                 <p class="field__hint">Déjala vacía para conservar la contraseña actual.</p>
               }
             </div>
 
             <div class="field">
-              <label class="field__label" for="pregunta">
-                Pregunta de recuperación <span class="field__req">*</span>
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.pregunta.invalid && form.controls.pregunta.touched
-                "
-              >
-                <mat-icon class="field__icon">help_outline</mat-icon>
-                <input id="pregunta" type="text" formControlName="pregunta" />
-              </div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Pregunta de recuperación</mat-label>
+                <mat-icon matPrefix>help_outline</mat-icon>
+                <input matInput id="pregunta" type="text" formControlName="pregunta" />
+              </mat-form-field>
             </div>
 
             <div class="field">
-              <label class="field__label" for="respuesta">
-                Respuesta <span class="field__req">*</span>
-              </label>
-              <div
-                class="field__control"
-                [class.field__control--invalid]="
-                  form.controls.respuesta.invalid && form.controls.respuesta.touched
-                "
-              >
-                <input id="respuesta" type="text" formControlName="respuesta" autocomplete="off" />
-              </div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Respuesta</mat-label>
+                <input matInput id="respuesta" type="text" formControlName="respuesta" autocomplete="off" />
+              </mat-form-field>
               @if (modoEdicion()) {
                 <p class="field__hint">
                   El servidor la guarda encriptada, así que no se puede mostrar la actual:
@@ -504,36 +438,6 @@
               {{ modoEdicion() ? 'Guardar cambios' : 'Crear usuario' }}
             }
           </span>
-        </button>
-      </footer>
-    </div>
-  </div>
-}
-
-<!-- ── Confirmación de baja ────────────────────────────────────────── -->
-@if (usuarioAEliminar(); as objetivo) {
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloBaja">
-    <div class="modal__dialog modal__dialog--sm">
-      <header class="modal__head">
-        <h2 class="modal__title" id="tituloBaja">Eliminar usuario</h2>
-      </header>
-      <div class="modal__body">
-        <p class="baja__texto">
-          ¿Seguro que deseas eliminar a
-          <strong>{{ objetivo.nombre }} {{ objetivo.apellido }}</strong>
-          (<code>{{ objetivo.idUsuario }}</code>)? Esta acción no se puede deshacer.
-        </p>
-      </div>
-      <footer class="modal__foot">
-        <button type="button" class="btn btn--ghost" (click)="cancelarBaja()">Cancelar</button>
-        <button
-          type="button"
-          class="btn btn--primary usuarios__btn-eliminar"
-          [disabled]="eliminando()"
-          (click)="eliminar()"
-        >
-          <mat-icon>delete</mat-icon>
-          <span>{{ eliminando() ? 'Eliminando…' : 'Eliminar' }}</span>
         </button>
       </footer>
     </div>

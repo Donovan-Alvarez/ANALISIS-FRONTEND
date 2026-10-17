@@ -2,11 +2,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { filter, switchMap } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
 import { StatusUsuario as StatusUsuarioModel } from '../../core/models/status-usuario.model';
 import { NotificationService } from '../../core/services/notification.service';
 import { StatusUsuarioService } from '../../core/services/status-usuario.service';
 import { StatusUsuarioFormDialog } from './status-usuario-form-dialog/status-usuario-form-dialog';
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 
 @Component({
   selector: 'app-status-usuario',
@@ -18,6 +20,7 @@ export class StatusUsuario implements OnInit {
   private readonly statusUsuarioService = inject(StatusUsuarioService);
   private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly statusUsuarios = signal<StatusUsuarioModel[]>([]);
   protected readonly columnas = ['nombre', 'acciones'];
@@ -53,11 +56,20 @@ export class StatusUsuario implements OnInit {
   }
 
   protected eliminarStatusUsuario(statusUsuario: StatusUsuarioModel): void {
-    if (!statusUsuario.idStatusUsuario) return;
-    if (!confirm(`¿Eliminar "${statusUsuario.nombre}"?`)) return;
-    this.statusUsuarioService.delete(statusUsuario.idStatusUsuario).subscribe(() => {
-      this.cargar();
-      this.notificationService.success('Estatus de usuario eliminado');
-    });
+    const id = statusUsuario.idStatusUsuario;
+    if (!id) return;
+    this.confirmDialog
+      .confirmar({
+        titulo: '¿Eliminar estatus de usuario?',
+        mensaje: `Se eliminará "${statusUsuario.nombre}". Esta acción no se puede deshacer.`,
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.statusUsuarioService.delete(id)),
+      )
+      .subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Estatus de usuario eliminado');
+      });
   }
 }

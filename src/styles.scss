@@ -40,6 +40,9 @@ html {
       outlined-error-focus-outline-color: $color-error,
       outlined-error-label-text-color: $color-error,
       focus-select-arrow-color: $color-primary,
+      outlined-caret-color: $color-primary,
+      outlined-input-text-placeholder-color: $color-text-muted,
+      container-text-size: 0.88rem,
       container-height: 46px,
       container-vertical-padding: 11px,
     )
@@ -82,6 +85,12 @@ html {
 // sigue mandando el maxWidth de 80vw que trae MatDialog por defecto.
 .dialog-ancho-amplio {
   --mat-dialog-container-max-width: 960px;
+}
+
+// Separación entre los botones del pie de todos los diálogos (Cancelar / Eliminar,
+// Cancelar / Guardar): mat-dialog-actions no la trae por defecto.
+.mat-mdc-dialog-actions {
+  gap: 0.6rem;
 }
 
 // Panel desplegable del mat-select: esquinas y sombra como las cards de la app.

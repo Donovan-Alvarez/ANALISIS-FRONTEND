@@ -2,6 +2,8 @@ import { Component, computed, effect, inject, input, signal, untracked } from '@
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { filter, finalize, switchMap } from 'rxjs';
 import { CatalogoJerarquicoConfig, ItemJerarquico } from '../../core/models/catalogo-jerarquico.model';
 import { ExportacionService, textoCelda, valorDe } from '../../core/services/exportacion.service';
@@ -38,7 +40,7 @@ function capitalizar(texto: string): string {
  */
 @Component({
   selector: 'app-catalogo-jerarquico',
-  imports: [MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './catalogo-jerarquico.html',
   styleUrl: './catalogo-jerarquico.scss',
 })

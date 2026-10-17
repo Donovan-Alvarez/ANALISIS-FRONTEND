@@ -32,10 +32,10 @@
       </div>
 
       <div class="field">
-        <label class="field__label" for="documento-numero">Número de documento <span class="field__req">*</span></label>
-        <div class="field__control" [class.field__control--invalid]="errorNumero()">
-          <input id="documento-numero" [formControl]="noDocumento" maxlength="50" autocomplete="off" />
-        </div>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Número de documento</mat-label>
+          <input matInput id="documento-numero" [formControl]="noDocumento" maxlength="50" autocomplete="off" />
+        </mat-form-field>
         @if (errorNumero(); as msg) {
           <p class="field__error">{{ msg }}</p>
         } @else {

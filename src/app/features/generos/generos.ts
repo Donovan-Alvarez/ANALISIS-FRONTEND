@@ -2,11 +2,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { filter, switchMap } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
 import { Genero } from '../../core/models/genero.model';
 import { GeneroService } from '../../core/services/genero.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { GeneroFormDialog } from './genero-form-dialog/genero-form-dialog';
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 
 @Component({
   selector: 'app-generos',
@@ -18,6 +20,7 @@ export class Generos implements OnInit {
   private readonly generoService = inject(GeneroService);
   private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly generos = signal<Genero[]>([]);
   protected readonly columnas = ['nombre', 'acciones'];
@@ -53,11 +56,20 @@ export class Generos implements OnInit {
   }
 
   protected eliminarGenero(genero: Genero): void {
-    if (!genero.idGenero) return;
-    if (!confirm(`¿Eliminar "${genero.nombre}"?`)) return;
-    this.generoService.delete(genero.idGenero).subscribe(() => {
-      this.cargar();
-      this.notificationService.success('Género eliminado');
-    });
+    const id = genero.idGenero;
+    if (!id) return;
+    this.confirmDialog
+      .confirmar({
+        titulo: '¿Eliminar género?',
+        mensaje: `Se eliminará "${genero.nombre}". Esta acción no se puede deshacer.`,
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.generoService.delete(id)),
+      )
+      .subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Género eliminado');
+      });
   }
 }

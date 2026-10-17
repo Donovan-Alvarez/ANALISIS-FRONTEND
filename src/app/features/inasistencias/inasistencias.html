@@ -69,16 +69,16 @@
             </mat-form-field>
           </div>
           <div class="field inasistencias__buscador">
-            <div class="field__control">
-              <mat-icon class="field__icon">search</mat-icon>
-              <input
+            <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+              <mat-icon matPrefix>search</mat-icon>
+              <input matInput
                 type="search"
                 placeholder="Buscar…"
                 [value]="filtro()"
                 (input)="filtro.set($any($event.target).value)"
                 aria-label="Buscar inasistencias"
               />
-            </div>
+            </mat-form-field>
           </div>
         </div>
       </div>

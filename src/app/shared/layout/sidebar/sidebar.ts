@@ -44,22 +44,15 @@ export class Sidebar {
   private readonly menuService = inject(MenuService);
 
   protected readonly modulos = this.menuService.menu;
-  private readonly menusExpandidos = signal<Set<number>>(new Set());
+  /** Acordeón: solo un menú abierto a la vez (en cualquier módulo), para no saturar el sidebar. */
+  private readonly menuExpandido = signal<number | null>(null);
 
   protected estaExpandido(idMenu: number): boolean {
-    return this.menusExpandidos().has(idMenu);
+    return this.menuExpandido() === idMenu;
   }
 
   protected toggleMenu(idMenu: number): void {
-    this.menusExpandidos.update(actual => {
-      const nuevo = new Set(actual);
-      if (nuevo.has(idMenu)) {
-        nuevo.delete(idMenu);
-      } else {
-        nuevo.add(idMenu);
-      }
-      return nuevo;
-    });
+    this.menuExpandido.update(actual => (actual === idMenu ? null : idMenu));
   }
 
   protected iconoDe(pagina: string): string {

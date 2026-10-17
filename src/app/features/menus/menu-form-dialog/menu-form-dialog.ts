@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 import { Menu } from '../../../core/models/menu.model';
 import { Modulo } from '../../../core/models/modulo.model';
 
@@ -13,7 +14,7 @@ export interface MenuDialogData {
 
 @Component({
   selector: 'app-menu-form-dialog',
-  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule],
+  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule],
   templateUrl: './menu-form-dialog.html',
   styleUrl: './menu-form-dialog.scss',
 })

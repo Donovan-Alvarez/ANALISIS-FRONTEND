@@ -1,19 +1,24 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { Empresa } from '../../core/models/empresa.model';
 import { EmpresaService } from '../../core/services/empresa.services';
 import { NotificationService } from '../../core/services/notification.service';
+import { filter, finalize, switchMap } from 'rxjs';
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 
 @Component({
   selector: 'app-empresas',
-  imports: [ReactiveFormsModule, MatIconModule],
+  imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './empresas.html',
   styleUrl: './empresas.scss',
 })
 export class Empresas implements OnInit {
   private readonly empresaService = inject(EmpresaService);
   private readonly notificationService = inject(NotificationService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly fb = inject(FormBuilder);
 
   protected readonly empresas = signal<Empresa[]>([]);
@@ -24,7 +29,6 @@ export class Empresas implements OnInit {
   protected readonly empresaSeleccionada = signal<Empresa | null>(null);
   protected readonly guardando = signal(false);
 
-  protected readonly empresaAEliminar = signal<Empresa | null>(null);
   protected readonly eliminando = signal(false);
 
   protected readonly form = this.fb.nonNullable.group({
@@ -109,26 +113,23 @@ export class Empresas implements OnInit {
   }
 
   protected confirmarBaja(empresa: Empresa): void {
-    this.empresaAEliminar.set(empresa);
-  }
-
-  protected cancelarBaja(): void {
-    this.empresaAEliminar.set(null);
-  }
-
-  protected eliminar(): void {
-    const empresa = this.empresaAEliminar();
-    if (!empresa?.idEmpresa) return;
-
-    this.eliminando.set(true);
-    this.empresaService.delete(empresa.idEmpresa).subscribe({
-      next: () => {
-        this.eliminando.set(false);
-        this.empresaAEliminar.set(null);
+    const id = empresa.idEmpresa;
+    if (!id) return;
+    this.confirmDialog
+      .confirmar({
+        titulo: '¿Eliminar empresa?',
+        mensaje: `Se eliminará "${empresa.nombre}". Esta acción no se puede deshacer.`,
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => {
+          this.eliminando.set(true);
+          return this.empresaService.delete(id).pipe(finalize(() => this.eliminando.set(false)));
+        }),
+      )
+      .subscribe(() => {
         this.cargar();
         this.notificationService.success('Empresa eliminada');
-      },
-      error: () => this.eliminando.set(false),
-    });
+      });
   }
 }

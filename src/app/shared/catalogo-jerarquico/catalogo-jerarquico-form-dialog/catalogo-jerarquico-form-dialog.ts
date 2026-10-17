@@ -12,6 +12,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 import { Observable, catchError, concatMap, finalize, from, map, of, switchMap, tap } from 'rxjs';
 import { ComboConfig, OpcionCombo, PayloadJerarquico } from '../../../core/models/catalogo-jerarquico.model';
 
@@ -52,7 +53,7 @@ function noSoloEspacios(control: AbstractControl<string>): ValidationErrors | nu
  */
 @Component({
   selector: 'app-catalogo-jerarquico-form-dialog',
-  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule],
+  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule],
   templateUrl: './catalogo-jerarquico-form-dialog.html',
   styleUrl: './catalogo-jerarquico-form-dialog.scss',
 })

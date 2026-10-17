@@ -95,20 +95,20 @@
             </div>
 
             <div class="field form-grid__full">
-              <label class="field__label" for="nombre">Nombre <span class="field__req">*</span></label>
-              <div class="field__control" [class.field__control--invalid]="form.controls.nombre.invalid && form.controls.nombre.touched">
-                <input id="nombre" type="text" formControlName="nombre" />
-              </div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Nombre</mat-label>
+                <input matInput id="nombre" type="text" formControlName="nombre" />
+              </mat-form-field>
               @if (form.controls.nombre.invalid && form.controls.nombre.touched) {
                 <p class="field__error">El nombre es obligatorio</p>
               }
             </div>
 
             <div class="field form-grid__full">
-              <label class="field__label" for="direccion">Dirección <span class="field__req">*</span></label>
-              <div class="field__control" [class.field__control--invalid]="form.controls.direccion.invalid && form.controls.direccion.touched">
-                <input id="direccion" type="text" formControlName="direccion" />
-              </div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Dirección</mat-label>
+                <input matInput id="direccion" type="text" formControlName="direccion" />
+              </mat-form-field>
               @if (form.controls.direccion.invalid && form.controls.direccion.touched) {
                 <p class="field__error">La dirección es obligatoria</p>
               }
@@ -122,26 +122,6 @@
         <button type="button" class="btn btn--primary" [disabled]="guardando() || empresas().length === 0" (click)="guardar()">
           <mat-icon>save</mat-icon>
           <span>@if (guardando()) { Guardando… } @else { {{ modoEdicion() ? 'Guardar cambios' : 'Crear sucursal' }} }</span>
-        </button>
-      </footer>
-    </div>
-  </div>
-}
-
-@if (sucursalAEliminar(); as objetivo) {
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloBajaSucursal">
-    <div class="modal__dialog modal__dialog--sm">
-      <header class="modal__head">
-        <h2 class="modal__title" id="tituloBajaSucursal">Eliminar sucursal</h2>
-      </header>
-      <div class="modal__body">
-        <p class="baja__texto">¿Seguro que deseas eliminar <strong>{{ objetivo.nombre }}</strong>? Esta acción no se puede deshacer.</p>
-      </div>
-      <footer class="modal__foot">
-        <button type="button" class="btn btn--ghost" (click)="cancelarBaja()">Cancelar</button>
-        <button type="button" class="btn btn--primary sucursales__btn-eliminar" [disabled]="eliminando()" (click)="eliminar()">
-          <mat-icon>delete</mat-icon>
-          <span>{{ eliminando() ? 'Eliminando…' : 'Eliminar' }}</span>
         </button>
       </footer>
     </div>

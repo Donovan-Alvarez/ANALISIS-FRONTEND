@@ -2,11 +2,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { filter, switchMap } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
 import { Role } from '../../core/models/role.model';
 import { NotificationService } from '../../core/services/notification.service';
 import { RoleService } from '../../core/services/role.service';
 import { RoleFormDialog } from './role-form-dialog/role-form-dialog';
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 
 @Component({
   selector: 'app-roles',
@@ -18,6 +20,7 @@ export class Roles implements OnInit {
   private readonly roleService = inject(RoleService);
   private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly roles = signal<Role[]>([]);
   protected readonly columnas = ['nombre', 'acciones'];
@@ -53,11 +56,20 @@ export class Roles implements OnInit {
   }
 
   protected eliminarRole(role: Role): void {
-    if (!role.idRole) return;
-    if (!confirm(`¿Eliminar "${role.nombre}"?`)) return;
-    this.roleService.delete(role.idRole).subscribe(() => {
-      this.cargar();
-      this.notificationService.success('Rol eliminado');
-    });
+    const id = role.idRole;
+    if (!id) return;
+    this.confirmDialog
+      .confirmar({
+        titulo: '¿Eliminar rol?',
+        mensaje: `Se eliminará "${role.nombre}". Esta acción no se puede deshacer.`,
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.roleService.delete(id)),
+      )
+      .subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Rol eliminado');
+      });
   }
 }

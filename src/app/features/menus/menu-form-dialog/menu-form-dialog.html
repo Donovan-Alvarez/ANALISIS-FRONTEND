@@ -15,17 +15,17 @@
       </div>
 
       <div class="field form-grid__full">
-        <label class="field__label" for="nombre">Nombre</label>
-        <div class="field__control">
-          <input id="nombre" formControlName="nombre" placeholder="Ej. Parametros Generales" />
-        </div>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Nombre</mat-label>
+          <input matInput id="nombre" formControlName="nombre" placeholder="Ej. Parametros Generales" />
+        </mat-form-field>
       </div>
 
       <div class="field">
-        <label class="field__label" for="ordenMenu">Orden en el menú</label>
-        <div class="field__control">
-          <input id="ordenMenu" type="number" formControlName="ordenMenu" />
-        </div>
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Orden en el menú</mat-label>
+          <input matInput id="ordenMenu" type="number" formControlName="ordenMenu" />
+        </mat-form-field>
       </div>
     </div>
   </mat-dialog-content>

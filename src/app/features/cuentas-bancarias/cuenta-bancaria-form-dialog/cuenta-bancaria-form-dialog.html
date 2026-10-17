@@ -4,9 +4,9 @@
   <mat-dialog-content>
     <div class="cuenta-form__campos">
       <div class="field">
-        <div class="field__control cuenta-form__buscar">
-          <mat-icon class="field__icon">search</mat-icon>
-          <input
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic" class="cuenta-form__buscar">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput
             type="search"
             placeholder="Buscar por nombre, puesto o departamento…"
             [value]="busqueda()"
@@ -14,7 +14,7 @@
             [disabled]="cargandoOpciones() || guardando()"
             aria-label="Buscar empleado"
           />
-        </div>
+        </mat-form-field>
         <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
           <mat-label>Empleado</mat-label>
           <mat-select id="cuenta-empleado" [formControl]="idEmpleado" [placeholder]="textoVacioEmpleado()">
@@ -37,9 +37,9 @@
       </div>
 
       <div class="field">
-        <label class="field__label" for="cuenta-numero">Número de cuenta <span class="field__req">*</span></label>
-        <div class="field__control" [class.field__control--invalid]="errorNumero()">
-          <input
+        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+          <mat-label>Número de cuenta</mat-label>
+          <input matInput
             id="cuenta-numero"
             type="text"
             inputmode="numeric"
@@ -49,7 +49,7 @@
             placeholder="Ej. 001-438715"
             (blur)="tocarNumero()"
           />
-        </div>
+        </mat-form-field>
         @if (errorNumero(); as error) {
           <p class="field__error">{{ error }}</p>
         } @else {

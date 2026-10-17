@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 import { filter, finalize, switchMap } from 'rxjs';
 import { CuentaBancaria, CuentaBancariaFila, CuentaBancariaPayload } from '../../core/models/cuenta-bancaria.model';
 import { CuentaBancariaService } from '../../core/services/cuenta-bancaria.service';
@@ -36,7 +37,7 @@ function normalizar(texto: string): string {
 
 @Component({
   selector: 'app-cuentas-bancarias',
-  imports: [MatFormFieldModule, MatSelectModule, MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './cuentas-bancarias.html',
   styleUrl: './cuentas-bancarias.scss',
 })

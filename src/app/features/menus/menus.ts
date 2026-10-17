@@ -1,7 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { forkJoin } from 'rxjs';
+import { filter, forkJoin, switchMap } from 'rxjs';
 import { Menu } from '../../core/models/menu.model';
 import { Modulo } from '../../core/models/modulo.model';
 import { MenuMantenimientoService } from '../../core/services/menu-mantenimiento.service';
@@ -10,6 +10,7 @@ import { NotificationService } from '../../core/services/notification.service';
 import { PermisosService } from '../../core/services/permisos.service';
 import { colorParaTexto } from '../../shared/utils/color-chip.util';
 import { MenuFormDialog } from './menu-form-dialog/menu-form-dialog';
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 
 interface MenuConModulo extends Menu {
   nombreModulo: string;
@@ -27,6 +28,7 @@ export class Menus implements OnInit {
   private readonly permisosService = inject(PermisosService);
   private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly menus = signal<MenuConModulo[]>([]);
   protected readonly modulos = signal<Modulo[]>([]);
@@ -82,11 +84,20 @@ export class Menus implements OnInit {
 
   protected eliminarMenu(menu: Menu): void {
     if (!this.permisos().baja) return;
-    if (!menu.idMenu) return;
-    if (!confirm(`¿Eliminar "${menu.nombre}"?`)) return;
-    this.menuService.delete(menu.idMenu).subscribe(() => {
-      this.cargar();
-      this.notificationService.success('Menú eliminado');
-    });
+    const id = menu.idMenu;
+    if (!id) return;
+    this.confirmDialog
+      .confirmar({
+        titulo: '¿Eliminar menú?',
+        mensaje: `Se eliminará "${menu.nombre}". Esta acción no se puede deshacer.`,
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.menuService.delete(id)),
+      )
+      .subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Menú eliminado');
+      });
   }
 }

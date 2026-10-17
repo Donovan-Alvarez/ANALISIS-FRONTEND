@@ -1,12 +1,14 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { filter, switchMap } from 'rxjs';
 import { Modulo } from '../../core/models/modulo.model';
 import { ModuloService } from '../../core/services/modulo.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { PermisosService } from '../../core/services/permisos.service';
 import { colorParaTexto } from '../../shared/utils/color-chip.util';
 import { ModuloFormDialog } from './modulo-form-dialog/modulo-form-dialog';
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 
 @Component({
   selector: 'app-modulos',
@@ -19,6 +21,7 @@ export class Modulos implements OnInit {
   private readonly permisosService = inject(PermisosService);
   private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   protected readonly modulos = signal<Modulo[]>([]);
   protected readonly colorDe = colorParaTexto;
@@ -58,11 +61,20 @@ export class Modulos implements OnInit {
 
   protected eliminarModulo(modulo: Modulo): void {
     if (!this.permisos().baja) return;
-    if (!modulo.idModulo) return;
-    if (!confirm(`¿Eliminar "${modulo.nombre}"?`)) return;
-    this.moduloService.delete(modulo.idModulo).subscribe(() => {
-      this.cargar();
-      this.notificationService.success('Módulo eliminado');
-    });
+    const id = modulo.idModulo;
+    if (!id) return;
+    this.confirmDialog
+      .confirmar({
+        titulo: '¿Eliminar módulo?',
+        mensaje: `Se eliminará "${modulo.nombre}". Esta acción no se puede deshacer.`,
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.moduloService.delete(id)),
+      )
+      .subscribe(() => {
+        this.cargar();
+        this.notificationService.success('Módulo eliminado');
+      });
   }
 }

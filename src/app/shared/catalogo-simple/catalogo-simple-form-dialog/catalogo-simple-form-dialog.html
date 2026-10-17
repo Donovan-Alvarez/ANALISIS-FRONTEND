@@ -3,18 +3,16 @@
 <form (submit)="guardar($event)" novalidate>
   <mat-dialog-content>
     <div class="field catalogo-form__campo">
-      <label class="field__label" for="catalogo-nombre">
-        {{ data.etiqueta }} <span class="field__req">*</span>
-      </label>
-      <div class="field__control" [class.field__control--invalid]="nombre.invalid && nombre.touched">
-        <input
+      <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+        <mat-label>{{ data.etiqueta }}</mat-label>
+        <input matInput
           id="catalogo-nombre"
           [formControl]="nombre"
           [attr.maxlength]="data.longitudMaxima"
           [placeholder]="data.placeholder ?? ''"
           autocomplete="off"
         />
-      </div>
+      </mat-form-field>
 
       @if (nombre.touched && nombre.hasError('required')) {
         <p class="field__error">{{ data.etiqueta }} es obligatorio.</p>

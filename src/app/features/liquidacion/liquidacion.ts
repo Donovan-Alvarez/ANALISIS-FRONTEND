@@ -2,6 +2,8 @@ import { Component, computed, effect, inject, signal, untracked } from '@angular
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { filter, finalize } from 'rxjs';
 import { Liquidacion as LiquidacionModel } from '../../core/models/liquidacion.model';
 import { ColumnaExport, ExportacionService, textoCelda, valorDe } from '../../core/services/exportacion.service';
@@ -24,7 +26,7 @@ function normalizar(texto: string): string {
  */
 @Component({
   selector: 'app-liquidacion',
-  imports: [MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './liquidacion.html',
   styleUrl: './liquidacion.scss',
 })

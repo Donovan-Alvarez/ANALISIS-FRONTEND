@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 import { Menu } from '../../../core/models/menu.model';
 import { Opcion } from '../../../core/models/opcion.model';
 
@@ -28,7 +29,7 @@ const PAGINAS_DISPONIBLES = [
 
 @Component({
   selector: 'app-opcion-form-dialog',
-  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule],
+  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule],
   templateUrl: './opcion-form-dialog.html',
   styleUrl: './opcion-form-dialog.scss',
 })

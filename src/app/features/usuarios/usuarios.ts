@@ -4,7 +4,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { forkJoin } from 'rxjs';
+import { MatInputModule } from '@angular/material/input';
+import { filter, finalize, forkJoin, switchMap } from 'rxjs';
 import {
   Empresa,
   Genero,
@@ -23,19 +24,21 @@ import { PermisosService } from '../../core/services/permisos.service';
 import { UsuariosService } from '../../core/services/usuarios.service';
 import { mensajeDeError } from '../../core/utils/api-error';
 import { aBase64Puro, aDataUri } from '../../core/utils/foto';
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 
 /** Ruta de esta pantalla; coincide con OPCION.Pagina en la base de datos. */
 const PAGINA = 'usuarios';
 
 @Component({
   selector: 'app-usuarios',
-  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatIconModule],
+  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './usuarios.html',
   styleUrl: './usuarios.scss',
 })
 export class Usuarios implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly notificationService = inject(NotificationService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly permisosService = inject(PermisosService);
   private readonly usuariosService = inject(UsuariosService);
   private readonly catalogosService = inject(CatalogosService);
@@ -58,7 +61,6 @@ export class Usuarios implements OnInit {
   protected readonly modoEdicion = signal(false);
   protected readonly guardando = signal(false);
   protected readonly eliminando = signal(false);
-  protected readonly usuarioAEliminar = signal<UsuarioResponse | null>(null);
   protected readonly verPassword = signal(false);
   /** Data URI para el <img>; se convierte a base64 puro antes de enviarlo. */
   protected readonly fotoPreview = signal<string | null>(null);
@@ -373,33 +375,27 @@ export class Usuarios implements OnInit {
 
   protected confirmarBaja(usuario: UsuarioResponse): void {
     if (!this.permisos().baja) return;
-    this.usuarioAEliminar.set(usuario);
-  }
-
-  protected cancelarBaja(): void {
-    this.usuarioAEliminar.set(null);
-  }
-
-  protected eliminar(): void {
-    const usuario = this.usuarioAEliminar();
-    if (!usuario) return;
-
-    this.eliminando.set(true);
-    this.usuariosService.eliminar(usuario.idUsuario).subscribe({
-      next: () => {
-        this.eliminando.set(false);
-        this.usuarioAEliminar.set(null);
-        this.recargarUsuarios();
-        this.notificationService.success('Usuario eliminado');
-      },
-      error: (error) => {
-        this.eliminando.set(false);
-        this.usuarioAEliminar.set(null);
-        // Oracle rechaza la baja si el usuario tiene bitácora o sesiones
-        // asociadas (restricción de integridad referencial).
-        this.notificationService.error('No se pudo eliminar el usuario', mensajeDeError(error));
-      },
-    });
+    this.confirmDialog
+      .confirmar({
+        titulo: '¿Eliminar usuario?',
+        mensaje: `Se eliminará a "${usuario.nombre} ${usuario.apellido}" (${usuario.idUsuario}). Esta acción no se puede deshacer.`,
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => {
+          this.eliminando.set(true);
+          return this.usuariosService.eliminar(usuario.idUsuario).pipe(finalize(() => this.eliminando.set(false)));
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.recargarUsuarios();
+          this.notificationService.success('Usuario eliminado');
+        },
+        // /api/usuarios tiene manejo propio en errorInterceptor: el aviso se pone aquí.
+        // Oracle rechaza la baja si el usuario tiene bitácora o sesiones asociadas.
+        error: (error) => this.notificationService.error('No se pudo eliminar el usuario', mensajeDeError(error)),
+      });
   }
 
   // ── Imprimir / Exportar ─────────────────────────────────────────────

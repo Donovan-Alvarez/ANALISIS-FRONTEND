@@ -61,16 +61,16 @@
       <div class="card__head">
         <h2 class="card__title">{{ filtrados().length }} liquidación(es)</h2>
         <div class="field liquidacion__buscador">
-          <div class="field__control">
-            <mat-icon class="field__icon">search</mat-icon>
-            <input
+          <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput
               type="search"
               placeholder="Buscar por empleado, puesto o motivo…"
               [value]="filtro()"
               (input)="filtro.set($any($event.target).value)"
               aria-label="Buscar liquidaciones"
             />
-          </div>
+          </mat-form-field>
         </div>
       </div>
 

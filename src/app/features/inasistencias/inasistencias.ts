@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 import { filter, finalize, switchMap } from 'rxjs';
 import { Inasistencia, InasistenciaFila, InasistenciaPayload } from '../../core/models/inasistencia.model';
 import { ColumnaExport, ExportacionService, textoCelda } from '../../core/services/exportacion.service';
@@ -40,7 +41,7 @@ function normalizar(texto: string): string {
 
 @Component({
   selector: 'app-inasistencias',
-  imports: [MatFormFieldModule, MatSelectModule, MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './inasistencias.html',
   styleUrl: './inasistencias.scss',
 })

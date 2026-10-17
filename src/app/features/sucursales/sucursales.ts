@@ -3,12 +3,14 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { forkJoin } from 'rxjs';
+import { MatInputModule } from '@angular/material/input';
+import { filter, finalize, forkJoin, switchMap } from 'rxjs';
 import { Empresa } from '../../core/models/empresa.model';
 import { Sucursal } from '../../core/models/sucursal.model';
 import { EmpresaService } from '../../core/services/empresa.services';
 import { NotificationService } from '../../core/services/notification.service';
 import { SucursalService } from '../../core/services/sucursal.service';
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 
 interface SucursalConEmpresa extends Sucursal {
   nombreEmpresa: string;
@@ -16,13 +18,14 @@ interface SucursalConEmpresa extends Sucursal {
 
 @Component({
   selector: 'app-sucursales',
-  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatIconModule],
+  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './sucursales.html',
   styleUrl: './sucursales.scss',
 })
 export class Sucursales implements OnInit {
   private readonly sucursalService = inject(SucursalService);
   private readonly notificationService = inject(NotificationService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly empresaService = inject(EmpresaService);
   private readonly fb = inject(FormBuilder);
 
@@ -35,7 +38,6 @@ export class Sucursales implements OnInit {
   protected readonly sucursalSeleccionada = signal<Sucursal | null>(null);
   protected readonly guardando = signal(false);
 
-  protected readonly sucursalAEliminar = signal<Sucursal | null>(null);
   protected readonly eliminando = signal(false);
 
   protected readonly form = this.fb.nonNullable.group({
@@ -114,26 +116,23 @@ export class Sucursales implements OnInit {
   }
 
   protected confirmarBaja(sucursal: Sucursal): void {
-    this.sucursalAEliminar.set(sucursal);
-  }
-
-  protected cancelarBaja(): void {
-    this.sucursalAEliminar.set(null);
-  }
-
-  protected eliminar(): void {
-    const sucursal = this.sucursalAEliminar();
-    if (!sucursal?.idSucursal) return;
-
-    this.eliminando.set(true);
-    this.sucursalService.delete(sucursal.idSucursal).subscribe({
-      next: () => {
-        this.eliminando.set(false);
-        this.sucursalAEliminar.set(null);
+    const id = sucursal.idSucursal;
+    if (!id) return;
+    this.confirmDialog
+      .confirmar({
+        titulo: '¿Eliminar sucursal?',
+        mensaje: `Se eliminará "${sucursal.nombre}". Esta acción no se puede deshacer.`,
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => {
+          this.eliminando.set(true);
+          return this.sucursalService.delete(id).pipe(finalize(() => this.eliminando.set(false)));
+        }),
+      )
+      .subscribe(() => {
         this.cargar();
         this.notificationService.success('Sucursal eliminada');
-      },
-      error: () => this.eliminando.set(false),
-    });
+      });
   }
 }

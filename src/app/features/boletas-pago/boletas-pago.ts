@@ -1,16 +1,22 @@
 import { Component, computed, effect, inject, signal, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
 import { Subscription } from 'rxjs';
 import { BoletasPagoService } from '../../core/services/boletas-pago.service';
 import { BoletaPago, PeriodoPago, EmpleadoPago } from '../../core/models/boleta-pago.model';
+import { MenuService } from '../../core/services/menu.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { PermisosService } from '../../core/services/permisos.service';
-import { ExportacionService, ColumnaExport } from '../../core/services/exportacion.service';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
+import { ExportacionService, ColumnaExport, textoCelda } from '../../core/services/exportacion.service';
+import { etiquetaPeriodo } from '../../core/utils/fecha-hora';
+
+/** Boleta de solo lectura: presenta lo que guardó Calcular Planilla, nunca recalcula el neto. */
 @Component({
   selector: 'app-boletas-pago',
-  imports: [MatFormFieldModule, MatSelectModule, CommonModule, FormsModule],
+  imports: [MatFormFieldModule, MatSelectModule, MatIconModule, MatMenuModule, FormsModule],
   templateUrl: './boletas-pago.html',
   styleUrl: './boletas-pago.scss',
 })
@@ -18,16 +24,35 @@ export class BoletasPago implements OnDestroy {
   private readonly api = inject(BoletasPagoService);
   private readonly exportacion = inject(ExportacionService);
   private readonly permisosService = inject(PermisosService);
+  private readonly menuService = inject(MenuService);
+  private readonly notificationService = inject(NotificationService);
   readonly permisos = computed(() => this.permisosService.permisosDe('boletas-pago'));
+  readonly menuCargado = this.menuService.cargado;
+  readonly sinAcceso = computed(() => this.menuCargado() && !this.permisos().consultar);
   readonly periodos = signal<PeriodoPago[]>([]);
   readonly empleados = signal<EmpleadoPago[]>([]);
   readonly boleta = signal<BoletaPago | null>(null);
   readonly cargando = signal(false);
-  readonly errorArchivo = signal('');
+  readonly procesando = signal(false);
   periodo = '';
   empleado: number | null = null;
   private peticion?: Subscription;
   private inicial?: Subscription;
+
+  readonly etiquetaPeriodo = etiquetaPeriodo;
+  readonly moneda = (valor: number | null | undefined) => textoCelda(valor, 'moneda') || '—';
+  readonly fecha = (valor: string | null | undefined) => textoCelda(valor, 'fecha');
+
+  /** Subtotales de presentación: suma de las líneas guardadas. El neto es el almacenado. */
+  readonly totalIngresos = computed(() => {
+    const d = this.boleta()?.detalle;
+    return d ? d.ingresoSueldoBase + d.ingresoBonificacionDecreto + d.ingresoOtrosIngresos : 0;
+  });
+  readonly totalDescuentos = computed(() => {
+    const d = this.boleta()?.detalle;
+    return d ? d.descuentoIgss + d.descuentoIsr + d.descuentoInasistencias : 0;
+  });
+
   constructor() {
     effect(() => {
       this.inicial?.unsubscribe();
@@ -108,19 +133,23 @@ export class BoletasPago implements OnDestroy {
   async archivo(tipo: 'imprimir' | 'pdf' | 'excel') {
     if (
       !this.boleta() ||
+      this.procesando() ||
       (tipo === 'imprimir' ? !this.permisos().imprimir : !this.permisos().exportar)
     )
       return;
-    this.errorArchivo.set('');
     const d = this.boleta()!.detalle;
     const titulo = `Boleta ${d.anio}-${d.mes} empleado ${d.idEmpleado}`;
+    this.procesando.set(true);
     try {
       if (tipo === 'imprimir') await this.exportacion.imprimir(titulo, this.columnas, this.filas());
       else if (tipo === 'pdf')
         await this.exportacion.exportarPdf(titulo, this.columnas, this.filas());
       else await this.exportacion.exportarExcel(titulo, this.columnas, this.filas());
-    } catch {
-      this.errorArchivo.set('No se pudo generar el archivo. Intente nuevamente.');
+    } catch (error) {
+      console.error(error);
+      this.notificationService.error('No se pudo generar el archivo', 'Revisa tu conexión e intenta de nuevo.');
+    } finally {
+      this.procesando.set(false);
     }
   }
   ngOnDestroy() {

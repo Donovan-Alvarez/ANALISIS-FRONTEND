@@ -81,30 +81,30 @@
           <h3 class="form-section__title">Datos generales</h3>
           <div class="form-grid">
             <div class="field form-grid__full">
-              <label class="field__label" for="nombre">Nombre <span class="field__req">*</span></label>
-              <div class="field__control" [class.field__control--invalid]="form.controls.nombre.invalid && form.controls.nombre.touched">
-                <input id="nombre" type="text" formControlName="nombre" />
-              </div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Nombre</mat-label>
+                <input matInput id="nombre" type="text" formControlName="nombre" />
+              </mat-form-field>
               @if (form.controls.nombre.invalid && form.controls.nombre.touched) {
                 <p class="field__error">El nombre es obligatorio</p>
               }
             </div>
 
             <div class="field form-grid__full">
-              <label class="field__label" for="direccion">Dirección <span class="field__req">*</span></label>
-              <div class="field__control" [class.field__control--invalid]="form.controls.direccion.invalid && form.controls.direccion.touched">
-                <input id="direccion" type="text" formControlName="direccion" />
-              </div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Dirección</mat-label>
+                <input matInput id="direccion" type="text" formControlName="direccion" />
+              </mat-form-field>
               @if (form.controls.direccion.invalid && form.controls.direccion.touched) {
                 <p class="field__error">La dirección es obligatoria</p>
               }
             </div>
 
             <div class="field">
-              <label class="field__label" for="nit">NIT <span class="field__req">*</span></label>
-              <div class="field__control" [class.field__control--invalid]="form.controls.nit.invalid && form.controls.nit.touched">
-                <input id="nit" type="text" formControlName="nit" />
-              </div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>NIT</mat-label>
+                <input matInput id="nit" type="text" formControlName="nit" />
+              </mat-form-field>
               @if (form.controls.nit.invalid && form.controls.nit.touched) {
                 <p class="field__error">El NIT es obligatorio</p>
               }
@@ -116,36 +116,52 @@
           <h3 class="form-section__title">Políticas de contraseña</h3>
           <div class="form-grid">
             <div class="field">
-              <label class="field__label" for="passwordCantidadMayusculas">Mayúsculas mínimas</label>
-              <div class="field__control"><input id="passwordCantidadMayusculas" type="number" min="0" formControlName="passwordCantidadMayusculas" /></div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Mayúsculas mínimas</mat-label>
+                <input matInput id="passwordCantidadMayusculas" type="number" min="0" formControlName="passwordCantidadMayusculas" />
+              </mat-form-field>
             </div>
             <div class="field">
-              <label class="field__label" for="passwordCantidadMinusculas">Minúsculas mínimas</label>
-              <div class="field__control"><input id="passwordCantidadMinusculas" type="number" min="0" formControlName="passwordCantidadMinusculas" /></div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Minúsculas mínimas</mat-label>
+                <input matInput id="passwordCantidadMinusculas" type="number" min="0" formControlName="passwordCantidadMinusculas" />
+              </mat-form-field>
             </div>
             <div class="field">
-              <label class="field__label" for="passwordCantidadNumeros">Números mínimos</label>
-              <div class="field__control"><input id="passwordCantidadNumeros" type="number" min="0" formControlName="passwordCantidadNumeros" /></div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Números mínimos</mat-label>
+                <input matInput id="passwordCantidadNumeros" type="number" min="0" formControlName="passwordCantidadNumeros" />
+              </mat-form-field>
             </div>
             <div class="field">
-              <label class="field__label" for="passwordCantidadCaracteresEspeciales">Caracteres especiales mínimos</label>
-              <div class="field__control"><input id="passwordCantidadCaracteresEspeciales" type="number" min="0" formControlName="passwordCantidadCaracteresEspeciales" /></div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Caracteres especiales mínimos</mat-label>
+                <input matInput id="passwordCantidadCaracteresEspeciales" type="number" min="0" formControlName="passwordCantidadCaracteresEspeciales" />
+              </mat-form-field>
             </div>
             <div class="field">
-              <label class="field__label" for="passwordLargo">Longitud mínima</label>
-              <div class="field__control"><input id="passwordLargo" type="number" min="1" formControlName="passwordLargo" /></div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Longitud mínima</mat-label>
+                <input matInput id="passwordLargo" type="number" min="1" formControlName="passwordLargo" />
+              </mat-form-field>
             </div>
             <div class="field">
-              <label class="field__label" for="passwordIntentosAntesDeBloquear">Intentos antes de bloquear</label>
-              <div class="field__control"><input id="passwordIntentosAntesDeBloquear" type="number" min="1" formControlName="passwordIntentosAntesDeBloquear" /></div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Intentos antes de bloquear</mat-label>
+                <input matInput id="passwordIntentosAntesDeBloquear" type="number" min="1" formControlName="passwordIntentosAntesDeBloquear" />
+              </mat-form-field>
             </div>
             <div class="field">
-              <label class="field__label" for="passwordCantidadCaducidadDias">Días de vigencia</label>
-              <div class="field__control"><input id="passwordCantidadCaducidadDias" type="number" min="1" formControlName="passwordCantidadCaducidadDias" /></div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Días de vigencia</mat-label>
+                <input matInput id="passwordCantidadCaducidadDias" type="number" min="1" formControlName="passwordCantidadCaducidadDias" />
+              </mat-form-field>
             </div>
             <div class="field">
-              <label class="field__label" for="passwordCantidadPreguntasValidar">Preguntas de recuperación</label>
-              <div class="field__control"><input id="passwordCantidadPreguntasValidar" type="number" min="0" formControlName="passwordCantidadPreguntasValidar" /></div>
+              <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
+                <mat-label>Preguntas de recuperación</mat-label>
+                <input matInput id="passwordCantidadPreguntasValidar" type="number" min="0" formControlName="passwordCantidadPreguntasValidar" />
+              </mat-form-field>
             </div>
           </div>
         </div>
@@ -156,26 +172,6 @@
         <button type="button" class="btn btn--primary" [disabled]="guardando()" (click)="guardar()">
           <mat-icon>save</mat-icon>
           <span>@if (guardando()) { Guardando… } @else { {{ modoEdicion() ? 'Guardar cambios' : 'Crear empresa' }} }</span>
-        </button>
-      </footer>
-    </div>
-  </div>
-}
-
-@if (empresaAEliminar(); as objetivo) {
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloBajaEmpresa">
-    <div class="modal__dialog modal__dialog--sm">
-      <header class="modal__head">
-        <h2 class="modal__title" id="tituloBajaEmpresa">Eliminar empresa</h2>
-      </header>
-      <div class="modal__body">
-        <p class="baja__texto">¿Seguro que deseas eliminar <strong>{{ objetivo.nombre }}</strong>? Esta acción no se puede deshacer.</p>
-      </div>
-      <footer class="modal__foot">
-        <button type="button" class="btn btn--ghost" (click)="cancelarBaja()">Cancelar</button>
-        <button type="button" class="btn btn--primary empresas__btn-eliminar" [disabled]="eliminando()" (click)="eliminar()">
-          <mat-icon>delete</mat-icon>
-          <span>{{ eliminando() ? 'Eliminando…' : 'Eliminar' }}</span>
         </button>
       </footer>
     </div>
