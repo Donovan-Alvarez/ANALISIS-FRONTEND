@@ -5,7 +5,7 @@
   </button>
 </div>
 
-<table mat-table [dataSource]="generos()" class="mat-elevation-z2">
+<table mat-table [dataSource]="pag.pagina()" class="mat-elevation-z2">
 
   <ng-container matColumnDef="nombre">
     <th mat-header-cell *matHeaderCellDef>Nombre</th>
@@ -27,3 +27,15 @@
   <tr mat-header-row *matHeaderRowDef="columnas"></tr>
   <tr mat-row *matRowDef="let row; columns: columnas"></tr>
 </table>
+@if (pag.visible()) {
+  <mat-paginator
+    class="tabla-paginador"
+    [length]="pag.total()"
+    [pageIndex]="pag.indice()"
+    [pageSize]="pag.tamano()"
+    [pageSizeOptions]="pag.opciones"
+    (page)="pag.cambiar($event)"
+    showFirstLastButtons
+    aria-label="Paginación de la tabla"
+  />
+}

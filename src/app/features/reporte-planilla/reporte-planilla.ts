@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { Subscription, finalize } from 'rxjs';
 import { PeriodoReporte, ReportePlanillaResultado } from '../../core/models/reporte-planilla.model';
 import { ColumnaExport, ExportacionService, textoCelda } from '../../core/services/exportacion.service';
@@ -12,6 +13,7 @@ import { NotificationService } from '../../core/services/notification.service';
 import { PermisosService } from '../../core/services/permisos.service';
 import { ReportePlanillaService } from '../../core/services/reporte-planilla.service';
 import { etiquetaPeriodo, fechaHoraTexto } from '../../core/utils/fecha-hora';
+import { Paginacion } from '../../core/utils/paginacion';
 
 const SLUG = 'reporte-planilla';
 
@@ -39,7 +41,7 @@ const clave = (anio: number, mes: number) => `${anio}-${mes}`;
 /** Reporte de solo lectura: no tiene Nuevo/Editar/Eliminar; solo Consultar, Imprimir y Exportar. */
 @Component({
   selector: 'app-reporte-planilla',
-  imports: [MatFormFieldModule, MatSelectModule, MatIconModule, MatMenuModule],
+  imports: [MatPaginatorModule, MatFormFieldModule, MatSelectModule, MatIconModule, MatMenuModule],
   templateUrl: './reporte-planilla.html',
   styleUrl: './reporte-planilla.scss',
 })
@@ -50,6 +52,7 @@ export class ReportePlanilla {
   private readonly notificationService = inject(NotificationService);
   private readonly exportacionService = inject(ExportacionService);
   private readonly destroyRef = inject(DestroyRef);
+  protected readonly pag = new Paginacion(() => this.reporte()?.detalle ?? []);
 
   protected readonly periodos = signal<PeriodoFila[]>([]);
   protected readonly claveSeleccionada = signal('');

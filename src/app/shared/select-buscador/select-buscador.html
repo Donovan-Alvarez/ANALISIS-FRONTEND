@@ -1,0 +1,19 @@
+<div class="select-buscador">
+  <mat-icon class="select-buscador__icono">search</mat-icon>
+  <input
+    #campo
+    type="text"
+    class="select-buscador__input"
+    autocomplete="off"
+    [placeholder]="placeholder()"
+    [value]="texto()"
+    (input)="escribir($any($event.target).value)"
+    (keydown)="alPresionar($event)"
+    [attr.aria-label]="placeholder()"
+  />
+  @if (texto()) {
+    <button type="button" class="select-buscador__limpiar" (click)="limpiar()" aria-label="Limpiar búsqueda">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+</div>

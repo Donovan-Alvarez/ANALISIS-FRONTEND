@@ -1,0 +1,71 @@
+@use 'colors' as *;
+
+// Fijo arriba del panel del mat-select mientras se desplazan las opciones.
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: $color-surface;
+  padding: 0.35rem 0.5rem 0.4rem;
+  border-bottom: 1px solid $color-border-soft;
+}
+
+.select-buscador {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.6rem;
+  height: 38px;
+  border: 1.5px solid $color-border;
+  border-radius: 10px;
+  background: $color-surface;
+  transition: border-color 0.15s ease;
+
+  &:focus-within {
+    border-color: $color-primary;
+  }
+}
+
+.select-buscador__icono {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: $color-text-muted;
+}
+
+.select-buscador__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: 0.85rem;
+  color: $color-text;
+
+  &::placeholder {
+    color: $color-text-muted;
+  }
+}
+
+.select-buscador__limpiar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: $color-text-muted;
+  cursor: pointer;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    color: $color-primary-dark;
+  }
+}

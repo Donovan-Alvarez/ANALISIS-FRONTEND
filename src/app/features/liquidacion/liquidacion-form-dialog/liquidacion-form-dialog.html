@@ -8,9 +8,12 @@
       <div class="field">
         <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
           <mat-label>Empleado a liquidar</mat-label>
-          <mat-select id="idEmpleado" formControlName="idEmpleado" [placeholder]="empleados().length ? 'Selecciona…' : 'No hay empleados pendientes de liquidar'">
-            @for (e of empleados(); track e.idEmpleado) {
+          <mat-select id="idEmpleado" formControlName="idEmpleado" [placeholder]="empleados().length ? 'Selecciona…' : 'No hay empleados pendientes de liquidar'" (openedChange)="buscadorEmpleado.alAbrir($event)">
+            <app-select-buscador #buscadorEmpleado [(texto)]="busqueda" placeholder="Buscar por nombre o puesto…" />
+            @for (e of empleadosFiltrados(); track e.idEmpleado) {
               <mat-option [value]="e.idEmpleado">{{ e.nombrePersona }}</mat-option>
+            } @empty {
+              <mat-option disabled>Ningún empleado coincide con la búsqueda.</mat-option>
             }
           </mat-select>
         </mat-form-field>

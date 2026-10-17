@@ -3,6 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { filter, finalize, switchMap } from 'rxjs';
 import {
   PeriodoPlanilla,
@@ -16,6 +17,7 @@ import { NotificationService } from '../../core/services/notification.service';
 import { PermisosService } from '../../core/services/permisos.service';
 import { etiquetaPeriodo, fechaHoraTexto } from '../../core/utils/fecha-hora';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+import { Paginacion } from '../../core/utils/paginacion';
 
 
 const SLUG = 'calculo-planilla';
@@ -38,7 +40,7 @@ const aClave = (anio: number, mes: number) => `${anio}-${mes}`;
 
 @Component({
   selector: 'app-calculo-planilla',
-  imports: [MatFormFieldModule, MatSelectModule, MatIconModule, MatMenuModule],
+  imports: [MatPaginatorModule, MatFormFieldModule, MatSelectModule, MatIconModule, MatMenuModule],
   templateUrl: './calculo-planilla.html',
   styleUrl: './calculo-planilla.scss',
 })
@@ -49,6 +51,7 @@ export class CalculoPlanilla {
   private readonly notificationService = inject(NotificationService);
   private readonly exportacionService = inject(ExportacionService);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  protected readonly pag = new Paginacion(() => this.filas());
 
   protected readonly periodos = signal<PeriodoPlanilla[]>([]);
   protected readonly cargando = signal(false);

@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { finalize } from 'rxjs';
 import { EmpleadoLiquidable } from '../../../core/models/liquidacion.model';
 import { LiquidacionService } from '../../../core/services/liquidacion.service';
+import { SelectBuscador, coincideBusqueda } from '../../../shared/select-buscador/select-buscador';
 
 /**
  * Formulario de liquidación. Solo cuatro campos capturables: empleado,
@@ -26,7 +27,7 @@ import { LiquidacionService } from '../../../core/services/liquidacion.service';
  */
 @Component({
   selector: 'app-liquidacion-form-dialog',
-  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule, DecimalPipe],
+  imports: [SelectBuscador, MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule, DecimalPipe],
   templateUrl: './liquidacion-form-dialog.html',
   styleUrl: './liquidacion-form-dialog.scss',
 })
@@ -36,6 +37,15 @@ export class LiquidacionFormDialog {
   private readonly dialogRef = inject(MatDialogRef<LiquidacionFormDialog, boolean>);
 
   protected readonly empleados = signal<EmpleadoLiquidable[]>([]);
+  protected readonly busqueda = signal('');
+  /** El empleado ya elegido se queda en la lista aunque no coincida con lo escrito. */
+  protected readonly empleadosFiltrados = computed(() =>
+    this.empleados().filter(
+      (e) =>
+        e.idEmpleado === this.idEmpleadoSeleccionado() ||
+        coincideBusqueda(this.busqueda(), e.nombrePersona, e.nombrePuesto),
+    ),
+  );
   protected readonly guardando = signal(false);
   protected readonly hoy = new Date().toISOString().slice(0, 10);
 

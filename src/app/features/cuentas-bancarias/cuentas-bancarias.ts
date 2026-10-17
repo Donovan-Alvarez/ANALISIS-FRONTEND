@@ -5,6 +5,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { filter, finalize, switchMap } from 'rxjs';
 import { CuentaBancaria, CuentaBancariaFila, CuentaBancariaPayload } from '../../core/models/cuenta-bancaria.model';
 import { CuentaBancariaService } from '../../core/services/cuenta-bancaria.service';
@@ -17,6 +18,7 @@ import {
   CuentaBancariaFormData,
   CuentaBancariaFormDialog,
 } from './cuenta-bancaria-form-dialog/cuenta-bancaria-form-dialog';
+import { Paginacion } from '../../core/utils/paginacion';
 
 const SLUG = 'cuentas-bancarias';
 const TITULO = 'Cuentas bancarias de empleados';
@@ -37,7 +39,7 @@ function normalizar(texto: string): string {
 
 @Component({
   selector: 'app-cuentas-bancarias',
-  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatPaginatorModule, MatInputModule, MatFormFieldModule, MatSelectModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './cuentas-bancarias.html',
   styleUrl: './cuentas-bancarias.scss',
 })
@@ -49,6 +51,7 @@ export class CuentasBancarias {
   private readonly exportacionService = inject(ExportacionService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly dialog = inject(MatDialog);
+  protected readonly pag = new Paginacion(() => this.filtrados());
 
   protected readonly items = signal<CuentaBancariaFila[]>([]);
   protected readonly cargando = signal(false);

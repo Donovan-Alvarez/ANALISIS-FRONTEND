@@ -4,15 +4,17 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { filter, switchMap } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { StatusUsuario as StatusUsuarioModel } from '../../core/models/status-usuario.model';
 import { NotificationService } from '../../core/services/notification.service';
 import { StatusUsuarioService } from '../../core/services/status-usuario.service';
 import { StatusUsuarioFormDialog } from './status-usuario-form-dialog/status-usuario-form-dialog';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+import { Paginacion } from '../../core/utils/paginacion';
 
 @Component({
   selector: 'app-status-usuario',
-  imports: [MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
+  imports: [MatPaginatorModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
   templateUrl: './status-usuario.html',
   styleUrl: './status-usuario.scss',
 })
@@ -21,6 +23,7 @@ export class StatusUsuario implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  protected readonly pag = new Paginacion(() => this.statusUsuarios());
 
   protected readonly statusUsuarios = signal<StatusUsuarioModel[]>([]);
   protected readonly columnas = ['nombre', 'acciones'];

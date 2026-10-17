@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { filter, finalize, switchMap } from 'rxjs';
 import { DocumentoPersona } from '../../core/models/documento-persona.model';
 import { DocumentoPersonaService } from '../../core/services/documento-persona.service';
@@ -16,6 +17,7 @@ import {
   DocumentoPersonaFormData,
   DocumentoPersonaFormDialog,
 } from './documento-persona-form-dialog/documento-persona-form-dialog';
+import { Paginacion } from '../../core/utils/paginacion';
 
 /** Ruta y OPCION.Pagina: 'documentos-persona' (contrato-rutas.md). */
 const SLUG = 'documentos-persona';
@@ -39,7 +41,7 @@ function normalizar(texto: string): string {
  */
 @Component({
   selector: 'app-documentos-persona',
-  imports: [MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatPaginatorModule, MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './documentos-persona.html',
   styleUrl: './documentos-persona.scss',
 })
@@ -51,6 +53,7 @@ export class DocumentosPersona {
   private readonly exportacionService = inject(ExportacionService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly dialog = inject(MatDialog);
+  protected readonly pag = new Paginacion(() => this.filtrados());
 
   protected readonly titulo = TITULO;
   protected readonly columnas = COLUMNAS;

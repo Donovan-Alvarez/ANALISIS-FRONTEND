@@ -40,7 +40,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (empresa of empresas(); track empresa.idEmpresa) {
+            @for (empresa of pag.pagina(); track empresa.idEmpresa) {
               <tr>
                 <td>{{ empresa.nombre }}</td>
                 <td>{{ empresa.direccion }}</td>
@@ -60,6 +60,18 @@
           </tbody>
         </table>
       </div>
+      @if (pag.visible()) {
+        <mat-paginator
+          class="tabla-paginador"
+          [length]="pag.total()"
+          [pageIndex]="pag.indice()"
+          [pageSize]="pag.tamano()"
+          [pageSizeOptions]="pag.opciones"
+          (page)="pag.cambiar($event)"
+          showFirstLastButtons
+          aria-label="Paginación de la tabla"
+        />
+      }
     }
   </section>
 </div>

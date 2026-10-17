@@ -139,7 +139,7 @@
                 </tr>
               </thead>
               <tbody>
-                @for (d of r.detalle; track d.idPlanillaDetalle) {
+                @for (d of pag.pagina(); track d.idPlanillaDetalle) {
                   <tr>
                     <td>
                       <div>{{ d.nombreEmpleado }}</div>
@@ -178,6 +178,18 @@
               </tfoot>
             </table>
           </div>
+          @if (pag.visible()) {
+            <mat-paginator
+              class="tabla-paginador"
+              [length]="pag.total()"
+              [pageIndex]="pag.indice()"
+              [pageSize]="pag.tamano()"
+              [pageSizeOptions]="pag.opciones"
+              (page)="pag.cambiar($event)"
+              showFirstLastButtons
+              aria-label="Paginación de la tabla"
+            />
+          }
         }
       } @else {
         <div class="empty-state">

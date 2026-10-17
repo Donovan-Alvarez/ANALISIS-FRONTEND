@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { filter, switchMap } from 'rxjs';
 import { Modulo } from '../../core/models/modulo.model';
 import { ModuloService } from '../../core/services/modulo.service';
@@ -9,10 +10,11 @@ import { PermisosService } from '../../core/services/permisos.service';
 import { colorParaTexto } from '../../shared/utils/color-chip.util';
 import { ModuloFormDialog } from './modulo-form-dialog/modulo-form-dialog';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+import { Paginacion } from '../../core/utils/paginacion';
 
 @Component({
   selector: 'app-modulos',
-  imports: [MatIconModule, MatDialogModule],
+  imports: [MatPaginatorModule, MatIconModule, MatDialogModule],
   templateUrl: './modulos.html',
   styleUrl: './modulos.scss',
 })
@@ -22,6 +24,7 @@ export class Modulos implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  protected readonly pag = new Paginacion(() => this.modulos());
 
   protected readonly modulos = signal<Modulo[]>([]);
   protected readonly colorDe = colorParaTexto;

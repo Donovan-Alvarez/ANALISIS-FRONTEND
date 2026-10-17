@@ -3,15 +3,17 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { Empresa } from '../../core/models/empresa.model';
 import { EmpresaService } from '../../core/services/empresa.services';
 import { NotificationService } from '../../core/services/notification.service';
 import { filter, finalize, switchMap } from 'rxjs';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+import { Paginacion } from '../../core/utils/paginacion';
 
 @Component({
   selector: 'app-empresas',
-  imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatIconModule],
+  imports: [MatPaginatorModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './empresas.html',
   styleUrl: './empresas.scss',
 })
@@ -20,6 +22,7 @@ export class Empresas implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly fb = inject(FormBuilder);
+  protected readonly pag = new Paginacion(() => this.empresas());
 
   protected readonly empresas = signal<Empresa[]>([]);
   protected readonly cargando = signal(false);

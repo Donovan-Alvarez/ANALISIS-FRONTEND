@@ -12,11 +12,12 @@ import { NotificationService } from '../../core/services/notification.service';
 import { PermisosService } from '../../core/services/permisos.service';
 import { ExportacionService, ColumnaExport, textoCelda } from '../../core/services/exportacion.service';
 import { etiquetaPeriodo } from '../../core/utils/fecha-hora';
+import { SelectBuscador, coincideBusqueda } from '../../shared/select-buscador/select-buscador';
 
 /** Boleta de solo lectura: presenta lo que guardó Calcular Planilla, nunca recalcula el neto. */
 @Component({
   selector: 'app-boletas-pago',
-  imports: [MatFormFieldModule, MatSelectModule, MatIconModule, MatMenuModule, FormsModule],
+  imports: [SelectBuscador, MatFormFieldModule, MatSelectModule, MatIconModule, MatMenuModule, FormsModule],
   templateUrl: './boletas-pago.html',
   styleUrl: './boletas-pago.scss',
 })
@@ -31,6 +32,13 @@ export class BoletasPago implements OnDestroy {
   readonly sinAcceso = computed(() => this.menuCargado() && !this.permisos().consultar);
   readonly periodos = signal<PeriodoPago[]>([]);
   readonly empleados = signal<EmpleadoPago[]>([]);
+  readonly busqueda = signal('');
+  /** El empleado ya elegido se queda en la lista aunque no coincida con lo escrito. */
+  readonly empleadosFiltrados = computed(() =>
+    this.empleados().filter(
+      (e) => e.idEmpleado === this.empleado || coincideBusqueda(this.busqueda(), e.nombre),
+    ),
+  );
   readonly boleta = signal<BoletaPago | null>(null);
   readonly cargando = signal(false);
   readonly procesando = signal(false);

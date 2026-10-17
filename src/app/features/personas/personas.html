@@ -98,7 +98,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (persona of filtrados(); track persona.idPersona) {
+              @for (persona of pag.pagina(); track persona.idPersona) {
                 <tr>
                   @for (columna of columnas; track columna.campo) {
                     <td>{{ celda(persona, columna.campo, columna.formato) }}</td>
@@ -132,6 +132,18 @@
             </tbody>
           </table>
         </div>
+        @if (pag.visible()) {
+          <mat-paginator
+            class="tabla-paginador"
+            [length]="pag.total()"
+            [pageIndex]="pag.indice()"
+            [pageSize]="pag.tamano()"
+            [pageSizeOptions]="pag.opciones"
+            (page)="pag.cambiar($event)"
+            showFirstLastButtons
+            aria-label="Paginación de la tabla"
+          />
+        }
       }
     }
   </section>

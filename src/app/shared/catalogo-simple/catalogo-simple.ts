@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { filter, finalize, switchMap } from 'rxjs';
 import { CatalogoSimpleConfig, ItemCatalogo } from '../../core/models/catalogo-simple.model';
 import { ColumnaExport, ExportacionService } from '../../core/services/exportacion.service';
@@ -15,6 +16,7 @@ import {
   CatalogoSimpleFormData,
   CatalogoSimpleFormDialog,
 } from './catalogo-simple-form-dialog/catalogo-simple-form-dialog';
+import { Paginacion } from '../../core/utils/paginacion';
 
 /** Minúsculas y sin tildes, para buscar 'union' y encontrar 'Unión'. */
 function normalizar(texto: string): string {
@@ -39,7 +41,7 @@ function capitalizar(texto: string): string {
  */
 @Component({
   selector: 'app-catalogo-simple',
-  imports: [MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatPaginatorModule, MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './catalogo-simple.html',
   styleUrl: './catalogo-simple.scss',
 })
@@ -52,6 +54,7 @@ export class CatalogoSimple {
   private readonly exportacionService = inject(ExportacionService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly dialog = inject(MatDialog);
+  protected readonly pag = new Paginacion(() => this.filtrados());
 
   protected readonly items = signal<ItemCatalogo[]>([]);
   protected readonly cargando = signal(false);

@@ -10,9 +10,12 @@
         <div class="field">
           <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
             <mat-label>Persona</mat-label>
-            <mat-select id="idPersona" formControlName="idPersona" placeholder="Selecciona…">
-              @for (p of personas(); track p.idPersona) {
+            <mat-select id="idPersona" formControlName="idPersona" placeholder="Selecciona…" (openedChange)="buscadorPersona.alAbrir($event)">
+              <app-select-buscador #buscadorPersona [(texto)]="busqueda" placeholder="Buscar persona…" />
+              @for (p of personasFiltradas(); track p.idPersona) {
                 <mat-option [value]="p.idPersona">{{ p.nombreCompleto }}</mat-option>
+              } @empty {
+                <mat-option disabled>Ninguna persona coincide con la búsqueda.</mat-option>
               }
             </mat-select>
           </mat-form-field>

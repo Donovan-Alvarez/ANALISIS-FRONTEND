@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { filter, finalize, forkJoin, switchMap } from 'rxjs';
 import { Empresa } from '../../core/models/empresa.model';
 import { Sucursal } from '../../core/models/sucursal.model';
@@ -11,6 +12,7 @@ import { EmpresaService } from '../../core/services/empresa.services';
 import { NotificationService } from '../../core/services/notification.service';
 import { SucursalService } from '../../core/services/sucursal.service';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+import { Paginacion } from '../../core/utils/paginacion';
 
 interface SucursalConEmpresa extends Sucursal {
   nombreEmpresa: string;
@@ -18,7 +20,7 @@ interface SucursalConEmpresa extends Sucursal {
 
 @Component({
   selector: 'app-sucursales',
-  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatIconModule],
+  imports: [MatPaginatorModule, MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './sucursales.html',
   styleUrl: './sucursales.scss',
 })
@@ -28,6 +30,7 @@ export class Sucursales implements OnInit {
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly empresaService = inject(EmpresaService);
   private readonly fb = inject(FormBuilder);
+  protected readonly pag = new Paginacion(() => this.sucursales());
 
   protected readonly sucursales = signal<SucursalConEmpresa[]>([]);
   protected readonly empresas = signal<Empresa[]>([]);

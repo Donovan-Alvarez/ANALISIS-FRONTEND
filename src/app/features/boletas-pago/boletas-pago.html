@@ -75,9 +75,13 @@
                 (ngModelChange)="consultar()"
                 [disabled]="!periodo || cargando()"
                 [placeholder]="!periodo ? 'Elige un período primero' : cargando() && !empleados().length ? 'Cargando…' : 'Selecciona un empleado…'"
+                (openedChange)="buscadorEmpleado.alAbrir($event)"
               >
-                @for (e of empleados(); track e.idEmpleado) {
+                <app-select-buscador #buscadorEmpleado [(texto)]="busqueda" placeholder="Buscar empleado…" />
+                @for (e of empleadosFiltrados(); track e.idEmpleado) {
                   <mat-option [value]="e.idEmpleado">{{ e.nombre }}</mat-option>
+                } @empty {
+                  <mat-option disabled>Ningún empleado coincide con la búsqueda.</mat-option>
                 }
               </mat-select>
             </mat-form-field>

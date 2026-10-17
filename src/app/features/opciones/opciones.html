@@ -37,7 +37,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (opcion of opciones(); track opcion.idOpcion) {
+            @for (opcion of pag.pagina(); track opcion.idOpcion) {
               <tr>
                 <td>{{ opcion.nombre }}</td>
                 <td class="data-table__num">{{ opcion.ordenMenu }}</td>
@@ -64,6 +64,18 @@
           </tbody>
         </table>
       </div>
+      @if (pag.visible()) {
+        <mat-paginator
+          class="tabla-paginador"
+          [length]="pag.total()"
+          [pageIndex]="pag.indice()"
+          [pageSize]="pag.tamano()"
+          [pageSizeOptions]="pag.opciones"
+          (page)="pag.cambiar($event)"
+          showFirstLastButtons
+          aria-label="Paginación de la tabla"
+        />
+      }
     }
   </section>
 </div>

@@ -18,6 +18,7 @@ import {
 import { EmpleadoOpcion } from '../../../core/models/inasistencia.model';
 import { BancoService } from '../../../core/services/banco.service';
 import { CuentaBancariaService } from '../../../core/services/cuenta-bancaria.service';
+import { SelectBuscador } from '../../../shared/select-buscador/select-buscador';
 
 export interface CuentaBancariaFormData {
   titulo: string;
@@ -38,7 +39,7 @@ function normalizar(texto: string): string {
 /** La app es zoneless: todo lo que lee la plantilla vive en signals. */
 @Component({
   selector: 'app-cuenta-bancaria-form-dialog',
-  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule],
+  imports: [SelectBuscador, MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule],
   templateUrl: './cuenta-bancaria-form-dialog.html',
   styleUrl: './cuenta-bancaria-form-dialog.scss',
 })

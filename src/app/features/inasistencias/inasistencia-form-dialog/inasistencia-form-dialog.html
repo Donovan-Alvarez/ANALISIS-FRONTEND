@@ -4,22 +4,23 @@
   <mat-dialog-content>
     <div class="inasistencia-form__campos">
       <div class="field">
-        <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic" class="inasistencia-form__buscar">
-          <mat-icon matPrefix>search</mat-icon>
-          <input matInput
-            type="search"
-            placeholder="Buscar por nombre, puesto o departamento…"
-            [value]="busqueda()"
-            (input)="busqueda.set($any($event.target).value)"
-            [disabled]="cargandoEmpleados() || guardando()"
-            aria-label="Buscar empleado"
-          />
-        </mat-form-field>
         <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
           <mat-label>Empleado</mat-label>
-          <mat-select id="inas-empleado" [formControl]="idEmpleado" [placeholder]="textoVacioEmpleado()">
+          <mat-select
+            id="inas-empleado"
+            [formControl]="idEmpleado"
+            [placeholder]="textoVacioEmpleado()"
+            (openedChange)="buscadorEmpleado.alAbrir($event)"
+          >
+            <app-select-buscador
+              #buscadorEmpleado
+              [(texto)]="busqueda"
+              placeholder="Buscar por nombre, puesto o departamento…"
+            />
             @for (e of empleadosFiltrados(); track e.idEmpleado) {
               <mat-option [value]="e.idEmpleado">{{ e.nombreCompleto }} — {{ e.nombrePuesto }}</mat-option>
+            } @empty {
+              <mat-option disabled>Ningún empleado coincide con la búsqueda.</mat-option>
             }
           </mat-select>
         </mat-form-field>

@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Observable, finalize } from 'rxjs';
 import { EmpleadoOpcion, Inasistencia, InasistenciaPayload } from '../../../core/models/inasistencia.model';
 import { InasistenciaService } from '../../../core/services/inasistencia.service';
+import { SelectBuscador } from '../../../shared/select-buscador/select-buscador';
 
 export interface InasistenciaFormData {
   titulo: string;
@@ -45,7 +46,7 @@ function normalizar(texto: string): string {
 /** La app es zoneless: todo lo que lee la plantilla vive en signals. */
 @Component({
   selector: 'app-inasistencia-form-dialog',
-  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule],
+  imports: [SelectBuscador, MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule],
   templateUrl: './inasistencia-form-dialog.html',
   styleUrl: './inasistencia-form-dialog.scss',
 })

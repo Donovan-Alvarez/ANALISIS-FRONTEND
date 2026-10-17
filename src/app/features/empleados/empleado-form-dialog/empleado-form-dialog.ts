@@ -13,6 +13,7 @@ import { OpcionCombo } from '../../../core/models/catalogo-jerarquico.model';
 import { EmpleadoService } from '../../../core/services/empleado.service';
 import { EmpresaService } from '../../../core/services/empresa.services';
 import { StatusEmpleadoService } from '../../../core/services/status-empleado.service';
+import { SelectBuscador, coincideBusqueda } from '../../../shared/select-buscador/select-buscador';
 
 export interface EmpleadoFormData {
   titulo: string;
@@ -37,7 +38,7 @@ export interface EmpleadoFormData {
  */
 @Component({
   selector: 'app-empleado-form-dialog',
-  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule, DecimalPipe],
+  imports: [SelectBuscador, MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule, DecimalPipe],
   templateUrl: './empleado-form-dialog.html',
   styleUrl: './empleado-form-dialog.scss',
 })
@@ -57,6 +58,14 @@ export class EmpleadoFormDialog {
   protected readonly departamentos = signal<OpcionCombo[]>([]);
   protected readonly puestos = signal<OpcionCombo[]>([]);
   protected readonly personas = signal<PersonaCombo[]>([]);
+  protected readonly busqueda = signal('');
+  /** La persona ya elegida se queda en la lista aunque no coincida con lo escrito. */
+  protected readonly personasFiltradas = computed(() => {
+    const elegida = this.form.controls.idPersona.value;
+    return this.personas().filter(
+      (p) => p.idPersona === elegida || coincideBusqueda(this.busqueda(), p.nombreCompleto),
+    );
+  });
   protected readonly statusDisponibles = signal<StatusPermitido[]>([]);
 
   protected readonly form = this.fb.nonNullable.group({

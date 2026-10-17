@@ -5,6 +5,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { filter, finalize, switchMap } from 'rxjs';
 import { Inasistencia, InasistenciaFila, InasistenciaPayload } from '../../core/models/inasistencia.model';
 import { ColumnaExport, ExportacionService, textoCelda } from '../../core/services/exportacion.service';
@@ -15,6 +16,7 @@ import { PermisosService } from '../../core/services/permisos.service';
 import { fechaHoraTexto } from '../../core/utils/fecha-hora';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 import { InasistenciaFormData, InasistenciaFormDialog } from './inasistencia-form-dialog/inasistencia-form-dialog';
+import { Paginacion } from '../../core/utils/paginacion';
 
 
 const SLUG = 'inasistencias';
@@ -41,7 +43,7 @@ function normalizar(texto: string): string {
 
 @Component({
   selector: 'app-inasistencias',
-  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatPaginatorModule, MatInputModule, MatFormFieldModule, MatSelectModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './inasistencias.html',
   styleUrl: './inasistencias.scss',
 })
@@ -53,6 +55,7 @@ export class Inasistencias {
   private readonly exportacionService = inject(ExportacionService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly dialog = inject(MatDialog);
+  protected readonly pag = new Paginacion(() => this.filtrados());
 
   protected readonly items = signal<InasistenciaFila[]>([]);
   protected readonly cargando = signal(false);

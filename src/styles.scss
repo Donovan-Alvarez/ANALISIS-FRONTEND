@@ -72,6 +72,23 @@ html {
       minimal-selected-checkmark-color: $color-primary,
     )
   );
+  @include mat.paginator-overrides(
+    (
+      container-background-color: transparent,
+      container-text-color: $color-text-muted,
+      container-text-size: 0.8rem,
+      enabled-icon-color: $color-primary-dark,
+      disabled-icon-color: $color-border,
+      select-trigger-text-size: 0.8rem,
+      form-field-container-height: 36px,
+      form-field-container-vertical-padding: 6px,
+    )
+  );
+}
+
+// Paginador debajo de las tablas (core/utils/paginacion.ts).
+.tabla-paginador {
+  border-top: 1px solid $color-border-soft;
 }
 
 // El mat-form-field ocupa todo el ancho del .field, igual que los inputs.

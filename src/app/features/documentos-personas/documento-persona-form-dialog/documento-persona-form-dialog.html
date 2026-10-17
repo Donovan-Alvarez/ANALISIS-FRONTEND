@@ -6,9 +6,12 @@
       <div class="field">
         <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
           <mat-label>Persona</mat-label>
-          <mat-select id="documento-persona" [formControl]="idPersona" [placeholder]="cargandoOpciones() ? 'Cargando…' : personas().length ? 'Selecciona…' : 'No hay personas registradas'">
-            @for (p of personas(); track p.id) {
+          <mat-select id="documento-persona" [formControl]="idPersona" [placeholder]="cargandoOpciones() ? 'Cargando…' : personas().length ? 'Selecciona…' : 'No hay personas registradas'" (openedChange)="buscadorPersona.alAbrir($event)">
+            <app-select-buscador #buscadorPersona [(texto)]="busqueda" placeholder="Buscar persona…" />
+            @for (p of personasFiltradas(); track p.id) {
               <mat-option [value]="p.id">{{ p.nombre }}</mat-option>
+            } @empty {
+              <mat-option disabled>Ninguna persona coincide con la búsqueda.</mat-option>
             }
           </mat-select>
         </mat-form-field>

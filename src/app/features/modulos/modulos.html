@@ -29,7 +29,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (modulo of modulos(); track modulo.idModulo) {
+            @for (modulo of pag.pagina(); track modulo.idModulo) {
               <tr>
                 <td>
                   <span class="chip" [style.background]="colorDe(modulo.nombre) + '1f'" [style.color]="colorDe(modulo.nombre)">
@@ -53,6 +53,18 @@
           </tbody>
         </table>
       </div>
+      @if (pag.visible()) {
+        <mat-paginator
+          class="tabla-paginador"
+          [length]="pag.total()"
+          [pageIndex]="pag.indice()"
+          [pageSize]="pag.tamano()"
+          [pageSizeOptions]="pag.opciones"
+          (page)="pag.cambiar($event)"
+          showFirstLastButtons
+          aria-label="Paginación de la tabla"
+        />
+      }
     }
   </section>
 </div>

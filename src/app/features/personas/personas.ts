@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { filter, finalize, switchMap } from 'rxjs';
 import { Persona } from '../../core/models/persona.model';
 import { ColumnaExport, ExportacionService, textoCelda, valorDe } from '../../core/services/exportacion.service';
@@ -13,6 +14,7 @@ import { PermisosService } from '../../core/services/permisos.service';
 import { PersonaService } from '../../core/services/persona.service';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 import { PersonaFormData, PersonaFormDialog } from './persona-form-dialog/persona-form-dialog';
+import { Paginacion } from '../../core/utils/paginacion';
 
 /** Ruta y OPCION.Pagina: 'personas' (contrato-rutas.md). */
 const SLUG = 'personas';
@@ -42,7 +44,7 @@ function normalizar(texto: string): string {
  */
 @Component({
   selector: 'app-personas',
-  imports: [MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatPaginatorModule, MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './personas.html',
   styleUrl: './personas.scss',
 })
@@ -54,6 +56,7 @@ export class Personas {
   private readonly exportacionService = inject(ExportacionService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly dialog = inject(MatDialog);
+  protected readonly pag = new Paginacion(() => this.filtrados());
 
   protected readonly titulo = TITULO;
   protected readonly columnas = COLUMNAS;

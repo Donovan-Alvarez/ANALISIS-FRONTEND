@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { filter, finalize, forkJoin, switchMap } from 'rxjs';
 import {
   Empresa,
@@ -25,13 +26,14 @@ import { UsuariosService } from '../../core/services/usuarios.service';
 import { mensajeDeError } from '../../core/utils/api-error';
 import { aBase64Puro, aDataUri } from '../../core/utils/foto';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+import { Paginacion } from '../../core/utils/paginacion';
 
 /** Ruta de esta pantalla; coincide con OPCION.Pagina en la base de datos. */
 const PAGINA = 'usuarios';
 
 @Component({
   selector: 'app-usuarios',
-  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatIconModule],
+  imports: [MatPaginatorModule, MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './usuarios.html',
   styleUrl: './usuarios.scss',
 })
@@ -42,6 +44,7 @@ export class Usuarios implements OnInit {
   private readonly permisosService = inject(PermisosService);
   private readonly usuariosService = inject(UsuariosService);
   private readonly catalogosService = inject(CatalogosService);
+  protected readonly pag = new Paginacion(() => this.usuariosFiltrados());
 
   /** Permisos del rol autenticado, derivados de GET /api/menu/actual. */
   protected readonly permisos = computed(() => this.permisosService.permisosDe(PAGINA));

@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { filter, finalize } from 'rxjs';
 import { Liquidacion as LiquidacionModel } from '../../core/models/liquidacion.model';
 import { ColumnaExport, ExportacionService, textoCelda, valorDe } from '../../core/services/exportacion.service';
@@ -12,6 +13,7 @@ import { MenuService } from '../../core/services/menu.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { PermisosService } from '../../core/services/permisos.service';
 import { LiquidacionFormDialog } from './liquidacion-form-dialog/liquidacion-form-dialog';
+import { Paginacion } from '../../core/utils/paginacion';
 
 function normalizar(texto: string): string {
   return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
@@ -26,7 +28,7 @@ function normalizar(texto: string): string {
  */
 @Component({
   selector: 'app-liquidacion',
-  imports: [MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatPaginatorModule, MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './liquidacion.html',
   styleUrl: './liquidacion.scss',
 })
@@ -37,6 +39,7 @@ export class Liquidacion {
   private readonly notificationService = inject(NotificationService);
   private readonly exportacionService = inject(ExportacionService);
   private readonly dialog = inject(MatDialog);
+  protected readonly pag = new Paginacion(() => this.filtrados());
 
   protected readonly liquidaciones = signal<LiquidacionModel[]>([]);
   protected readonly cargando = signal(false);

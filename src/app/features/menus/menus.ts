@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { filter, forkJoin, switchMap } from 'rxjs';
 import { Menu } from '../../core/models/menu.model';
 import { Modulo } from '../../core/models/modulo.model';
@@ -11,6 +12,7 @@ import { PermisosService } from '../../core/services/permisos.service';
 import { colorParaTexto } from '../../shared/utils/color-chip.util';
 import { MenuFormDialog } from './menu-form-dialog/menu-form-dialog';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+import { Paginacion } from '../../core/utils/paginacion';
 
 interface MenuConModulo extends Menu {
   nombreModulo: string;
@@ -18,7 +20,7 @@ interface MenuConModulo extends Menu {
 
 @Component({
   selector: 'app-menus',
-  imports: [MatIconModule, MatDialogModule],
+  imports: [MatPaginatorModule, MatIconModule, MatDialogModule],
   templateUrl: './menus.html',
   styleUrl: './menus.scss',
 })
@@ -29,6 +31,7 @@ export class Menus implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  protected readonly pag = new Paginacion(() => this.menus());
 
   protected readonly menus = signal<MenuConModulo[]>([]);
   protected readonly modulos = signal<Modulo[]>([]);

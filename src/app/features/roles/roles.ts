@@ -4,15 +4,17 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { filter, switchMap } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { Role } from '../../core/models/role.model';
 import { NotificationService } from '../../core/services/notification.service';
 import { RoleService } from '../../core/services/role.service';
 import { RoleFormDialog } from './role-form-dialog/role-form-dialog';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+import { Paginacion } from '../../core/utils/paginacion';
 
 @Component({
   selector: 'app-roles',
-  imports: [MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
+  imports: [MatPaginatorModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
   templateUrl: './roles.html',
   styleUrl: './roles.scss',
 })
@@ -21,6 +23,7 @@ export class Roles implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  protected readonly pag = new Paginacion(() => this.roles());
 
   protected readonly roles = signal<Role[]>([]);
   protected readonly columnas = ['nombre', 'acciones'];

@@ -12,6 +12,7 @@ import { DocumentoPersona, DocumentoPersonaPayload } from '../../../core/models/
 import { PersonaService } from '../../../core/services/persona.service';
 import { TipoDocumentoService } from '../../../core/services/tipo-documento.service';
 import { ayudaNumeroDocumento, errorNumeroDocumento, noSoloEspacios } from '../../../core/utils/validaciones-persona';
+import { SelectBuscador, coincideBusqueda } from '../../../shared/select-buscador/select-buscador';
 
 export interface DocumentoPersonaFormData {
   titulo: string;
@@ -36,7 +37,7 @@ export interface DocumentoPersonaFormData {
  */
 @Component({
   selector: 'app-documento-persona-form-dialog',
-  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule],
+  imports: [SelectBuscador, MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule],
   templateUrl: './documento-persona-form-dialog.html',
   styleUrl: './documento-persona-form-dialog.scss',
 })
@@ -51,6 +52,11 @@ export class DocumentoPersonaFormDialog implements OnInit {
   protected readonly guardando = signal(false);
   protected readonly cargandoOpciones = signal(true);
   protected readonly personas = signal<OpcionCombo[]>([]);
+  protected readonly busqueda = signal('');
+  /** La persona ya elegida se queda en la lista aunque no coincida con lo escrito. */
+  protected readonly personasFiltradas = computed(() =>
+    this.personas().filter((p) => p.id === this.idPersonaSel() || coincideBusqueda(this.busqueda(), p.nombre)),
+  );
   protected readonly tipos = signal<OpcionCombo[]>([]);
 
   // Espejo de los combos en signals (la app es zoneless y la plantilla lee de aquí).

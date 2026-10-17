@@ -35,7 +35,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (menu of menus(); track menu.idMenu) {
+            @for (menu of pag.pagina(); track menu.idMenu) {
               <tr>
                 <td>{{ menu.nombre }}</td>
                 <td class="data-table__num">{{ menu.ordenMenu }}</td>
@@ -60,6 +60,18 @@
           </tbody>
         </table>
       </div>
+      @if (pag.visible()) {
+        <mat-paginator
+          class="tabla-paginador"
+          [length]="pag.total()"
+          [pageIndex]="pag.indice()"
+          [pageSize]="pag.tamano()"
+          [pageSizeOptions]="pag.opciones"
+          (page)="pag.cambiar($event)"
+          showFirstLastButtons
+          aria-label="Paginación de la tabla"
+        />
+      }
     }
   </section>
 </div>

@@ -101,7 +101,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (empleado of filtrados(); track empleado.idEmpleado) {
+              @for (empleado of pag.pagina(); track empleado.idEmpleado) {
                 <tr>
                   @for (columna of columnas; track columna.campo) {
                     <td [class.data-table__num]="columna.formato === 'moneda'">
@@ -141,6 +141,18 @@
             </tbody>
           </table>
         </div>
+        @if (pag.visible()) {
+          <mat-paginator
+            class="tabla-paginador"
+            [length]="pag.total()"
+            [pageIndex]="pag.indice()"
+            [pageSize]="pag.tamano()"
+            [pageSizeOptions]="pag.opciones"
+            (page)="pag.cambiar($event)"
+            showFirstLastButtons
+            aria-label="Paginación de la tabla"
+          />
+        }
       }
     }
   </section>

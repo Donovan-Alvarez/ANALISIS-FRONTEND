@@ -4,15 +4,17 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { filter, switchMap } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { Genero } from '../../core/models/genero.model';
 import { GeneroService } from '../../core/services/genero.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { GeneroFormDialog } from './genero-form-dialog/genero-form-dialog';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+import { Paginacion } from '../../core/utils/paginacion';
 
 @Component({
   selector: 'app-generos',
-  imports: [MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
+  imports: [MatPaginatorModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
   templateUrl: './generos.html',
   styleUrl: './generos.scss',
 })
@@ -21,6 +23,7 @@ export class Generos implements OnInit {
   private readonly notificationService = inject(NotificationService);
   private readonly dialog = inject(MatDialog);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  protected readonly pag = new Paginacion(() => this.generos());
 
   protected readonly generos = signal<Genero[]>([]);
   protected readonly columnas = ['nombre', 'acciones'];

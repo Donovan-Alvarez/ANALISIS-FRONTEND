@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { filter, finalize, switchMap } from 'rxjs';
 import { CatalogoJerarquicoConfig, ItemJerarquico } from '../../core/models/catalogo-jerarquico.model';
 import { ExportacionService, textoCelda, valorDe } from '../../core/services/exportacion.service';
@@ -15,6 +16,7 @@ import {
   CatalogoJerarquicoFormData,
   CatalogoJerarquicoFormDialog,
 } from './catalogo-jerarquico-form-dialog/catalogo-jerarquico-form-dialog';
+import { Paginacion } from '../../core/utils/paginacion';
 
 /** Minúsculas y sin tildes, para buscar 'logistica' y encontrar 'Logística'. */
 function normalizar(texto: string): string {
@@ -40,7 +42,7 @@ function capitalizar(texto: string): string {
  */
 @Component({
   selector: 'app-catalogo-jerarquico',
-  imports: [MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
+  imports: [MatPaginatorModule, MatFormFieldModule, MatInputModule, MatIconModule, MatDialogModule, MatMenuModule],
   templateUrl: './catalogo-jerarquico.html',
   styleUrl: './catalogo-jerarquico.scss',
 })
@@ -53,6 +55,7 @@ export class CatalogoJerarquico {
   private readonly exportacionService = inject(ExportacionService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly dialog = inject(MatDialog);
+  protected readonly pag = new Paginacion(() => this.filtrados());
 
   protected readonly items = signal<ItemJerarquico[]>([]);
   protected readonly cargando = signal(false);
