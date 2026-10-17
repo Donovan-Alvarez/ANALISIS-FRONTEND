@@ -14,6 +14,8 @@ import { EmpleadoService } from '../../../core/services/empleado.service';
 import { EmpresaService } from '../../../core/services/empresa.services';
 import { StatusEmpleadoService } from '../../../core/services/status-empleado.service';
 import { SelectBuscador, coincideBusqueda } from '../../../shared/select-buscador/select-buscador';
+import { calcularIgss, calcularIsrMensual } from '../../../core/utils/deducciones-ley';
+import { MonedaInputDirective } from '../../../shared/directivas/moneda-input.directive';
 
 export interface EmpleadoFormData {
   titulo: string;
@@ -38,7 +40,7 @@ export interface EmpleadoFormData {
  */
 @Component({
   selector: 'app-empleado-form-dialog',
-  imports: [SelectBuscador, MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule, DecimalPipe],
+  imports: [MonedaInputDirective, SelectBuscador, MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule, MatIconModule, DecimalPipe],
   templateUrl: './empleado-form-dialog.html',
   styleUrl: './empleado-form-dialog.scss',
 })
@@ -179,16 +181,48 @@ export class EmpleadoFormDialog {
   }
 
   private escucharMontos(): void {
-    this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
-      const v = this.form.getRawValue();
-      this.valores.set({
-        ingresoSueldoBase: Number(v.ingresoSueldoBase) || 0,
-        ingresoBonificacionDecreto: Number(v.ingresoBonificacionDecreto) || 0,
-        ingresoOtrosIngresos: Number(v.ingresoOtrosIngresos) || 0,
-        descuentoIgss: Number(v.descuentoIgss) || 0,
-        descuentoIsr: Number(v.descuentoIsr) || 0,
-        descuentoInasistencias: Number(v.descuentoInasistencias) || 0,
-      });
+    this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.sincronizarMontos());
+
+    // IGSS e ISR se proponen a partir del sueldo base (core/utils/deducciones-ley.ts)
+    // y el usuario puede ajustarlos a mano. Solo se recalculan cuando cambia el
+    // sueldo: un ajuste manual, o los montos guardados al editar, se respetan
+    // hasta entonces. restaurarIgss()/restaurarIsr() vuelven al valor calculado.
+    this.form.controls.ingresoSueldoBase.valueChanges.pipe(takeUntilDestroyed()).subscribe((sueldo) => {
+      const base = Number(sueldo) || 0;
+      this.form.patchValue({ descuentoIgss: calcularIgss(base), descuentoIsr: calcularIsrMensual(base) });
+    });
+  }
+
+  /** Valor de ley para el sueldo actual, y si el usuario lo dejó distinto (ajuste manual o dato guardado). */
+  protected readonly sugeridos = computed(() => {
+    const v = this.valores();
+    const igss = calcularIgss(v.ingresoSueldoBase);
+    const isr = calcularIsrMensual(v.ingresoSueldoBase);
+    return {
+      igss,
+      isr,
+      igssAjustado: Math.abs(v.descuentoIgss - igss) >= 0.005,
+      isrAjustado: Math.abs(v.descuentoIsr - isr) >= 0.005,
+    };
+  });
+
+  protected restaurarIgss(): void {
+    this.form.controls.descuentoIgss.setValue(this.sugeridos().igss);
+  }
+
+  protected restaurarIsr(): void {
+    this.form.controls.descuentoIsr.setValue(this.sugeridos().isr);
+  }
+
+  private sincronizarMontos(): void {
+    const v = this.form.getRawValue();
+    this.valores.set({
+      ingresoSueldoBase: Number(v.ingresoSueldoBase) || 0,
+      ingresoBonificacionDecreto: Number(v.ingresoBonificacionDecreto) || 0,
+      ingresoOtrosIngresos: Number(v.ingresoOtrosIngresos) || 0,
+      descuentoIgss: Number(v.descuentoIgss) || 0,
+      descuentoIsr: Number(v.descuentoIsr) || 0,
+      descuentoInasistencias: Number(v.descuentoInasistencias) || 0,
     });
   }
 
@@ -216,6 +250,8 @@ export class EmpleadoFormDialog {
       },
       { emitEvent: false },
     );
+    // Sin eventos, la vista previa de totales no se entera de los montos cargados.
+    this.sincronizarMontos();
 
     // La empresa sale de la sucursal; el departamento viene en el DTO.
     this.empresaService.findAll().subscribe((empresas) => {

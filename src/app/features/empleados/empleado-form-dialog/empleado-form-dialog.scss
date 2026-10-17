@@ -57,3 +57,12 @@
   font-weight: 700;
   color: $color-primary-dark;
 }
+
+/* IGSS e ISR: se calculan del sueldo base, pero se pueden ajustar a mano. */
+.campo-calculado__icono {
+  color: $color-primary;
+}
+
+.campo-calculado__restaurar mat-icon {
+  color: $color-warning;
+}

@@ -4,10 +4,11 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Modulo } from '../../../core/models/modulo.model';
+import { SeleccionarAlEnfocarDirective } from '../../../shared/directivas/seleccionar-al-enfocar.directive';
 
 @Component({
   selector: 'app-modulo-form-dialog',
-  imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatDialogModule],
+  imports: [SeleccionarAlEnfocarDirective, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatDialogModule],
   templateUrl: './modulo-form-dialog.html',
   styleUrl: './modulo-form-dialog.scss',
 })

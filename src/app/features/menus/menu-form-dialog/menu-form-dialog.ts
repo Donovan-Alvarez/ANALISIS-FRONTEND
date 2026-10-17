@@ -6,6 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { Menu } from '../../../core/models/menu.model';
 import { Modulo } from '../../../core/models/modulo.model';
+import { SeleccionarAlEnfocarDirective } from '../../../shared/directivas/seleccionar-al-enfocar.directive';
 
 export interface MenuDialogData {
   menu: Menu | null;
@@ -14,7 +15,7 @@ export interface MenuDialogData {
 
 @Component({
   selector: 'app-menu-form-dialog',
-  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule],
+  imports: [SeleccionarAlEnfocarDirective, MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule],
   templateUrl: './menu-form-dialog.html',
   styleUrl: './menu-form-dialog.scss',
 })

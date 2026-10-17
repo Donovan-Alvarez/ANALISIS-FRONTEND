@@ -102,7 +102,7 @@
           <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
             <mat-label>Sueldo base</mat-label>
             <span matTextPrefix>Q&nbsp;</span>
-            <input matInput id="ingresoSueldoBase" type="number" min="0" step="0.01" formControlName="ingresoSueldoBase" />
+            <input matInput appMoneda id="ingresoSueldoBase" formControlName="ingresoSueldoBase" />
           </mat-form-field>
           @if (form.controls.ingresoSueldoBase.hasError('min') && form.controls.ingresoSueldoBase.touched) {
             <p class="field__error">No puede ser negativo</p>
@@ -113,11 +113,8 @@
           <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
             <mat-label>Bonificación decreto</mat-label>
             <span matTextPrefix>Q&nbsp;</span>
-            <input matInput
+            <input matInput appMoneda
               id="ingresoBonificacionDecreto"
-              type="number"
-              min="0"
-              step="0.01"
               formControlName="ingresoBonificacionDecreto"
             />
           </mat-form-field>
@@ -127,7 +124,7 @@
           <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
             <mat-label>Otros ingresos</mat-label>
             <span matTextPrefix>Q&nbsp;</span>
-            <input matInput id="ingresoOtrosIngresos" type="number" min="0" step="0.01" formControlName="ingresoOtrosIngresos" />
+            <input matInput appMoneda id="ingresoOtrosIngresos" formControlName="ingresoOtrosIngresos" />
           </mat-form-field>
         </div>
       </div>
@@ -141,27 +138,62 @@
           <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
             <mat-label>IGSS</mat-label>
             <span matTextPrefix>Q&nbsp;</span>
-            <input matInput id="descuentoIgss" type="number" min="0" step="0.01" formControlName="descuentoIgss" />
+            <input matInput appMoneda id="descuentoIgss" formControlName="descuentoIgss" />
+            @if (sugeridos().igssAjustado) {
+              <button
+                matSuffix
+                type="button"
+                class="btn-icon campo-calculado__restaurar"
+                (click)="restaurarIgss()"
+                [title]="'Volver al valor calculado: Q ' + (sugeridos().igss | number: '1.2-2')"
+                aria-label="Volver al IGSS calculado"
+              >
+                <mat-icon>restart_alt</mat-icon>
+              </button>
+            } @else {
+              <mat-icon matSuffix class="campo-calculado__icono" title="Calculado a partir del sueldo base">calculate</mat-icon>
+            }
           </mat-form-field>
+          @if (form.controls.descuentoIgss.hasError('min')) {
+            <p class="field__error">No puede ser negativo</p>
+          } @else {
+            <p class="field__hint">Se calcula automáticamente</p>
+          }
         </div>
 
         <div class="field">
           <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
             <mat-label>ISR</mat-label>
             <span matTextPrefix>Q&nbsp;</span>
-            <input matInput id="descuentoIsr" type="number" min="0" step="0.01" formControlName="descuentoIsr" />
+            <input matInput appMoneda id="descuentoIsr" formControlName="descuentoIsr" />
+            @if (sugeridos().isrAjustado) {
+              <button
+                matSuffix
+                type="button"
+                class="btn-icon campo-calculado__restaurar"
+                (click)="restaurarIsr()"
+                [title]="'Volver al valor calculado: Q ' + (sugeridos().isr | number: '1.2-2')"
+                aria-label="Volver al ISR calculado"
+              >
+                <mat-icon>restart_alt</mat-icon>
+              </button>
+            } @else {
+              <mat-icon matSuffix class="campo-calculado__icono" title="Calculado a partir del sueldo base">calculate</mat-icon>
+            }
           </mat-form-field>
+          @if (form.controls.descuentoIsr.hasError('min')) {
+            <p class="field__error">No puede ser negativo</p>
+          } @else {
+            <p class="field__hint">Se calcula automáticamente</p>
+          }
         </div>
 
         <div class="field">
           <mat-form-field appearance="outline" floatLabel="always" subscriptSizing="dynamic">
             <mat-label>Inasistencias</mat-label>
             <span matTextPrefix>Q&nbsp;</span>
-            <input matInput
+            <input matInput appMoneda
               id="descuentoInasistencias"
-              type="number"
-              min="0"
-              step="0.01"
               formControlName="descuentoInasistencias"
             />
           </mat-form-field>

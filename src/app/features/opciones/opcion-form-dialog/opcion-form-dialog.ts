@@ -6,6 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { Menu } from '../../../core/models/menu.model';
 import { Opcion } from '../../../core/models/opcion.model';
+import { SeleccionarAlEnfocarDirective } from '../../../shared/directivas/seleccionar-al-enfocar.directive';
 
 export interface OpcionDialogData {
   opcion: Opcion | null;
@@ -29,7 +30,7 @@ const PAGINAS_DISPONIBLES = [
 
 @Component({
   selector: 'app-opcion-form-dialog',
-  imports: [MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule],
+  imports: [SeleccionarAlEnfocarDirective, MatInputModule, MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatDialogModule],
   templateUrl: './opcion-form-dialog.html',
   styleUrl: './opcion-form-dialog.scss',
 })

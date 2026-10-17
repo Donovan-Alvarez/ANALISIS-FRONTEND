@@ -10,10 +10,11 @@ import { NotificationService } from '../../core/services/notification.service';
 import { filter, finalize, switchMap } from 'rxjs';
 import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 import { Paginacion } from '../../core/utils/paginacion';
+import { SeleccionarAlEnfocarDirective } from '../../shared/directivas/seleccionar-al-enfocar.directive';
 
 @Component({
   selector: 'app-empresas',
-  imports: [MatPaginatorModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatIconModule],
+  imports: [SeleccionarAlEnfocarDirective, MatPaginatorModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './empresas.html',
   styleUrl: './empresas.scss',
 })
